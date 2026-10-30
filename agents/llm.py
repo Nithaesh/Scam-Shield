@@ -143,6 +143,10 @@ def call_llm(
                     image_mime_type=image_mime_type,
                     json_mode=json_mode,
                 )
+            except ValueError as ve:
+                # Configuration error (missing key, invalid parameter) - do not retry
+                logger.warning("Gemini configuration error: %s. Switching to fallback.", str(ve))
+                break
             except Exception as e:
                 logger.warning("Gemini attempt %d failed: %s", attempt + 1, str(e))
                 if attempt < MAX_RETRIES:
@@ -163,6 +167,10 @@ def call_llm(
                 image=image,
                 json_mode=json_mode,
             )
+        except ValueError as ve:
+            # Configuration error - do not retry
+            logger.error("Groq configuration error: %s", str(ve))
+            raise RuntimeError(f"LLM configuration error: {ve}") from ve
         except Exception as e:
             logger.error("Groq attempt %d failed: %s", attempt + 1, str(e))
             if attempt < MAX_RETRIES:

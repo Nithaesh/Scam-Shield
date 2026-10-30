@@ -45,16 +45,20 @@ class Extracted(BaseModel):
 
     @classmethod
     def fallback(cls, message_text: str = "") -> "Extracted":
-        """Safe fallback when extraction fails."""
+        """Safe fallback when extraction fails, with lightweight regex entity recovery."""
+        import re
+        urls = re.findall(r"https?://[^\s<>\"']+|www\.[^\s<>\"']+", message_text)
+        phones = re.findall(r"(?:\+91[\s-]?)?[6789]\d{9}\b|1800\d{6,7}\b", message_text)
+        upi_ids = re.findall(r"[a-zA-Z0-9.\-_]{2,64}@[a-zA-Z]{2,32}", message_text)
         return cls(
             sender=None,
             message_text=message_text,
-            urls=[],
-            phone_numbers=[],
-            upi_ids=[],
+            urls=urls,
+            phone_numbers=phones,
+            upi_ids=upi_ids,
             language="other",
             claimed_organisation=None,
-            summary="Raw unparsed message.",
+            summary="Raw message processed via fallback recovery.",
         )
 
 

@@ -30,6 +30,32 @@ TIMEOUT_SECONDS = 30.0
 MAX_RETRIES = 2
 BACKOFF_FACTOR = 1.5
 
+_gemini_client = None
+_groq_client = None
+
+
+def _get_gemini_client(api_key: str):
+    """Reuse a single Gemini client instance to keep HTTP connection alive."""
+    global _gemini_client
+    if _gemini_client is None:
+        from google import genai
+        from google.genai import types
+        # Note: HttpOptions timeout must be in milliseconds
+        _gemini_client = genai.Client(
+            api_key=api_key,
+            http_options=types.HttpOptions(timeout=int(TIMEOUT_SECONDS * 1000)),
+        )
+    return _gemini_client
+
+
+def _get_groq_client(api_key: str):
+    """Reuse a single Groq client instance."""
+    global _groq_client
+    if _groq_client is None:
+        from groq import Groq
+        _groq_client = Groq(api_key=api_key, timeout=TIMEOUT_SECONDS, max_retries=0)
+    return _groq_client
+
 
 def _clean_json_markdown(text: str) -> str:
     """Strip markdown code fence blocks from an LLM response string."""
@@ -50,7 +76,6 @@ def _call_gemini(
     json_mode: bool = False,
 ) -> str:
     """Execute API call against Google Gemini."""
-    from google import genai
     from google.genai import types
 
     api_key = os.getenv("GEMINI_API_KEY")
@@ -58,7 +83,7 @@ def _call_gemini(
         raise ValueError("GEMINI_API_KEY is not configured in environment.")
 
     model_name = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
-    client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=TIMEOUT_SECONDS))
+    client = _get_gemini_client(api_key)
 
     contents: list[Any] = []
     if image is not None:
@@ -69,6 +94,7 @@ def _call_gemini(
         system_instruction=system,
         response_mime_type="application/json" if json_mode else None,
         temperature=0.1,
+        automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
     )
 
     response = client.models.generate_content(
@@ -92,14 +118,12 @@ def _call_groq(
     if image is not None:
         raise ValueError("Groq fallback does not support image analysis; Gemini vision is required.")
 
-    from groq import Groq
-
     api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
         raise ValueError("GROQ_API_KEY is not configured in environment.")
 
     model_name = os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b")
-    client = Groq(api_key=api_key, timeout=TIMEOUT_SECONDS)
+    client = _get_groq_client(api_key)
 
     messages = [
         {"role": "system", "content": system},
@@ -160,7 +184,7 @@ def call_llm(
 
     for attempt in range(MAX_RETRIES + 1):
         try:
-            logger.info("Attempting Groq fallback call (attempt %d/%d)", attempt + 1, MAX_RETRIES + 1)
+            logger.info("Attempting Groq call (attempt %d/%d)", attempt + 1, MAX_RETRIES + 1)
             return _call_groq(
                 system=system,
                 user=user,
@@ -172,6 +196,10 @@ def call_llm(
             logger.error("Groq configuration error: %s", str(ve))
             raise RuntimeError(f"LLM configuration error: {ve}") from ve
         except Exception as e:
+            err_msg = str(e).lower()
+            if "rate_limit" in err_msg or "429" in err_msg or "too many requests" in err_msg:
+                logger.warning("Groq free-tier rate limit (30 RPM) reached. Bypassing wait and switching to local engine.")
+                raise e
             logger.error("Groq attempt %d failed: %s", attempt + 1, str(e))
             if attempt < MAX_RETRIES:
                 time.sleep(BACKOFF_FACTOR ** (attempt + 1))

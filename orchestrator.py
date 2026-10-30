@@ -48,18 +48,26 @@ AGENT_TIMEOUT_SECONDS = 35.0
 
 
 def _compute_input_hash(input_data: str | bytes, language: str) -> str:
-    """Generate SHA-256 fingerprint for cache key."""
+    """Generate SHA-256 fingerprint for cache key.
+
+    Normalizes whitespace for text inputs so exact message content matches
+    even with leading/trailing spaces or newline variations.
+    """
     hasher = hashlib.sha256()
     hasher.update(language.encode("utf-8"))
     if isinstance(input_data, bytes):
         hasher.update(input_data)
     else:
-        hasher.update(str(input_data).strip().encode("utf-8"))
+        normalized_text = " ".join(str(input_data).strip().split())
+        hasher.update(normalized_text.encode("utf-8"))
     return hasher.hexdigest()
 
 
-def _get_cached_result(cache_key: str) -> AnalysisResult | None:
-    """Retrieve and deserialize result from cache if present."""
+def _get_cached_result(cache_key: str, start_time: float | None = None) -> AnalysisResult | None:
+    """Retrieve and deserialize result from cache if present.
+
+    Returns the cached result immediately in ~0ms, saving LLM tokens.
+    """
     use_cache = os.getenv("USE_CACHE", "1").lower() in ("1", "true", "yes")
     if not use_cache:
         return None
@@ -70,7 +78,9 @@ def _get_cached_result(cache_key: str) -> AnalysisResult | None:
             data = json.loads(cache_file.read_text(encoding="utf-8"))
             result = AnalysisResult.model_validate(data)
             result.cache_hit = True
-            logger.info("Cache hit for input key: %s", cache_key[:12])
+            elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2) if start_time else 0.0
+            result.timings_ms = {"total": elapsed_ms, "cached": 0.0}
+            logger.info("Cache hit for input key %s: returned from local storage in %.1fms (0 LLM tokens consumed).", cache_key[:12], elapsed_ms)
             return result
         except Exception as e:
             logger.warning("Failed to read cache file %s: %s", cache_file, str(e))
@@ -180,7 +190,7 @@ def analyse(
 
     # Check Cache
     cache_key = _compute_input_hash(input_data, language)
-    cached = _get_cached_result(cache_key)
+    cached = _get_cached_result(cache_key, start_time=total_start)
     if cached:
         return cached
 
@@ -268,7 +278,7 @@ def analyse_stream(
 
     yield {"stage": "cache", "status": "checking"}
     cache_key = _compute_input_hash(input_data if isinstance(input_data, (str, bytes)) else str(input_data), language)
-    cached = _get_cached_result(cache_key)
+    cached = _get_cached_result(cache_key, start_time=total_start)
     if cached:
         yield {"stage": "cache", "status": "done", "data": cached.model_dump(mode="json")}
         return cached

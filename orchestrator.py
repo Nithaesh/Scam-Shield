@@ -207,14 +207,14 @@ def analyse(
             pattern = pattern_future.result(timeout=AGENT_TIMEOUT_SECONDS)
         except (FuturesTimeoutError, Exception) as e:
             logger.error("Pattern Analyst agent failed or timed out: %s", str(e))
-            pattern = PatternReport.fallback(reason=f"Pattern analyst error: {e}")
+            pattern = PatternReport.fallback(reason=f"Pattern analyst error: {type(e).__name__}: {e}")
 
         # Retrieve Entity Checker
         try:
             entity = entity_future.result(timeout=AGENT_TIMEOUT_SECONDS)
         except (FuturesTimeoutError, Exception) as e:
             logger.error("Entity Checker agent failed or timed out: %s", str(e))
-            entity = EntityReport.fallback(reason=f"Entity checker error: {e}")
+            entity = EntityReport.fallback(reason=f"Entity checker error: {type(e).__name__}: {e}")
 
     parallel_duration = round((time.perf_counter() - parallel_start) * 1000, 2)
     timings["pattern_analyst_and_entity_checker_parallel"] = parallel_duration
@@ -225,7 +225,7 @@ def analyse(
         verdict = adjudicate(extracted, pattern, entity)
     except Exception as e:
         logger.error("Stage 3 Judge crashed: %s", str(e))
-        verdict = JudgeVerdict.fallback(reason=f"Judge error: {e}")
+        verdict = JudgeVerdict.fallback(reason=f"Judge error: {type(e).__name__}: {e}")
     timings["judge"] = round((time.perf_counter() - judge_start) * 1000, 2)
 
     # Stage 4: Advisor Agent

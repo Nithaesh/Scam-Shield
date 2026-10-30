@@ -1,0 +1,137 @@
+[
+  {
+    "id": "GENUINE_001",
+    "input_text": "Rs 1,250.00 debited from your A/c XX4821 on 24-Oct-26 at 18:42:10 via UPI. Ref: 429810284912. Available Balance: Rs 45,820.50 - State Bank of India",
+    "input_type": "text",
+    "language": "en",
+    "category": "bank_debit_alert",
+    "expected_verdict": "safe",
+    "notes": "Standard official debit notification with masked account number and reference ID. No links or calls."
+  },
+  {
+    "id": "GENUINE_002",
+    "input_text": "194820 is your OTP for login to your HDFC Bank NetBanking. Valid for 5 mins. Do not share this OTP with anyone, including bank staff. Bank never asks for OTP.",
+    "input_type": "text",
+    "language": "en",
+    "category": "bank_otp",
+    "expected_verdict": "safe",
+    "notes": "Standard official OTP verification explicitly reminding user not to share."
+  },
+  {
+    "id": "GENUINE_003",
+    "input_text": "Your order #402-9841029 from Amazon has been dispatched with delivery agent Suresh (PIN: 48). Track your package directly on the Amazon app: https://amazon.in/orders",
+    "input_type": "text",
+    "language": "en",
+    "category": "ecommerce_delivery",
+    "expected_verdict": "safe",
+    "notes": "Legitimate Amazon delivery dispatch linking to verified domain amazon.in."
+  },
+  {
+    "id": "GENUINE_004",
+    "input_text": "Your Swiggy delivery partner has arrived at your location with order #849102. Please collect your food. Enjoy your meal!",
+    "input_type": "text",
+    "language": "en",
+    "category": "food_delivery_update",
+    "expected_verdict": "safe",
+    "notes": "Informational food delivery arrival notice with no actionable threats or credentials."
+  },
+  {
+    "id": "GENUINE_005",
+    "input_text": "Recharge of Rs 299 successful for your Jio number 9876540001. Benefits: 1.5GB/day, Unlimited Calls for 28 days. Check balance anytime in MyJio app.",
+    "input_type": "text",
+    "language": "en",
+    "category": "telecom_recharge",
+    "expected_verdict": "safe",
+    "notes": "Routine telecom plan renewal confirmation."
+  },
+  {
+    "id": "GENUINE_006",
+    "input_text": "Reminder: Your dental consultation appointment with Dr. Sharma at Apollo Clinics is confirmed for tomorrow, 28th Oct at 10:30 AM. For rescheduling, call 1800-500-1066.",
+    "input_type": "text",
+    "language": "en",
+    "category": "appointment_reminder",
+    "expected_verdict": "safe",
+    "notes": "Healthcare appointment reminder pointing to official 1800 toll-free number."
+  },
+  {
+    "id": "GENUINE_007",
+    "input_text": "Dear Consumer, payment of Rs 1,420 towards your BESCOM Electricity Account #0948201948 has been successfully received on 22-Oct-26. Receipt ID: BESC98401. Thank you.",
+    "input_type": "text",
+    "language": "en",
+    "category": "utility_bill_receipt",
+    "expected_verdict": "safe",
+    "notes": "Legitimate electricity bill payment acknowledgment."
+  },
+  {
+    "id": "GENUINE_008",
+    "input_text": "Rs 35,000.00 credited to your ICICI Bank A/c XX9102 on 28-Oct-26 towards Salary by TechCorp Pvt Ltd. Available Bal: Rs 89,450.00 - ICICI Bank",
+    "input_type": "text",
+    "language": "en",
+    "category": "salary_credit_alert",
+    "expected_verdict": "safe",
+    "notes": "Routine salary credit message with masked account details."
+  },
+  {
+    "id": "GENUINE_009",
+    "input_text": "IRCTC Ticket Confirmation: PNR 4829102492, Train 12951 NDLS TEJAS RAJ, 28-Oct-26, Sleeper/3A confirmed. Download official e-ticket at https://irctc.co.in",
+    "input_type": "text",
+    "language": "en",
+    "category": "travel_booking",
+    "expected_verdict": "safe",
+    "notes": "Official IRCTC railway confirmation linking to legitimate irctc.co.in."
+  },
+  {
+    "id": "GENUINE_010",
+    "input_text": "Airtel Thanks: Your broadband bill for Account #080294102 of Rs 943 is due on 05-Nov-26. Pay safely via Airtel Thanks app or at https://airtel.in/broadband",
+    "input_type": "text",
+    "language": "en",
+    "category": "utility_bill_due",
+    "expected_verdict": "safe",
+    "notes": "Normal billing notice with realistic due date and verified airtel.in link."
+  },
+  {
+    "id": "GENUINE_011",
+    "input_text": "आपके बैंक खाते XX3012 से ₹500 का सफल भुगतान Zomato को किया गया। संदर्भ संख्या: 938472910283। भारतीय स्टेट बैंक।",
+    "input_type": "text",
+    "language": "hi",
+    "category": "bank_debit_alert",
+    "expected_verdict": "safe",
+    "notes": "Authentic Hindi bank debit notification."
+  },
+  {
+    "id": "GENUINE_012",
+    "input_text": "489210 is your secret one-time verification code for Swiggy account recovery. Never disclose this code to anyone for your security.",
+    "input_type": "text",
+    "language": "en",
+    "category": "service_otp",
+    "expected_verdict": "safe",
+    "notes": "Routine account recovery OTP with clear warning."
+  },
+  {
+    "id": "GENUINE_013",
+    "input_text": "India Post Tracking: Consignment #EK849201948IN delivered to recipient on 27-Oct-26 at Mumbai GPO. Track details anytime on official website https://indiapost.gov.in",
+    "input_type": "text",
+    "language": "en",
+    "category": "postal_delivery",
+    "expected_verdict": "safe",
+    "notes": "Authentic India Post delivery confirmation linking strictly to .gov.in domain."
+  },
+  {
+    "id": "GENUINE_014",
+    "input_text": "Your monthly statement for Axis Bank Credit Card ending 8021 has been generated. Total amount due: Rs 4,890. View statement in official Axis Mobile App.",
+    "input_type": "text",
+    "language": "en",
+    "category": "credit_card_statement",
+    "expected_verdict": "safe",
+    "notes": "Standard monthly credit card statement alert without phishing links."
+  },
+  {
+    "id": "GENUINE_015",
+    "input_text": "data/images/sample_genuine_receipt.png",
+    "input_type": "image",
+    "language": "en",
+    "category": "vision_screenshot_test",
+    "expected_verdict": "safe",
+    "notes": "Screenshot of official bank SMS debit notification on smartphone screen."
+  }
+]

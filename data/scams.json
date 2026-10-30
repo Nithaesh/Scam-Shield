@@ -1,0 +1,272 @@
+[
+  {
+    "id": "SCAM_001",
+    "input_text": "Dear SBI User, your account has been blocked due to pending KYC verification. Update your PAN card immediately to avoid permanent deactivation: http://sbi-kyc-update.xyz",
+    "input_type": "text",
+    "language": "en",
+    "category": "fake_kyc_bank",
+    "expected_verdict": "scam",
+    "notes": "Fictional domain sbi-kyc-update.xyz. Phishing for NetBanking credentials."
+  },
+  {
+    "id": "SCAM_002",
+    "input_text": "प्रिय ग्राहक, आपका HDFC बैंक खाता आज रात 12 बजे बंद कर दिया जाएगा। तुरंत अपना पैन और आधार अपडेट करें: http://hdfcbank-secure.top",
+    "input_type": "text",
+    "language": "hi",
+    "category": "fake_kyc_bank",
+    "expected_verdict": "scam",
+    "notes": "Hindi text with fake .top domain impersonating HDFC."
+  },
+  {
+    "id": "SCAM_003",
+    "input_text": "Dear consumer your electricity power will be disconnected tonight at 9:30 pm from electricity office because your previous month bill was not updated. Please immediately contact our electricity officer at 9876543210. Thank you.",
+    "input_type": "text",
+    "language": "en",
+    "category": "electricity_bill_threat",
+    "expected_verdict": "scam",
+    "notes": "Classic Indian electricity disconnection urgency scam with personal phone number."
+  },
+  {
+    "id": "SCAM_004",
+    "input_text": "Dear customer, your SBI YONO app requires a mandatory security update. Download and install the official APK file now: http://192.168.1.100/yono_update.apk",
+    "input_type": "text",
+    "language": "en",
+    "category": "apk_malware",
+    "expected_verdict": "scam",
+    "notes": "IP-hosted APK download pretending to be SBI YONO banking app."
+  },
+  {
+    "id": "SCAM_005",
+    "input_text": "Congratulations! Aapka mobile number KBC All India SIM Card Lucky Draw 2026 mein Rs 25,00,000 cash prize jeet chuka hai. Apni prize claim karne ke liye WhatsApp manager Rana Pratap ko turant contact karein: +919876500001",
+    "input_type": "text",
+    "language": "hinglish",
+    "category": "lottery_kbc",
+    "expected_verdict": "scam",
+    "notes": "Famous KBC lottery WhatsApp advance fee scam."
+  },
+  {
+    "id": "SCAM_006",
+    "input_text": "Work from home part-time opportunity! Earn Rs 2,500 to Rs 5,000 daily simply by liking YouTube videos and rating Google Maps. No fees required initially. Join Telegram: https://bit.ly/parttime-daily-task",
+    "input_type": "text",
+    "language": "en",
+    "category": "fake_job_offer",
+    "expected_verdict": "scam",
+    "notes": "YouTube rating task scam funneling users to Telegram prepaid task trap."
+  },
+  {
+    "id": "SCAM_007",
+    "input_text": "India Post Alert: Package tracking ID IN984210 cannot be delivered due to wrong house address. Please update your delivery address and pay Rs 15 reschedule charges within 24h at http://indiapost-parcel.click",
+    "input_type": "text",
+    "language": "en",
+    "category": "fake_courier_customs",
+    "expected_verdict": "scam",
+    "notes": "Impersonating India Post with .click phishing link to harvest credit card OTP."
+  },
+  {
+    "id": "SCAM_008",
+    "input_text": "Dear Taxpayer, Income Tax Department has approved a refund of Rs 28,450 for Assessment Year 2025-26. Click the secure link to verify your bank account and receive instant credit: http://incometax-refund-gov.xyz",
+    "input_type": "text",
+    "language": "en",
+    "category": "income_tax_refund",
+    "expected_verdict": "scam",
+    "notes": "Fake Income Tax refund link harvesting NetBanking login details."
+  },
+  {
+    "id": "SCAM_009",
+    "input_text": "I have sent you advance payment of Rs 12,000 for your second-hand furniture on OLX. Please scan this QR code and enter your UPI PIN to accept credit into your account immediately.",
+    "input_type": "text",
+    "language": "en",
+    "category": "upi_qr_collect_scam",
+    "expected_verdict": "scam",
+    "notes": "Classic QR code / UPI PIN collect trap. UPI PIN is never needed to receive money."
+  },
+  {
+    "id": "SCAM_010",
+    "input_text": "Urgent attention from CBI Headquarters New Delhi: A DHL courier sent to Cambodia in your Aadhaar name was intercepted with 16 fake passports and MDMA narcotics. You are placed under digital arrest. Join emergency Skype interrogation immediately.",
+    "input_type": "text",
+    "language": "en",
+    "category": "digital_arrest_police",
+    "expected_verdict": "scam",
+    "notes": "Coercive digital arrest scam impersonating CBI and narcotics bureau."
+  },
+  {
+    "id": "SCAM_011",
+    "input_text": "Mom, this is my new WhatsApp number. My phone fell into water and broke completely. I need Rs 8,500 urgently to pay the repair shop UPI sbi-urgent@paytm please transfer right now.",
+    "input_type": "text",
+    "language": "en",
+    "category": "whatsapp_family_distress",
+    "expected_verdict": "scam",
+    "notes": "Family impersonation emergency distress scam targeting parents."
+  },
+  {
+    "id": "SCAM_012",
+    "input_text": "Dear Customer, 4,500 ICICI Bank reward points worth Rs 4,500 will expire today. Redeem into direct cash in your bank account by logging in here: http://icicibank-points-claim.site",
+    "input_type": "text",
+    "language": "en",
+    "category": "credit_card_reward",
+    "expected_verdict": "scam",
+    "notes": "Reward points expiration phishing stealing credit card details and OTP."
+  },
+  {
+    "id": "SCAM_013",
+    "input_text": "TRAI Notice: Your SIM card mobile connection will be permanently blocked in 2 hours due to illegal bulk SMS complaints. To verify identity, immediately contact customer executive at +919876599999",
+    "input_type": "text",
+    "language": "en",
+    "category": "trai_sim_block",
+    "expected_verdict": "scam",
+    "notes": "Telecom disconnection intimidation impersonating TRAI regulator."
+  },
+  {
+    "id": "SCAM_014",
+    "input_text": "Instant pre-approved personal loan of Rs 5,00,000 without CIBIL score or collateral! Download our FastCash app APK now: http://fastcash-instant.club/loan.apk",
+    "input_type": "text",
+    "language": "en",
+    "category": "predatory_loan_app",
+    "expected_verdict": "scam",
+    "notes": "Malicious loan app APK designed to exfiltrate user contacts and photos for extortion."
+  },
+  {
+    "id": "SCAM_015",
+    "input_text": "Dear customer, to cancel your unauthorized Amazon transaction of Rs 49,999, please install QuickSupport application from PlayStore and share the 9-digit remote access code with our security officer.",
+    "input_type": "text",
+    "language": "en",
+    "category": "remote_access_scam",
+    "expected_verdict": "scam",
+    "notes": "Remote desktop screen-sharing takeover scam using QuickSupport/AnyDesk."
+  },
+  {
+    "id": "SCAM_016",
+    "input_text": "Join our VIP Institutional Crypto Trading Telegram Group! Daily guaranteed returns of 300% on Bitcoin and Ethereum. 100% risk free. Start with just Rs 1,000. Contact @CryptoGuruIndia",
+    "input_type": "text",
+    "language": "en",
+    "category": "crypto_investment_group",
+    "expected_verdict": "scam",
+    "notes": "Guaranteed high-return Ponzi investment scheme."
+  },
+  {
+    "id": "SCAM_017",
+    "input_text": "IRCTC Alert: Your booked train ticket PNR 284729104 has been cancelled due to technical maintenance. Claim your full instant refund of Rs 1,840 here: http://irctc-refund-portal.top",
+    "input_type": "text",
+    "language": "en",
+    "category": "irctc_refund",
+    "expected_verdict": "scam",
+    "notes": "Phishing domain impersonating Indian Railways booking portal."
+  },
+  {
+    "id": "SCAM_018",
+    "input_text": "UIDAI Notification: Government mandatory order requires Aadhaar biometric re-verification before 31st October to prevent penalty of Rs 10,000. Complete e-KYC: http://uidai-aadhar-link.xyz",
+    "input_type": "text",
+    "language": "en",
+    "category": "aadhaar_pan_fine",
+    "expected_verdict": "scam",
+    "notes": "Government fine intimidation phishing for Aadhaar number and OTP."
+  },
+  {
+    "id": "SCAM_019",
+    "input_text": "Sir, I am calling from bank verification department. A fund transfer of Rs 25,000 is initiated from your account. If you did not do this, share the 6-digit OTP received on your SMS right now to block it.",
+    "input_type": "text",
+    "language": "en",
+    "category": "otp_request_fraud",
+    "expected_verdict": "scam",
+    "notes": "Direct social engineering asking user to disclose transactional OTP."
+  },
+  {
+    "id": "SCAM_020",
+    "input_text": "Paytm Cashback Alert! You have received a scratch card reward of Rs 1,999. Click to send directly to your bank account: http://paytm-cashback-reward.site/claim",
+    "input_type": "text",
+    "language": "en",
+    "category": "upi_cashback_lure",
+    "expected_verdict": "scam",
+    "notes": "Fake cashback landing page triggering UPI collect requests."
+  },
+  {
+    "id": "SCAM_021",
+    "input_text": "आपका बिजली बिल बाकी होने के कारण आज रात 9:30 बजे बिजली कनेक्शन काट दिया जाएगा। तुरंत हमारे अधिकारी से इस नंबर पर संपर्क करें: 9876543211",
+    "input_type": "text",
+    "language": "hi",
+    "category": "electricity_bill_threat",
+    "expected_verdict": "scam",
+    "notes": "Pure Hindi power disconnection urgency scam."
+  },
+  {
+    "id": "SCAM_022",
+    "input_text": "PNB Bank Alert: Your NetBanking password will expire within 6 hours. Login immediately to continue enjoying online banking services: http://pnbindia-ebanking.click",
+    "input_type": "text",
+    "language": "en",
+    "category": "fake_kyc_bank",
+    "expected_verdict": "scam",
+    "notes": "Urgent password expiry phishing imitating Punjab National Bank."
+  },
+  {
+    "id": "SCAM_023",
+    "input_text": "Aapka FASTag account blacklist ho gaya hai low balance ki wajah se. Highway toll par fine se bachne ke liye abhi recharge karein: http://fastag-nhai-recharge.top",
+    "input_type": "text",
+    "language": "hinglish",
+    "category": "fastag_toll_scam",
+    "expected_verdict": "scam",
+    "notes": "Hinglish FASTag highway fine intimidation link."
+  },
+  {
+    "id": "SCAM_024",
+    "input_text": "Dear customer, your Axis Bank debit card has been disabled due to suspicious overseas transactions. Re-activate by verifying your card CVV and PIN: http://axisbank-security.xyz",
+    "input_type": "text",
+    "language": "en",
+    "category": "fake_kyc_bank",
+    "expected_verdict": "scam",
+    "notes": "Phishing site asking for card PIN and CVV."
+  },
+  {
+    "id": "SCAM_025",
+    "input_text": "Swiggy Mega Foodie Lucky Draw: You have won an iPhone 16 Pro and Rs 50,000 dining coupon. Pay customs registration fee of Rs 499 via UPI swiggy-prize@ybl to claim.",
+    "input_type": "text",
+    "language": "en",
+    "category": "prize_lure",
+    "expected_verdict": "scam",
+    "notes": "Food delivery app prize lure asking for advance fee."
+  },
+  {
+    "id": "SCAM_026",
+    "input_text": "Notice from Delhi Police Cyber Cell: Your IP address was traced accessing illegal banned content under Section 67 IT Act. Pay settlement penalty of Rs 15,000 within 2 hours or police team will be dispatched.",
+    "input_type": "text",
+    "language": "en",
+    "category": "digital_arrest_police",
+    "expected_verdict": "scam",
+    "notes": "Fake police legal notice intimidation demanding immediate extortion money."
+  },
+  {
+    "id": "SCAM_027",
+    "input_text": "Air India Flight Confirmation: Your flight AI-802 is rescheduled. To confirm new seat assignment without extra charge, install our airline assistant app: http://airindia-support.site/app.apk",
+    "input_type": "text",
+    "language": "en",
+    "category": "apk_malware",
+    "expected_verdict": "scam",
+    "notes": "Airline flight disruption lure distributing malicious APK."
+  },
+  {
+    "id": "SCAM_028",
+    "input_text": "बधाई हो! भारत सरकार की पीएम किसान योजना के तहत आपके खाते में ₹12,000 की नई किस्त जमा की जा रही है। अपना बैंक खाता तुरंत कन्फर्म करें: http://pmkisan-yojana.buzz",
+    "input_type": "text",
+    "language": "hi",
+    "category": "government_scheme_lure",
+    "expected_verdict": "scam",
+    "notes": "Hindi government subsidy fraud targeting rural citizens."
+  },
+  {
+    "id": "SCAM_029",
+    "input_text": "Amazon Customer Care: A MacBook Pro of Rs 1,49,000 was ordered from your account to an address in Patna. If this was not you, call our cancellation helpline immediately at 9876543299",
+    "input_type": "text",
+    "language": "en",
+    "category": "fake_customer_support",
+    "expected_verdict": "scam",
+    "notes": "Fake high-value purchase alert prompting user to call scam call center."
+  },
+  {
+    "id": "SCAM_030",
+    "input_text": "data/images/sample_scam_screenshot.png",
+    "input_type": "image",
+    "language": "en",
+    "category": "vision_screenshot_test",
+    "expected_verdict": "scam",
+    "notes": "Multi-modal vision screenshot test showing fake bank KYC block notice. Marked fictional."
+  }
+]

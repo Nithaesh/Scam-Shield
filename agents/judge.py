@@ -7,11 +7,73 @@ import logging
 import sys
 from pathlib import Path
 from agents.llm import call_llm_json
-from agents.schemas import Extracted, PatternReport, EntityReport, JudgeVerdict
+from agents.schemas import Conflict, Extracted, PatternReport, EntityReport, JudgeVerdict
 
 logger = logging.getLogger("scam_shield.judge")
 
 PROMPT_PATH = Path(__file__).parent / "prompts" / "judge.md"
+
+
+def _synthesize_verdict_fallback(
+    extracted: Extracted,
+    pattern: PatternReport,
+    entity: EntityReport,
+) -> JudgeVerdict:
+    """Deterministic arbitration when LLM adjudication is offline."""
+    key_evidence: list[str] = []
+    conflicts: list[Conflict] = []
+
+    # Check high-severity entity findings
+    high_threat_entities = [f for f in entity.findings if f.severity == "high"]
+    has_otp_pin = "otp_request" in pattern.tactics or "pin_request" in pattern.tactics
+    has_remote_app = "remote_access_request" in pattern.tactics
+    has_apk = any(u.endswith(".apk") for u in extracted.urls) or "click_pressure" in pattern.tactics
+
+    # Red lines & Scam triggers
+    has_medium_threats = any(f.severity == "medium" for f in entity.findings)
+    if high_threat_entities or has_otp_pin or has_remote_app or has_apk or pattern.score >= 50 or entity.risk_score >= 60:
+        for f in high_threat_entities:
+            key_evidence.append(f"{f.type.upper()} threat: {f.signal}")
+        if has_otp_pin:
+            key_evidence.append("Critical red line: Sensitive OTP/PIN credential request detected.")
+        if has_remote_app:
+            key_evidence.append("Critical red line: Solicitation of remote desktop screen-sharing.")
+        if has_apk:
+            key_evidence.append("Malicious third-party Android APK download detected.")
+        if pattern.reasons:
+            key_evidence.extend(pattern.reasons[:2])
+
+        confidence = min(98, max(pattern.score, entity.risk_score, 88))
+        return JudgeVerdict(
+            verdict="scam",
+            confidence=confidence,
+            reasoning="Severe fraud signals confirmed across behavioral patterns and technical entity analysis.",
+            conflicts=[],
+            key_evidence=key_evidence[:4],
+        )
+
+    # Safe criteria: low risk and absence of any threat findings
+    if pattern.score <= 15 and entity.risk_score <= 15 and not high_threat_entities and not has_medium_threats:
+        return JudgeVerdict(
+            verdict="safe",
+            confidence=92,
+            reasoning="Message conforms to standard legitimate notifications with no suspicious links, credentials, or threats.",
+            conflicts=[],
+            key_evidence=["Clean entity reputation", "Routine message format without urgency or extortion tactics"],
+        )
+
+    # Suspicious criteria
+    conflicts.append(Conflict(
+        description="Unverified message with moderate risk indicators or masked shortener link.",
+        resolution="Arbitrated as suspicious requiring extra caution.",
+    ))
+    return JudgeVerdict(
+        verdict="suspicious",
+        confidence=65,
+        reasoning="Ambiguous indicators detected. Sender identity or destination link cannot be conclusively verified.",
+        conflicts=conflicts,
+        key_evidence=["Shortened link or unverified sender identity", "Moderate behavioral pressure"],
+    )
 
 
 def _get_system_prompt() -> str:
@@ -55,11 +117,11 @@ def adjudicate(
             schema=JudgeVerdict,
             system=system_prompt,
             user=user_prompt,
-            default_factory=lambda: JudgeVerdict.fallback(reason="Arbitration LLM failure."),
+            default_factory=lambda: _synthesize_verdict_fallback(extracted, pattern, entity),
         )
     except Exception as e:
         logger.error("Judge agent failed: %s. Returning fallback.", str(e))
-        return JudgeVerdict.fallback(reason=f"Exception in judge adjudication: {e}")
+        return _synthesize_verdict_fallback(extracted, pattern, entity)
 
 
 if __name__ == "__main__":

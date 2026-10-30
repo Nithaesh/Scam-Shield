@@ -57,7 +57,7 @@ def _call_gemini(
     if not api_key:
         raise ValueError("GEMINI_API_KEY is not configured in environment.")
 
-    model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+    model_name = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
     client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=TIMEOUT_SECONDS))
 
     contents: list[Any] = []
@@ -98,7 +98,7 @@ def _call_groq(
     if not api_key:
         raise ValueError("GROQ_API_KEY is not configured in environment.")
 
-    model_name = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+    model_name = os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b")
     client = Groq(api_key=api_key, timeout=TIMEOUT_SECONDS)
 
     messages = [

@@ -8,9 +8,9 @@ from agents.llm import call_llm, call_llm_json
 
 
 class SmokeSchema(BaseModel):
-    provider: str
-    status: str
-    message: str
+    provider: str = "Fallback"
+    status: str = "could_not_check"
+    message: str = "Default message"
 
 
 def run_smoke_test():

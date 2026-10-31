@@ -58,9 +58,7 @@ export default function HomePage() {
       />
 
       {/* Live 5-Agent Multi-Agent Progression */}
-      {(isAnalyzing || result) && (
-        <PipelineView stages={stages} isAnalyzing={isAnalyzing} />
-      )}
+      <PipelineView stages={stages} isAnalyzing={isAnalyzing} />
 
       {/* Final Verdict Banner */}
       {result && <VerdictBanner result={result} />}

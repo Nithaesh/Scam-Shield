@@ -27,8 +27,8 @@ class Settings(BaseSettings):
     # Input constraints & timeouts
     MAX_IMAGE_MB: int = 5
     MAX_TEXT_CHARS: int = 5000
-    PIPELINE_TIMEOUT_S: float = 25.0
-    STAGE_TIMEOUT_S: float = 15.0
+    PIPELINE_TIMEOUT_S: float = 65.0
+    STAGE_TIMEOUT_S: float = 40.0
 
     # Community Intelligence (Database)
     COMMUNITY_ENABLED: bool = False

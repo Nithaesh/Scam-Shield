@@ -126,6 +126,34 @@ async def stream_pipeline_analysis(
                 if status == "done" and isinstance(data, dict):
                     is_cached = True
                     final_result_data = data
+                    for s in ("extractor", "pattern_analyst", "entity_checker", "judge", "advisor"):
+                        yield {
+                            "event": "stage_start",
+                            "data": StageStartEvent(v=1, request_id=request_id, stage=s).model_dump_json(),
+                        }
+                        yield {
+                            "event": "stage_result",
+                            "data": StageResultEvent(
+                                v=1,
+                                request_id=request_id,
+                                stage=s,
+                                status="done",
+                                output={},
+                                duration_ms=0.5,
+                                cached=True,
+                                tools_used=["cache_store"],
+                            ).model_dump_json(),
+                        }
+                continue
+
+            # Handle completion event
+            if stage in ("complete", "done"):
+                if isinstance(data, dict):
+                    final_result_data = data
+                continue
+
+            # Only forward official 5-agent pipeline stages
+            if stage not in ("extractor", "pattern_analyst", "entity_checker", "judge", "advisor"):
                 continue
 
             # Handle Agent Stages

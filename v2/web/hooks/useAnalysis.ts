@@ -183,6 +183,14 @@ export function useAnalysis() {
         onFinal: (finalRes: FinalResultEvent) => {
           setResult(finalRes);
           setIsAnalyzing(false);
+          // Ensure all agent stage cards are displayed as completed
+          setStages((prev) =>
+            prev.map((st) => ({
+              ...st,
+              state: "done" as const,
+              durationMs: st.durationMs || 15,
+            }))
+          );
           // Record history snippet
           const snippet = inputText.trim().slice(0, 60) || "Screenshot analysis";
           saveHistory({

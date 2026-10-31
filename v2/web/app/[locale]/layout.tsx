@@ -32,6 +32,28 @@ export const metadata: Metadata = {
   description:
     "A multi-agent AI investigation desk checking suspicious SMS, WhatsApp forwards, UPI requests and screenshots in English and Hindi. Zero data retention.",
   metadataBase: new URL("https://scamshield.in"),
+  keywords: [
+    "Scam Shield",
+    "Indian cyber fraud",
+    "1930 helpline",
+    "UPI fraud checker",
+    "Electricity bill scam",
+    "SBI KYC update scam",
+    "Digital arrest cybercrime",
+  ],
+  openGraph: {
+    title: "Scam Shield — 5-Agent Citizen Fraud Intelligence",
+    description: "Check suspicious SMS, WhatsApp forwards, and UPI requests with 5 AI agents. Instant plain-language verdict in English & Hindi.",
+    url: "https://scamshield.in",
+    siteName: "Scam Shield",
+    locale: "en_IN",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Scam Shield | Citizen Fraud Protection",
+    description: "Multi-agent consensus AI checking suspicious messages with zero data storage.",
+  },
   icons: {
     icon: "/icons/shield.svg",
   },

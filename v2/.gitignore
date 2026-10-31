@@ -1,0 +1,39 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pytest_cache/
+
+# Environments
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+build/
+dist/
+.pnpm-store/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Database & SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# Test & coverage
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+
+# OS specific
+.DS_Store
+Thumbs.db

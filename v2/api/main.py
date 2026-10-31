@@ -3,8 +3,19 @@
 from __future__ import annotations
 
 import logging
+import os
+from pathlib import Path
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
+from dotenv import load_dotenv
+
+# Ensure root .env is loaded read-only into process environment
+root_env = Path(__file__).resolve().parent.parent.parent / ".env"
+if root_env.exists():
+    load_dotenv(dotenv_path=root_env)
+else:
+    load_dotenv()
+
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse

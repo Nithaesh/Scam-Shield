@@ -25,6 +25,7 @@ class AnalyzeRequest(BaseModel):
     image_base64: str | None = Field(default=None, description="Base64-encoded screenshot bytes.")
     image_mime: str | None = Field(default=None, description="MIME type of the screenshot (image/png, image/jpeg, image/webp).")
     language: LanguageLiteral = Field(default="auto", description="Preferred output advice language.")
+    stream: bool = Field(default=False, description="Request real-time SSE event stream.")
 
     @model_validator(mode="after")
     def check_input_present(self) -> "AnalyzeRequest":

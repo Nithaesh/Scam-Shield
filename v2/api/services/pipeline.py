@@ -3,11 +3,15 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import os
 import queue
 import threading
 import time
 from typing import Any, AsyncGenerator
+
+logger = logging.getLogger("scam_shield.v2.pipeline")
+
 from v2.api.config import settings
 from v2.api.models.schemas import (
     ConflictEvent,
@@ -70,12 +74,20 @@ async def stream_pipeline_analysis(
 
     # Check for offline mock mode
     use_mock = os.getenv("USE_STUB_UI", "0").lower() in ("1", "true", "yes")
-    has_keys = bool(os.getenv("GEMINI_API_KEY") or os.getenv("GROQ_API_KEY"))
+    has_keys = bool(
+        os.getenv("GEMINI_API_KEY") 
+        or os.getenv("GROQ_API_KEY")
+        or settings.GEMINI_API_KEY 
+        or settings.GROQ_API_KEY
+    )
 
     if use_mock or not has_keys:
+        logger.info("Executing pipeline in deterministic offline mock mode (keys available: %s, use_mock: %s)", has_keys, use_mock)
         async for sse in _stream_offline_mock(input_data, language, request_id, raw_text, total_start):
             yield sse
         return
+
+    logger.info("Starting live multi-agent analysis pipeline for request %s (language: %s)", request_id, language)
 
     # Thread communication queue
     q: queue.Queue = queue.Queue()

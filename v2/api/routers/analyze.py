@@ -59,19 +59,16 @@ def _extract_and_validate_payload(request: AnalyzeRequest) -> tuple[str | bytes,
     return input_data, resolved_lang, cleaned_text
 
 
-@router.post("/analyze", response_model=FinalResultEvent)
-@limiter.limit(settings.RATE_LIMIT_ANALYZE)
-async def analyze_message_sync(
+async def _run_sync_analysis(
     request: Request,
     payload: AnalyzeRequest,
 ) -> FinalResultEvent:
-    """Synchronous message analysis returning the final enriched verdict as JSON."""
+    """Consume the streaming generator internally to produce a consolidated JSON result."""
     input_data, resolved_lang, cleaned_text = _extract_and_validate_payload(payload)
     request_id = getattr(request.state, "request_id", "sync_req")
 
     final_event: FinalResultEvent | None = None
 
-    # Consume the streaming generator internally to produce the consolidated result
     async for sse_item in stream_pipeline_analysis(
         input_data=input_data,
         language=resolved_lang,
@@ -90,6 +87,26 @@ async def analyze_message_sync(
         )
 
     return final_event
+
+
+@router.post("/analyze")
+@limiter.limit(settings.RATE_LIMIT_ANALYZE)
+async def analyze_message_endpoint(
+    request: Request,
+    payload: AnalyzeRequest,
+):
+    """Analyze endpoint supporting both SSE stream and synchronous JSON response.
+    
+    If payload.stream is True or Accept: text/event-stream is present, returns an SSE EventSourceResponse.
+    Otherwise returns a single synchronous FinalResultEvent JSON.
+    """
+    accept_header = request.headers.get("accept", "")
+    wants_stream = payload.stream or "text/event-stream" in accept_header
+
+    if wants_stream:
+        return await analyze_message_stream(request, payload)
+
+    return await _run_sync_analysis(request, payload)
 
 
 @router.post("/analyze/stream")

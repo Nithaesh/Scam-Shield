@@ -269,7 +269,10 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
             className="flex flex-col items-center gap-2 select-none cursor-pointer group"
             onClick={() => setSelectedNode(PIPELINE_NODES[0])}
           >
-            <div className="w-14 h-14 rounded-2xl bg-[#161D2E] border border-white/[0.1] group-hover:border-signal p-3 flex items-center justify-center shadow-lg transition-all">
+            <div className={cn(
+              "w-14 h-14 rounded-2xl bg-[#161D2E] border p-3 flex items-center justify-center shadow-lg transition-all",
+              isNodeActive("message") ? "border-signal ring-2 ring-signal/50 shadow-signal/30 animate-pulse" : isNodeDone("message") ? "border-emerald-500/50" : "border-white/[0.1] group-hover:border-signal"
+            )}>
               <div className="w-9 h-9 rounded-xl bg-pink-500/20 text-pink-400 flex items-center justify-center">
                 <MessageSquare className="w-5 h-5" />
               </div>
@@ -286,13 +289,19 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
             className="flex flex-col items-center gap-2 select-none cursor-pointer group"
             onClick={() => setSelectedNode(PIPELINE_NODES[1])}
           >
-            <div className="w-14 h-14 rounded-2xl bg-[#161D2E] border border-white/[0.1] group-hover:border-signal p-3 flex items-center justify-center shadow-lg transition-all">
+            <div className={cn(
+              "w-14 h-14 rounded-2xl bg-[#161D2E] border p-3 flex items-center justify-center shadow-lg transition-all",
+              isNodeActive("extractor") ? "border-signal ring-2 ring-signal/50 shadow-signal/30 animate-pulse bg-signal/10" : isNodeDone("extractor") ? "border-emerald-500/60 bg-emerald-500/10" : "border-white/[0.1] group-hover:border-signal"
+            )}>
               <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
                 <FileSpreadsheet className="w-5 h-5" />
               </div>
             </div>
             <div className="text-center">
-              <div className="font-heading font-semibold text-xs text-white">Extractor</div>
+              <div className="font-heading font-semibold text-xs text-white flex items-center gap-1 justify-center">
+                <span>Extractor</span>
+                {isNodeActive("extractor") && <span className="w-1.5 h-1.5 rounded-full bg-signal animate-ping" />}
+              </div>
               <div className="text-[10px] text-slate-400 font-mono">Links & VPAs</div>
             </div>
           </div>
@@ -302,7 +311,10 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
             style={{ position: "absolute", left: "340px", top: "150px", transform: "translate(-50%, -50%)" }}
             className="flex flex-col items-center gap-2 select-none"
           >
-            <div className="w-14 h-14 rounded-2xl bg-[#161D2E] border border-signal/40 p-3 flex items-center justify-center shadow-lg">
+            <div className={cn(
+              "w-14 h-14 rounded-2xl bg-[#161D2E] border p-3 flex items-center justify-center shadow-lg transition-all",
+              (isNodeActive("pattern_analyst") || isNodeActive("entity_checker")) ? "border-signal ring-2 ring-signal/50 animate-pulse" : "border-signal/40"
+            )}>
               <div className="w-9 h-9 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center">
                 <GitBranch className="w-5 h-5" />
               </div>
@@ -316,7 +328,12 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
           {/* Branch Pill 1 (True / Technical Risk) */}
           <div
             style={{ position: "absolute", left: "410px", top: "105px", transform: "translate(-50%, -50%)" }}
-            className="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-[10px] font-mono font-bold"
+            className={cn(
+              "px-2 py-0.5 rounded-full border text-[10px] font-mono font-bold transition-all",
+              isNodeActive("entity_checker") || isNodeDone("entity_checker")
+                ? "bg-emerald-500/30 border-emerald-400 text-emerald-300 ring-2 ring-emerald-500/30"
+                : "bg-emerald-500/20 border-emerald-500/40 text-emerald-400"
+            )}
           >
             technical
           </div>
@@ -324,7 +341,12 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
           {/* Branch Pill 2 (False / Psychological Threat) */}
           <div
             style={{ position: "absolute", left: "410px", top: "195px", transform: "translate(-50%, -50%)" }}
-            className="px-2 py-0.5 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-400 text-[10px] font-mono font-bold"
+            className={cn(
+              "px-2 py-0.5 rounded-full border text-[10px] font-mono font-bold transition-all",
+              isNodeActive("pattern_analyst") || isNodeDone("pattern_analyst")
+                ? "bg-rose-500/30 border-rose-400 text-rose-300 ring-2 ring-rose-500/30"
+                : "bg-rose-500/20 border-rose-500/40 text-rose-400"
+            )}
           >
             urgency
           </div>
@@ -335,13 +357,19 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
             className="flex flex-col items-center gap-2 select-none cursor-pointer group"
             onClick={() => setSelectedNode(PIPELINE_NODES[3])}
           >
-            <div className="w-14 h-14 rounded-2xl bg-[#161D2E] border border-white/[0.1] group-hover:border-signal p-3 flex items-center justify-center shadow-lg transition-all">
+            <div className={cn(
+              "w-14 h-14 rounded-2xl bg-[#161D2E] border p-3 flex items-center justify-center shadow-lg transition-all",
+              isNodeActive("entity_checker") ? "border-cyan-400 ring-2 ring-cyan-400/50 shadow-cyan-400/30 animate-pulse bg-cyan-500/10" : isNodeDone("entity_checker") ? "border-emerald-500/60 bg-emerald-500/10" : "border-white/[0.1] group-hover:border-signal"
+            )}>
               <div className="w-9 h-9 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center">
                 <ShieldCheck className="w-5 h-5" />
               </div>
             </div>
             <div className="text-center">
-              <div className="font-heading font-semibold text-xs text-white">Entity Checker</div>
+              <div className="font-heading font-semibold text-xs text-white flex items-center gap-1 justify-center">
+                <span>Entity Checker</span>
+                {isNodeActive("entity_checker") && <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />}
+              </div>
               <div className="text-[10px] text-slate-400 font-mono">DNS & WHOIS Age</div>
             </div>
           </div>
@@ -352,13 +380,19 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
             className="flex flex-col items-center gap-2 select-none cursor-pointer group"
             onClick={() => setSelectedNode(PIPELINE_NODES[2])}
           >
-            <div className="w-14 h-14 rounded-2xl bg-[#161D2E] border border-white/[0.1] group-hover:border-signal p-3 flex items-center justify-center shadow-lg transition-all">
+            <div className={cn(
+              "w-14 h-14 rounded-2xl bg-[#161D2E] border p-3 flex items-center justify-center shadow-lg transition-all",
+              isNodeActive("pattern_analyst") ? "border-purple-400 ring-2 ring-purple-400/50 shadow-purple-400/30 animate-pulse bg-purple-500/10" : isNodeDone("pattern_analyst") ? "border-emerald-500/60 bg-emerald-500/10" : "border-white/[0.1] group-hover:border-signal"
+            )}>
               <div className="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
                 <BrainCircuit className="w-5 h-5" />
               </div>
             </div>
             <div className="text-center">
-              <div className="font-heading font-semibold text-xs text-white">Pattern Analyst</div>
+              <div className="font-heading font-semibold text-xs text-white flex items-center gap-1 justify-center">
+                <span>Pattern Analyst</span>
+                {isNodeActive("pattern_analyst") && <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-ping" />}
+              </div>
               <div className="text-[10px] text-slate-400 font-mono">Panic & Threat Vector</div>
             </div>
           </div>
@@ -369,13 +403,19 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
             className="flex flex-col items-center gap-2 select-none cursor-pointer group"
             onClick={() => setSelectedNode(PIPELINE_NODES[4])}
           >
-            <div className="w-14 h-14 rounded-2xl bg-[#161D2E] border border-signal/50 ring-2 ring-signal/20 group-hover:ring-signal/40 p-3 flex items-center justify-center shadow-lg transition-all">
+            <div className={cn(
+              "w-14 h-14 rounded-2xl bg-[#161D2E] border p-3 flex items-center justify-center shadow-lg transition-all",
+              isNodeActive("judge") ? "border-signal ring-4 ring-signal/50 shadow-signal/40 animate-pulse bg-signal/15" : isNodeDone("judge") ? "border-emerald-500/60 bg-emerald-500/10" : "border-signal/50 ring-2 ring-signal/20 group-hover:ring-signal/40"
+            )}>
               <div className="w-9 h-9 rounded-xl bg-blue-500/20 text-signal flex items-center justify-center">
                 <Scale className="w-5 h-5" />
               </div>
             </div>
             <div className="text-center">
-              <div className="font-heading font-semibold text-xs text-white">Judge Agent</div>
+              <div className="font-heading font-semibold text-xs text-white flex items-center gap-1 justify-center">
+                <span>Judge Agent</span>
+                {isNodeActive("judge") && <span className="w-1.5 h-1.5 rounded-full bg-signal animate-ping" />}
+              </div>
               <div className="text-[10px] text-signal font-mono">Veto Consensus</div>
             </div>
           </div>
@@ -386,13 +426,19 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
             className="flex flex-col items-center gap-2 select-none cursor-pointer group"
             onClick={() => setSelectedNode(PIPELINE_NODES[5])}
           >
-            <div className="w-14 h-14 rounded-2xl bg-[#161D2E] border border-white/[0.1] group-hover:border-signal p-3 flex items-center justify-center shadow-lg transition-all">
+            <div className={cn(
+              "w-14 h-14 rounded-2xl bg-[#161D2E] border p-3 flex items-center justify-center shadow-lg transition-all",
+              isNodeActive("advisor") ? "border-purple-400 ring-2 ring-purple-400/50 shadow-purple-400/30 animate-pulse bg-purple-500/10" : isNodeDone("advisor") ? "border-emerald-500/60 bg-emerald-500/10" : "border-white/[0.1] group-hover:border-signal"
+            )}>
               <div className="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
                 <LifeBuoy className="w-5 h-5" />
               </div>
             </div>
             <div className="text-center">
-              <div className="font-heading font-semibold text-xs text-white">Advisor</div>
+              <div className="font-heading font-semibold text-xs text-white flex items-center gap-1 justify-center">
+                <span>Advisor</span>
+                {isNodeActive("advisor") && <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-ping" />}
+              </div>
               <div className="text-[10px] text-slate-400 font-mono">Plain Language</div>
             </div>
           </div>
@@ -403,13 +449,25 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
             className="flex flex-col items-center gap-2 select-none cursor-pointer group"
             onClick={() => setSelectedNode(PIPELINE_NODES[6])}
           >
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/30 to-signal/30 border border-emerald-400/50 p-3 flex items-center justify-center shadow-lg transition-all">
-              <div className="w-9 h-9 rounded-xl bg-emerald-500 text-slate-950 flex items-center justify-center">
+            <div className={cn(
+              "w-14 h-14 rounded-2xl border p-3 flex items-center justify-center shadow-lg transition-all",
+              verdict === "scam"
+                ? "bg-rose-500/30 border-rose-400 ring-2 ring-rose-400/40"
+                : verdict === "safe"
+                ? "bg-emerald-500/30 border-emerald-400 ring-2 ring-emerald-400/40"
+                : "bg-gradient-to-br from-emerald-500/30 to-signal/30 border-emerald-400/50"
+            )}>
+              <div className={cn(
+                "w-9 h-9 rounded-xl flex items-center justify-center text-slate-950",
+                verdict === "scam" ? "bg-rose-500 text-white" : "bg-emerald-500 text-slate-950"
+              )}>
                 <Stamp className="w-5 h-5" />
               </div>
             </div>
             <div className="text-center">
-              <div className="font-heading font-semibold text-xs text-emerald-400 font-bold">Safe / Scam</div>
+              <div className="font-heading font-semibold text-xs text-emerald-400 font-bold">
+                {verdict ? verdict.toUpperCase() : "Safe / Scam"}
+              </div>
               <div className="text-[10px] text-slate-300 font-mono">Action Ready</div>
             </div>
           </div>

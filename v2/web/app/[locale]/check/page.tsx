@@ -111,6 +111,7 @@ export default function SyntrixDashboardPage() {
   const [selectedPresetCategory, setSelectedPresetCategory] = useState<string>("all");
 
   const mainScrollRef = useRef<HTMLDivElement>(null);
+  const resultContainerRef = useRef<HTMLDivElement>(null);
 
   // Hindi localization dictionary
   const isHi = locale === "hi";
@@ -257,6 +258,26 @@ export default function SyntrixDashboardPage() {
       e.target.value = "";
     }
   };
+
+  // Automatically scroll down to the final verdict once results are ready
+  useEffect(() => {
+    if (finalResult) {
+      const timer = setTimeout(() => {
+        if (resultContainerRef.current) {
+          resultContainerRef.current.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        } else if (mainScrollRef.current) {
+          mainScrollRef.current.scrollTo({
+            top: mainScrollRef.current.scrollHeight,
+            behavior: "smooth",
+          });
+        }
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [finalResult]);
 
   // Clipboard paste listener for instant Ctrl+V screenshot attachment
   useEffect(() => {
@@ -1168,8 +1189,10 @@ export default function SyntrixDashboardPage() {
 
             {/* FINAL VERDICT DOSSIER BANNER */}
             {finalResult && (
-              <div className={cn(
-                "p-6 sm:p-8 rounded-3xl border shadow-2xl space-y-5 transition-all duration-300",
+              <div
+                ref={resultContainerRef}
+                className={cn(
+                  "scroll-mt-8 p-6 sm:p-8 rounded-3xl border shadow-2xl space-y-5 transition-all duration-300",
                 finalResult.verdict === "scam"
                   ? "bg-gradient-to-b from-[#180C14] to-[#0A050B] border-rose-500/40 shadow-rose-500/10"
                   : finalResult.verdict === "suspicious"

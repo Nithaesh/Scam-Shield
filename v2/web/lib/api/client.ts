@@ -135,7 +135,11 @@ async function simulateOfflineStream(
   payload: AnalyzePayload,
   handlers: StreamEventHandler
 ): Promise<void> {
-  const text = payload.text || "";
+  let text = payload.text || "";
+  if (!text.trim() && payload.image_base64) {
+    // Simulated high-precision OCR extraction from citizen screenshot
+    text = "Dear SBI User, your YONO account has been suspended due to pending KYC update. Click http://sbi-update-kyc.top to avoid permanent block.";
+  }
   const textLower = text.toLowerCase();
   const isSafe = textLower.includes("debited") || textLower.includes("credited") || (textLower.includes("otp") && !textLower.includes("http") && !textLower.includes("call"));
   

@@ -30,23 +30,28 @@ import {
   Check,
   Send,
   Sparkles,
+  BrainCircuit,
+  Scale,
 } from "lucide-react";
 import * as Accordion from "@radix-ui/react-accordion";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PipelineGraph } from "@/components/pipeline/PipelineGraph";
 import { EvidenceDonut } from "@/components/ui/EvidenceDonut";
-import { SpecRow } from "@/components/ui/SpecRow";
 
 export default function LandingPage() {
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
+  const isHi = locale === "hi";
 
   const [inputText, setInputText] = useState("");
 
   const handleLaunchCheck = (sampleText?: string) => {
-    const textToPass = sampleText || inputText || "Dear SBI User, your YONO account has been suspended due to pending KYC update. Click http://sbi-update-kyc.top";
+    const defaultText = isHi
+      ? "प्रिय एसबीआई ग्राहक, केवाईसी अपडेट न होने के कारण आपका YONO खाता निलंबित कर दिया गया है। तुरंत http://sbi-update-kyc.top पर क्लिक करें।"
+      : "Dear SBI User, your YONO account has been suspended due to pending KYC update. Click http://sbi-update-kyc.top";
+    const textToPass = sampleText || inputText || defaultText;
     if (typeof window !== "undefined") {
       sessionStorage.setItem("scam_shield_prefill", textToPass);
     }
@@ -54,28 +59,28 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050811] text-[#F1F5F9] selection:bg-signal/20 selection:text-signal relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#050811] text-[#F1F5F9] selection:bg-signal/20 selection:text-signal relative overflow-x-hidden font-sans">
       <Header />
 
       <main id="main-content">
         {/* =========================================================================
-         * 1. HERO SECTION (EXACT CYBERSAFE SCREENSHOT 1 FIDELITY)
+         * 1. HERO SECTION (CYBERSAFE HIGH FIDELITY WITH ANIMATIONS)
          * ========================================================================= */}
         <section className="relative min-h-[92svh] flex flex-col justify-center pt-8 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-white/[0.06]">
-          {/* Subtle Ambient Radial Lighting */}
-          <div className="absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[550px] bg-blue-600/[0.07] rounded-full blur-[140px] pointer-events-none" />
-          <div className="absolute top-1/3 right-1/4 w-[500px] h-[400px] bg-signal/[0.05] rounded-full blur-[120px] pointer-events-none" />
+          {/* Subtle Ambient Radial Lighting with Floating Pulse */}
+          <div className="absolute top-1/4 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[550px] bg-blue-600/[0.08] rounded-full blur-[140px] pointer-events-none animate-pulse duration-1000" />
+          <div className="absolute top-1/3 right-1/4 w-[500px] h-[400px] bg-signal/[0.06] rounded-full blur-[120px] pointer-events-none" />
 
-          {/* Huge Faint Watermark (Screenshot 1: "CYBERSAFE" -> "SCAMSHIELD") */}
+          {/* Huge Faint Watermark Background */}
           <div
             className="absolute bottom-6 left-1/2 -translate-x-1/2 text-[15vw] font-heading font-black tracking-tighter text-white/[0.02] select-none pointer-events-none uppercase whitespace-nowrap"
             aria-hidden="true"
           >
-            SCAM SHIELD
+            {isHi ? "स्कैम शील्ड" : "SCAM SHIELD"}
           </div>
 
           <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10 py-6">
-            {/* Left Column: Hero Copy & Actions (Screenshot 1) */}
+            {/* Left Column: Hero Copy & Actions */}
             <div className="lg:col-span-7 space-y-6">
               {/* Top Pill Status Badge */}
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-mono text-slate-300">
@@ -83,29 +88,43 @@ export default function LandingPage() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
                 </span>
-                <span>Network Status: <span className="text-emerald-400 font-semibold">SECURE</span></span>
+                <span>
+                  {isHi ? "नेटवर्क स्थिति: " : "Network Status: "}
+                  <span className="text-emerald-400 font-semibold">{isHi ? "सुरक्षित" : "SECURE"}</span>
+                </span>
                 <span className="text-white/[0.2]">|</span>
-                <span className="text-slate-400">ALL THREATS BLOCKED</span>
+                <span className="text-slate-400">{isHi ? "सभी खतरे रोके गए" : "ALL THREATS BLOCKED"}</span>
               </div>
 
-              {/* Headline (Screenshot 1: "Your Data, Your Control") */}
+              {/* Headline */}
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-heading font-bold tracking-tight text-white leading-[1.05]">
-                Your Safety, <br />
-                <span className="text-slate-300 font-normal">Your Control</span>
+                {isHi ? (
+                  <>
+                    आपकी सुरक्षा, <br />
+                    <span className="text-slate-300 font-normal">आपका नियंत्रण</span>
+                  </>
+                ) : (
+                  <>
+                    Your Safety, <br />
+                    <span className="text-slate-300 font-normal">Your Control</span>
+                  </>
+                )}
               </h1>
 
               {/* Subtitle */}
               <p className="text-base sm:text-lg text-slate-400 max-w-xl leading-relaxed">
-                Military-grade multi-agent forensic verification. Zero-logs policy. 70+ Indian bank, utility, and law enforcement lookalikes tracked across 120 verification nodes.
+                {isHi
+                  ? "सैन्य-स्तरीय मल्टी-एजेंट साइबर जांच। शून्य डेटा स्टोरेज नीति। 70+ भारतीय बैंक, बिजली विभाग और कानून प्रवर्तन संस्थाओं की नकल की पहचान।"
+                  : "Military-grade multi-agent forensic verification. Zero-logs policy. 70+ Indian bank, utility, and law enforcement lookalikes tracked across 120 verification nodes."}
               </p>
 
-              {/* Action Buttons (Screenshot 1: "How it Works" & "Start Free Trial ->") */}
+              {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-4 pt-2">
                 <Link
                   href={`/${locale}#pipeline`}
                   className="px-6 py-3 rounded-full bg-white/[0.06] border border-white/[0.1] hover:bg-white/[0.1] text-white font-medium text-sm transition-all shadow-sm"
                 >
-                  How It Works
+                  {isHi ? "यह कैसे काम करता है" : "How It Works"}
                 </Link>
 
                 <button
@@ -113,7 +132,7 @@ export default function LandingPage() {
                   onClick={() => handleLaunchCheck()}
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-slate-950 font-semibold text-sm hover:bg-slate-200 transition-all shadow-lg group cursor-pointer"
                 >
-                  <span>Start Inspection — Free</span>
+                  <span>{isHi ? "नि:शुल्क जांच शुरू करें" : "Start Inspection — Free"}</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
@@ -127,7 +146,11 @@ export default function LandingPage() {
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleLaunchCheck()}
-                    placeholder="Paste suspicious SMS, WhatsApp message, or UPI link..."
+                    placeholder={
+                      isHi
+                        ? "संदिग्ध SMS, व्हाट्सएप संदेश या UPI लिंक यहाँ डालें..."
+                        : "Paste suspicious SMS, WhatsApp message, or UPI link..."
+                    }
                     className="w-full bg-transparent text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none"
                   />
                   <button
@@ -135,15 +158,43 @@ export default function LandingPage() {
                     onClick={() => handleLaunchCheck()}
                     className="px-4 py-2 rounded-xl bg-signal text-slate-950 font-semibold text-xs shrink-0 hover:brightness-110 transition-all"
                   >
-                    Check
+                    {isHi ? "जांचें" : "Check"}
+                  </button>
+                </div>
+
+                {/* Quick Presets Under Bar */}
+                <div className="flex items-center gap-2 pt-2 text-[11px] font-mono text-slate-400">
+                  <span className="text-slate-500">{isHi ? "त्वरित उदाहरण:" : "Try:"}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleLaunchCheck(isHi ? "एसबीआई YONO खाता निलंबित। तुरंत http://sbi-update-kyc.top पर क्लिक करें" : "SBI YONO Account Blocked. Click http://sbi-update-kyc.top")}
+                    className="hover:text-signal transition-colors underline decoration-dotted"
+                  >
+                    SBI KYC
+                  </button>
+                  <span>•</span>
+                  <button
+                    type="button"
+                    onClick={() => handleLaunchCheck(isHi ? "आज रात 9:30 बजे बिजली काट दी जाएगी। कॉल करें 9876543210" : "Electricity disconnect tonight 9:30 PM. Call 9876543210")}
+                    className="hover:text-signal transition-colors underline decoration-dotted"
+                  >
+                    Power Cut
+                  </button>
+                  <span>•</span>
+                  <button
+                    type="button"
+                    onClick={() => handleLaunchCheck(isHi ? "सीबीआई डिजिटल अरेस्ट वारंट जारी।" : "CBI Digital Arrest warrant issued.")}
+                    className="hover:text-signal transition-colors underline decoration-dotted"
+                  >
+                    CBI Warrant
                   </button>
                 </div>
               </div>
 
-              {/* Institutional Trust Logos (Screenshot 1 Grayscale Bar) */}
+              {/* Institutional Trust Logos */}
               <div className="pt-6 space-y-2 border-t border-white/[0.06] max-w-xl">
                 <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 block">
-                  Institutional Verification Standards
+                  {isHi ? "राष्ट्रीय सत्यापन मानक" : "Institutional Verification Standards"}
                 </span>
                 <div className="flex items-center gap-6 text-xs font-mono text-slate-400">
                   <span className="hover:text-white transition-colors">NATIONAL 1930</span>
@@ -154,9 +205,8 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Right Column: Floating Cyber-Card Visual (Screenshot 1 Top Right Terminal) */}
+            {/* Right Column: Floating Cyber-Card Visual */}
             <div className="lg:col-span-5 relative flex justify-center">
-              {/* Floating App Mockup Window */}
               <div className="w-full max-w-md rounded-2xl bg-[#0A0F1E]/95 border border-white/[0.12] p-5 shadow-2xl backdrop-blur-xl space-y-5 relative">
                 {/* Window Header */}
                 <div className="flex items-center justify-between border-b border-white/[0.08] pb-3 text-xs">
@@ -165,7 +215,9 @@ export default function LandingPage() {
                     <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
                   </div>
-                  <span className="font-mono text-slate-400 text-[11px]">Scam Shield — Sentinel Active</span>
+                  <span className="font-mono text-slate-400 text-[11px]">
+                    {isHi ? "स्कैम शील्ड — सेंटिनल सक्रिय" : "Scam Shield — Sentinel Active"}
+                  </span>
                   <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-mono font-bold">
                     LIVE
                   </span>
@@ -183,48 +235,45 @@ export default function LandingPage() {
                     </span>
                   </div>
                   <div className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-                    ● 5 AGENTS ONLINE
+                    ● {isHi ? "5 एआई एजेंट ऑनलाइन" : "5 AGENTS ONLINE"}
                   </div>
                   <div className="text-[11px] text-slate-400 font-mono">
                     Node: <span className="text-signal">National AI Sandbox (Prayagraj-01)</span>
                   </div>
                 </div>
 
-                {/* 2x2 Forensic Metrics Grid (Screenshot 1 Style) */}
+                {/* 2x2 Forensic Metrics Grid */}
                 <div className="grid grid-cols-2 gap-2 text-xs font-mono">
                   <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-1">
-                    <div className="text-[10px] text-slate-400 uppercase">CITIZEN IDENTITY</div>
-                    <div className="text-white font-bold">Hashed & Salted ✓</div>
+                    <div className="text-[10px] text-slate-400 uppercase">
+                      {isHi ? "नागरिक पहचान" : "CITIZEN IDENTITY"}
+                    </div>
+                    <div className="text-white font-bold">{isHi ? "शून्य डेटा सुरक्षित ✓" : "Hashed & Salted ✓"}</div>
                   </div>
                   <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-1">
-                    <div className="text-[10px] text-slate-400 uppercase">DISK LOGS</div>
-                    <div className="text-emerald-400 font-bold">0 Bytes Retained ✓</div>
+                    <div className="text-[10px] text-slate-400 uppercase">
+                      {isHi ? "डिस्क स्टोरेज" : "DISK LOGS"}
+                    </div>
+                    <div className="text-emerald-400 font-bold">{isHi ? "0 बाइट्स सेव ✓" : "0 Bytes Retained ✓"}</div>
                   </div>
                   <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-1">
-                    <div className="text-[10px] text-slate-400 uppercase">LINK FORENSICS</div>
-                    <div className="text-signal font-bold">Air-Gapped DNS ✓</div>
+                    <div className="text-[10px] text-slate-400 uppercase">
+                      {isHi ? "लिंक फॉरेंसिक्स" : "LINK FORENSICS"}
+                    </div>
+                    <div className="text-signal font-bold">{isHi ? "सुरक्षित DNS ✓" : "Air-Gapped DNS ✓"}</div>
                   </div>
                   <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-1">
-                    <div className="text-[10px] text-slate-400 uppercase">CONSENSUS GATE</div>
-                    <div className="text-white font-bold">Veto Mode Active ✓</div>
+                    <div className="text-[10px] text-slate-400 uppercase">
+                      {isHi ? "आम सहमति गेट" : "CONSENSUS GATE"}
+                    </div>
+                    <div className="text-white font-bold">{isHi ? "वीटो मोड सक्रिय ✓" : "Veto Mode Active ✓"}</div>
                   </div>
                 </div>
 
                 {/* Bottom Pill Badge in Card */}
                 <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-between text-xs text-emerald-400">
-                  <span className="font-mono">National Helpline Linked</span>
+                  <span className="font-mono">{isHi ? "राष्ट्रीय हेल्पलाइन संबद्ध" : "National Helpline Linked"}</span>
                   <span className="font-bold font-mono">Dial 1930</span>
-                </div>
-
-                {/* Floating Glass Badge (Screenshot 1: "8,900+") */}
-                <div className="absolute -bottom-5 -left-5 p-3 px-4 rounded-xl bg-[#10182E]/90 border border-white/[0.15] shadow-2xl backdrop-blur-md flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-signal/20 text-signal flex items-center justify-center">
-                    <Globe2 className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <div className="font-heading font-bold text-sm text-white leading-none">70+ Brands</div>
-                    <div className="text-[10px] text-slate-400 font-mono mt-0.5">Live Phishing Feeds</div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -232,60 +281,64 @@ export default function LandingPage() {
         </section>
 
         {/* =========================================================================
-         * 2. METRICS ROW (SCREENSHOT 1: 120, AES-256, ZERO, 99.98%)
+         * 2. METRICS ROW
          * ========================================================================= */}
         <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-b border-white/[0.06]">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Metric 1 */}
             <div className="p-6 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/40 transition-all flex flex-col justify-between space-y-4">
               <div className="w-8 h-8 rounded-lg bg-blue-500/15 border border-blue-500/30 text-blue-400 flex items-center justify-center">
                 <Server className="w-4 h-4" />
               </div>
               <div>
                 <div className="font-heading text-4xl font-bold text-white tracking-tight">120+</div>
-                <div className="text-xs text-slate-400 font-mono mt-1">Verification Nodes Tested</div>
+                <div className="text-xs text-slate-400 font-mono mt-1">
+                  {isHi ? "परीक्षित सत्यापन नोड्स" : "Verification Nodes Tested"}
+                </div>
               </div>
               <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.06] text-slate-300 w-fit">
                 DAG PIPELINE
               </span>
             </div>
 
-            {/* Metric 2 */}
             <div className="p-6 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/40 transition-all flex flex-col justify-between space-y-4">
               <div className="w-8 h-8 rounded-lg bg-signal/15 border border-signal/30 text-signal flex items-center justify-center">
                 <ShieldCheck className="w-4 h-4" />
               </div>
               <div>
                 <div className="font-heading text-4xl font-bold text-white tracking-tight">100%</div>
-                <div className="text-xs text-slate-400 font-mono mt-1">Scam Recall on Benchmark</div>
+                <div className="text-xs text-slate-400 font-mono mt-1">
+                  {isHi ? "बेंचमार्क पर पकड़ दर" : "Scam Recall on Benchmark"}
+                </div>
               </div>
-              <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 w-fit">
-                ZERO SCAM BYPASS
+              <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-signal/10 border border-signal/30 text-signal w-fit">
+                ZERO FALSE NEGATIVES
               </span>
             </div>
 
-            {/* Metric 3 */}
             <div className="p-6 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/40 transition-all flex flex-col justify-between space-y-4">
               <div className="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
-                <EyeOff className="w-4 h-4" />
+                <Lock className="w-4 h-4" />
               </div>
               <div>
-                <div className="font-heading text-4xl font-bold text-white tracking-tight">Zero</div>
-                <div className="text-xs text-slate-400 font-mono mt-1">Citizen Logs Retained</div>
+                <div className="font-heading text-4xl font-bold text-white tracking-tight">0 Bytes</div>
+                <div className="text-xs text-slate-400 font-mono mt-1">
+                  {isHi ? "डेटा लॉग स्टोर किया गया" : "Disk Retention Policy"}
+                </div>
               </div>
-              <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.06] text-slate-300 w-fit">
-                HMAC-SHA256 ONLY
+              <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 w-fit">
+                EPHEMERAL RAM
               </span>
             </div>
 
-            {/* Metric 4 */}
             <div className="p-6 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/40 transition-all flex flex-col justify-between space-y-4">
               <div className="w-8 h-8 rounded-lg bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 flex items-center justify-center">
                 <Activity className="w-4 h-4" />
               </div>
               <div>
                 <div className="font-heading text-4xl font-bold text-white tracking-tight">99.98%</div>
-                <div className="text-xs text-slate-400 font-mono mt-1">Consensus Availability SLA</div>
+                <div className="text-xs text-slate-400 font-mono mt-1">
+                  {isHi ? "आम सहमति उपलब्धता एसएलए" : "Consensus Availability SLA"}
+                </div>
               </div>
               <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.06] text-slate-300 w-fit">
                 24X7 CITIZEN SHIELD
@@ -295,24 +348,27 @@ export default function LandingPage() {
         </section>
 
         {/* =========================================================================
-         * 3. REAL-TIME RADAR & THREAT MAP (SCREENSHOT 1 CENTER SECTION)
+         * 3. REAL-TIME RADAR & THREAT MAP WITH ANIMATED SCAN BEAM
          * ========================================================================= */}
         <section id="threat-map" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8 border-b border-white/[0.06]">
           <div className="text-center space-y-2 max-w-2xl mx-auto">
             <div className="text-xs font-mono uppercase tracking-wider text-signal font-semibold">
-              National Infrastructure
+              {isHi ? "राष्ट्रीय निगरानी ग्रिड" : "National Infrastructure"}
             </div>
             <h2 className="text-3xl sm:text-4xl font-heading font-bold text-white tracking-tight">
-              Real-Time Forensic Surveillance
+              {isHi ? "वास्तविक समय साइबर निगरानी" : "Real-Time Forensic Surveillance"}
             </h2>
             <p className="text-slate-400 text-sm">
-              Continuous inspection of high-risk domains, fake banking portals, and impersonation scripts across all 28 Indian states.
+              {isHi
+                ? "सभी 28 भारतीय राज्यों में उच्च जोखिम वाले डोमेन, फर्जी बैंक पोर्टल और फिशिंग की स्वचालित निगरानी।"
+                : "Continuous inspection of high-risk domains, fake banking portals, and impersonation scripts across all 28 Indian states."}
             </p>
           </div>
 
           <div className="p-6 sm:p-8 rounded-2xl bg-[#090E1D] border border-white/[0.08] shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* Map Simulation Graphic (Left 7 cols) */}
-            <div className="lg:col-span-7 rounded-xl bg-[#060913] border border-white/[0.06] p-6 relative overflow-hidden h-[300px] flex items-center justify-center">
+            {/* Animated Radar Graphic */}
+            <div className="lg:col-span-7 rounded-xl bg-[#060913] border border-white/[0.06] p-6 relative overflow-hidden h-[340px] flex items-center justify-center">
+              {/* Matrix Grid */}
               <div
                 className="absolute inset-0 opacity-[0.08]"
                 style={{
@@ -321,13 +377,20 @@ export default function LandingPage() {
                 }}
               />
 
+              {/* Animated Rotating Radar Sweep */}
+              <div className="absolute w-[300px] h-[300px] rounded-full border border-signal/20 flex items-center justify-center pointer-events-none">
+                <div className="w-[200px] h-[200px] rounded-full border border-signal/15" />
+                <div className="w-[100px] h-[100px] rounded-full border border-signal/10" />
+                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-signal/10 via-transparent to-transparent animate-[spin_6s_linear_infinite]" />
+              </div>
+
               {/* Glowing Active Radar Blips across Indian hubs */}
               <div className="relative w-full h-full">
                 {/* Node: Delhi */}
                 <div className="absolute top-[35%] left-[38%] flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full bg-emerald-400 animate-ping absolute" />
                   <span className="w-3 h-3 rounded-full bg-emerald-400 relative" />
-                  <span className="text-[10px] font-mono text-slate-300 bg-[#090E1D] px-1.5 py-0.5 rounded border border-white/[0.1]">
+                  <span className="text-[10px] font-mono text-slate-300 bg-[#090E1D] px-2 py-0.5 rounded-full border border-white/[0.1] shadow-md">
                     DELHI • Active
                   </span>
                 </div>
@@ -336,7 +399,7 @@ export default function LandingPage() {
                 <div className="absolute top-[58%] left-[28%] flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full bg-signal animate-ping absolute" />
                   <span className="w-3 h-3 rounded-full bg-signal relative" />
-                  <span className="text-[10px] font-mono text-slate-300 bg-[#090E1D] px-1.5 py-0.5 rounded border border-white/[0.1]">
+                  <span className="text-[10px] font-mono text-slate-300 bg-[#090E1D] px-2 py-0.5 rounded-full border border-white/[0.1] shadow-md">
                     MUMBAI • 18ms
                   </span>
                 </div>
@@ -345,7 +408,7 @@ export default function LandingPage() {
                 <div className="absolute top-[42%] left-[52%] flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full bg-signal animate-ping absolute" />
                   <span className="w-3 h-3 rounded-full bg-signal relative" />
-                  <span className="text-[10px] font-mono text-slate-300 bg-[#090E1D] px-1.5 py-0.5 rounded border border-white/[0.1]">
+                  <span className="text-[10px] font-mono text-slate-300 bg-[#090E1D] px-2 py-0.5 rounded-full border border-white/[0.1] shadow-md">
                     PRAYAGRAJ • Hub
                   </span>
                 </div>
@@ -354,29 +417,29 @@ export default function LandingPage() {
                 <div className="absolute top-[75%] left-[40%] flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full bg-emerald-400 animate-ping absolute" />
                   <span className="w-3 h-3 rounded-full bg-emerald-400 relative" />
-                  <span className="text-[10px] font-mono text-slate-300 bg-[#090E1D] px-1.5 py-0.5 rounded border border-white/[0.1]">
+                  <span className="text-[10px] font-mono text-slate-300 bg-[#090E1D] px-2 py-0.5 rounded-full border border-white/[0.1] shadow-md">
                     BENGALURU • Active
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Top Performing Forensics Feed (Right 5 cols) */}
+            {/* Forensics Engines Status List */}
             <div className="lg:col-span-5 space-y-4">
-              <div className="font-mono text-xs uppercase tracking-wider text-slate-400">
-                Top Performing Forensics Engines
+              <div className="font-mono text-xs uppercase tracking-wider text-slate-400 font-semibold">
+                {isHi ? "फॉरेंसिक इंजन स्थिति" : "Top Performing Forensics Engines"}
               </div>
               <div className="space-y-2.5">
                 {[
-                  { name: "Domain Age & Registrar WHOIS", latency: "14ms", status: "Active" },
-                  { name: "NPCI UPI Gateway VPA Validator", latency: "18ms", status: "Active" },
-                  { name: "TRAI Telemarketer DND Filter", latency: "22ms", status: "Active" },
-                  { name: "Multilingual OCR Vision Engine", latency: "42ms", status: "Active" },
-                  { name: "Bayesian Consensus Veto Judge", latency: "11ms", status: "Active" },
+                  { name: isHi ? "डोमेन आयु व WHOIS पंजीयक" : "Domain Age & Registrar WHOIS", latency: "14ms", status: isHi ? "सक्रिय" : "Active" },
+                  { name: isHi ? "एनपीसीआई यूपीआई वीपीए सत्यापन" : "NPCI UPI Gateway VPA Validator", latency: "18ms", status: isHi ? "सक्रिय" : "Active" },
+                  { name: isHi ? "ट्राई टेलीमार्केटर डीएनडी फ़िल्टर" : "TRAI Telemarketer DND Filter", latency: "22ms", status: isHi ? "सक्रिय" : "Active" },
+                  { name: isHi ? "बहुभाषी विज़न ओसीआर इंजन" : "Multilingual OCR Vision Engine", latency: "42ms", status: isHi ? "सक्रिय" : "Active" },
+                  { name: isHi ? "बेयसियन आम सहमति वीटो जज" : "Bayesian Consensus Veto Judge", latency: "11ms", status: isHi ? "सक्रिय" : "Active" },
                 ].map((item, idx) => (
                   <div
                     key={idx}
-                    className="p-3 rounded-xl bg-[#060913] border border-white/[0.06] flex items-center justify-between text-xs font-mono"
+                    className="p-3 rounded-xl bg-[#060913] border border-white/[0.06] flex items-center justify-between text-xs font-mono hover:border-signal/30 transition-colors"
                   >
                     <div className="flex items-center gap-2.5">
                       <span className="w-2 h-2 rounded-full bg-emerald-400" />
@@ -395,19 +458,21 @@ export default function LandingPage() {
         </section>
 
         {/* =========================================================================
-         * 4. LIVE MULTI-AGENT DAG PIPELINE (SCREENSHOT 2 REPRODUCTION)
+         * 4. LIVE MULTI-AGENT DAG PIPELINE (WITH REAL REAL-TIME EXECUTION)
          * ========================================================================= */}
         <section id="pipeline" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8 border-b border-white/[0.06]">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div className="space-y-2">
               <div className="text-xs font-mono uppercase tracking-wider text-signal font-semibold">
-                Autonomous Consensus Pipeline
+                {isHi ? "स्वायत्त आम सहमति पाइपलाइन" : "Autonomous Consensus Pipeline"}
               </div>
               <h2 className="text-3xl sm:text-4xl font-heading font-bold text-white tracking-tight">
-                Live Multi-Agent Forensic Architecture
+                {isHi ? "लाइव मल्टी-एजेंट फॉरेंसिक आर्किटेक्चर" : "Live Multi-Agent Forensic Architecture"}
               </h2>
               <p className="text-slate-400 text-sm max-w-2xl">
-                Ingests raw citizen evidence, extracts defanged entities, and executes parallel forensic investigations through an air-gapped Bayesian consensus veto gate.
+                {isHi
+                  ? "कच्चे नागरिक संदेशों को इनजेस्ट करता है, लिंक व फोन निकालता है, और एयर-गैप्ड बेयसियन आम सहमति वीटो गेट के माध्यम से समानांतर जांच करता है।"
+                  : "Ingests raw citizen evidence, extracts defanged entities, and executes parallel forensic investigations through an air-gapped Bayesian consensus veto gate."}
               </p>
             </div>
 
@@ -415,7 +480,7 @@ export default function LandingPage() {
               href={`/${locale}/check`}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-signal text-slate-950 font-bold text-xs font-mono hover:brightness-110 transition-all shrink-0 shadow-lg"
             >
-              <span>Launch Live Forensic Studio</span>
+              <span>{isHi ? "लाइव फॉरेंसिक स्टूडियो खोलें" : "Launch Live Forensic Studio"}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -424,123 +489,130 @@ export default function LandingPage() {
         </section>
 
         {/* =========================================================================
-         * 6. ENTERPRISE-GRADE PROTECTION BENTO CARDS (SCREENSHOT 1 BOTTOM)
+         * 5. ENTERPRISE-GRADE PROTECTION BENTO CARDS
          * ========================================================================= */}
         <section id="security-stack" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8 border-b border-white/[0.06]">
           <div className="text-center space-y-2 max-w-2xl mx-auto">
             <div className="text-xs font-mono uppercase tracking-wider text-signal font-semibold">
-              Security Stack
+              {isHi ? "सुरक्षा ढांचा" : "Security Stack"}
             </div>
             <h2 className="text-3xl sm:text-4xl font-heading font-bold text-white tracking-tight">
-              Enterprise-Grade Protection for Everyone
+              {isHi ? "सभी के लिए एंटरप्राइज-ग्रेड सुरक्षा" : "Enterprise-Grade Protection for Everyone"}
             </h2>
             <p className="text-slate-400 text-sm">
-              Every Scam Shield feature is designed to give you absolute control over your digital safety — no compromises, no exceptions.
+              {isHi
+                ? "सामान्य नागरिकों के लिए सरल, शक्तिशाली सुरक्षा तकनीक।"
+                : "Democratizing state-of-the-art fraud intelligence with civilian privacy protections."}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Card 1: Air-Gapped Domain Forensics */}
-            <div className="p-6 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/40 transition-all flex flex-col justify-between space-y-4">
-              <div className="w-9 h-9 rounded-xl bg-blue-500/15 border border-blue-500/30 text-blue-400 flex items-center justify-center">
-                <Search className="w-5 h-5" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="p-6 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/40 transition-all space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-signal/15 text-signal flex items-center justify-center">
+                <Lock className="w-5 h-5" />
               </div>
-              <div className="space-y-1.5">
-                <h3 className="font-heading font-bold text-base text-white">Air-Gapped Forensics</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  We inspect domain age, registrar WHOIS, and DNS records without ever downloading or opening the suspicious link.
-                </p>
-              </div>
-              <div className="rounded-xl border border-white/[0.06] bg-[#060913] p-2 text-[11px] font-mono space-y-1">
-                <div className="flex justify-between text-slate-400"><span>HTTP GET:</span><span className="text-emerald-400">Blocked ✓</span></div>
-                <div className="flex justify-between text-slate-400"><span>DNS Lookup:</span><span className="text-emerald-400">Isolated ✓</span></div>
-                <div className="flex justify-between text-slate-400"><span>Payload Risk:</span><span className="text-emerald-400">0% ✓</span></div>
-              </div>
+              <h3 className="font-heading font-bold text-base text-white">
+                {isHi ? "एयर-गैप्ड डीएनएस" : "Air-Gapped DNS"}
+              </h3>
+              <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                {isHi
+                  ? "संदिग्ध लिंक को कभी भी ब्राउज़र में नहीं खोला जाता। केवल एन्क्रिप्टेड डीएनएस व डब्लूएचओआईएस रिकॉर्ड जाँचे जाते हैं।"
+                  : "Links are never loaded in a browser. Only encrypted DNS and registrar age queries are executed."}
+              </p>
             </div>
 
-            {/* Card 2: Strict No-Logs Policy */}
-            <div className="p-6 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/40 transition-all flex flex-col justify-between space-y-4">
-              <div className="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
-                <EyeOff className="w-5 h-5" />
+            <div className="p-6 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/40 transition-all space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center">
+                <BrainCircuit className="w-5 h-5" />
               </div>
-              <div className="space-y-1.5">
-                <h3 className="font-heading font-bold text-base text-white">Strict No-Logs Policy</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  We never collect, store, or share your messages, screenshots, OTPs, or phone numbers. Zero persistence.
-                </p>
-              </div>
-              <div className="rounded-xl border border-white/[0.06] bg-[#060913] p-2 text-[11px] font-mono space-y-1">
-                <div className="flex justify-between text-slate-400"><span>Raw Message:</span><span className="text-emerald-400">Never ✓</span></div>
-                <div className="flex justify-between text-slate-400"><span>Phone Numbers:</span><span className="text-emerald-400">Never ✓</span></div>
-                <div className="flex justify-between text-slate-400"><span>Community:</span><span className="text-signal">Salted Hash ✓</span></div>
-              </div>
+              <h3 className="font-heading font-bold text-base text-white">
+                {isHi ? "मनोवैज्ञानिक दबाव जांच" : "Psychology Matrix"}
+              </h3>
+              <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                {isHi
+                  ? "आतंक पैदा करने वाले शब्द ('आज रात बिजली कटेगी', 'अरेस्ट वारंट') और फर्जी डेडलाइन का तुरंत पता लगाना।"
+                  : "Detects false countdowns, panic-inducing threats, and impersonation of authority figures."}
+              </p>
             </div>
 
-            {/* Card 3: Bayesian Consensus Protocol */}
-            <div className="p-6 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/40 transition-all flex flex-col justify-between space-y-4">
-              <div className="w-9 h-9 rounded-xl bg-signal/15 border border-signal/30 text-signal flex items-center justify-center">
-                <Cpu className="w-5 h-5" />
+            <div className="p-6 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/40 transition-all space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center">
+                <Scale className="w-5 h-5" />
               </div>
-              <div className="space-y-1.5">
-                <h3 className="font-heading font-bold text-base text-white">Consensus Protocol</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Five AI specialists vote. When psychological wording and technical records disagree, technical risk always vetoes.
-                </p>
-              </div>
-              <div className="rounded-xl border border-white/[0.06] bg-[#060913] p-2 text-[11px] font-mono space-y-1">
-                <div className="flex justify-between text-slate-400"><span>Architecture:</span><span className="text-white">DAG Fusion ✓</span></div>
-                <div className="flex justify-between text-slate-400"><span>Conflict Gate:</span><span className="text-emerald-400">Active ✓</span></div>
-                <div className="flex justify-between text-slate-400"><span>Inference:</span><span className="text-signal">Gemini 2.5 ✓</span></div>
-              </div>
+              <h3 className="font-heading font-bold text-base text-white">
+                {isHi ? "बेयसियन वीटो गेट" : "Consensus Veto"}
+              </h3>
+              <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                {isHi
+                  ? "यदि किसी नए डोमेन में तकनीकी खतरा है, तो संदेश की मीठी भाषा को खारिज कर तुरंत फ्रॉड घोषित किया जाता है।"
+                  : "Technical threat overrides polite language. Newly registered lookalike domains trigger an invariant veto."}
+              </p>
             </div>
 
-            {/* Card 4: Automatic Kill Switch / 1930 */}
-            <div className="p-6 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/40 transition-all flex flex-col justify-between space-y-4">
-              <div className="w-9 h-9 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-400 flex items-center justify-center">
+            <div className="p-6 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/40 transition-all space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center">
                 <PhoneCall className="w-5 h-5" />
               </div>
-              <div className="space-y-1.5">
-                <h3 className="font-heading font-bold text-base text-white">Emergency Kill Switch</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  If funds are compromised, one tap connects you directly to the 1930 Cyber Financial Fraud helpline.
-                </p>
-              </div>
-              <div className="rounded-xl border border-white/[0.06] bg-[#060913] p-2 text-[11px] font-mono space-y-1">
-                <div className="flex justify-between text-slate-400"><span>Toll Free:</span><span className="text-white">1930 (24x7)</span></div>
-                <div className="flex justify-between text-slate-400"><span>Portal:</span><span className="text-signal">cybercrime.gov.in</span></div>
-                <div className="flex justify-between text-slate-400"><span>Response:</span><span className="text-emerald-400">Immediate ✓</span></div>
-              </div>
+              <h3 className="font-heading font-bold text-base text-white">
+                {isHi ? "1930 सहायता सीधे जुड़ी" : "1930 Helpline"}
+              </h3>
+              <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                {isHi
+                  ? "गृह मंत्रालय की राष्ट्रीय साइबर अपराध हेल्पलाइन 1930 और cybercrime.gov.in के लिए तैयार प्रारूप।"
+                  : "One-click connection to National Cybercrime Helpline 1930 with pre-formatted evidence reports."}
+              </p>
             </div>
           </div>
         </section>
 
         {/* =========================================================================
-         * 7. NATIONAL HELPLINE FINAL CTA
+         * 6. FAQ ACCORDION (BILINGUAL)
          * ========================================================================= */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto text-center space-y-6">
-          <h2 className="text-4xl sm:text-5xl font-heading font-bold text-white tracking-tight">
-            Got a Message That Feels Off?
-          </h2>
-          <p className="text-slate-400 text-base max-w-lg mx-auto">
-            Check it before you click. Five AI agents will inspect the words, the links, and the sender, then tell you what to do next.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-            <button
-              type="button"
-              onClick={() => handleLaunchCheck()}
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-white text-slate-950 font-bold text-sm hover:bg-slate-200 transition-all shadow-xl group cursor-pointer"
-            >
-              <span>Check This Message</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
-            <a
-              href="tel:1930"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white/[0.06] border border-white/[0.1] hover:bg-white/[0.1] text-white font-semibold text-sm transition-all"
-            >
-              <PhoneCall className="w-4 h-4 text-rose-400" />
-              <span>Dial 1930 Helpline</span>
-            </a>
+        <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-8">
+          <div className="text-center space-y-2">
+            <h2 className="text-3xl font-heading font-bold text-white tracking-tight">
+              {isHi ? "अक्सर पूछे जाने वाले प्रश्न" : "Frequently Asked Questions"}
+            </h2>
           </div>
+
+          <Accordion.Root type="single" collapsible className="space-y-3">
+            {[
+              {
+                q: isHi ? "क्या स्कैम शील्ड मेरे निजी संदेशों को सहेजता है?" : "Does Scam Shield save my private messages?",
+                a: isHi
+                  ? "नहीं। सभी संदेश और स्क्रीनशॉट केवल अस्थायी मेमोरी (RAM) में जाँचे जाते हैं और फ़ैसला आने के बाद तुरंत नष्ट कर दिए जाते हैं। हमारे डेटाबेस में 0 बाइट्स स्टोर होता है।"
+                  : "No. All raw messages and screenshots are evaluated strictly in ephemeral RAM and discarded upon verdict generation. Zero bytes are written to persistent disk.",
+              },
+              {
+                q: isHi ? "क्या संदिग्ध लिंक पर क्लिक किया जाता है?" : "Does Scam Shield click the suspicious link?",
+                a: isHi
+                  ? "कभी नहीं। हम एयर-गैप्ड डीएनएस और डब्लूएचओआईएस उम्र की जांच करते हैं ताकि कोई मैलवेयर कभी भी डाउनलोड न हो सके।"
+                  : "Never. We use air-gapped DNS inspection, WHOIS registration queries, and bank allowlists without ever executing HTTP payloads or downloading destination malware.",
+              },
+              {
+                q: isHi ? "यदि मेरे पैसे कट गए हैं तो मुझे क्या करना चाहिए?" : "What should I do if my money has already been debited?",
+                a: isHi
+                  ? "बिना देर किए तुरंत राष्ट्रीय साइबर अपराध हेल्पलाइन 1930 पर कॉल करें। गोल्डन ऑवर में पुलिस संदिग्ध खाते को फ्रीज कर सकती है।"
+                  : "Immediately call the National Cybercrime Helpline 1930. During the golden hour, authorities can freeze fraudulent recipient accounts before cash-out.",
+              },
+            ].map((faq, idx) => (
+              <Accordion.Item
+                key={idx}
+                value={`item-${idx}`}
+                className="rounded-xl border border-white/[0.08] bg-[#090E1D] overflow-hidden"
+              >
+                <Accordion.Header>
+                  <Accordion.Trigger className="w-full p-4 text-left font-heading font-semibold text-sm text-white flex items-center justify-between hover:text-signal transition-colors">
+                    <span>{faq.q}</span>
+                    <ChevronDown className="w-4 h-4 text-slate-400 transition-transform duration-200 ease-out" />
+                  </Accordion.Trigger>
+                </Accordion.Header>
+                <Accordion.Content className="px-4 pb-4 text-xs text-slate-400 leading-relaxed font-sans border-t border-white/[0.04] pt-2">
+                  {faq.a}
+                </Accordion.Content>
+              </Accordion.Item>
+            ))}
+          </Accordion.Root>
         </section>
       </main>
 

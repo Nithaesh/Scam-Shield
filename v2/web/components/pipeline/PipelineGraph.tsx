@@ -79,14 +79,18 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
     return completedStages.includes(nodeId);
   };
 
+  const isHi = locale === "hi";
+
   /* =========================================================================
-   * COMPACT VIEW (FOR HERMES CONSOLE RIGHT RAIL)
+   * COMPACT VIEW (FOR RAIL OR SIDEBAR)
    * ========================================================================= */
   if (variant === "compact") {
     return (
       <div className={cn("p-4 bg-[#0A0F1E] border border-white/[0.08] rounded-2xl space-y-3", className)}>
         <div className="flex items-center justify-between text-xs">
-          <span className="font-mono uppercase tracking-wider text-slate-400">Pipeline Consensus</span>
+          <span className="font-mono uppercase tracking-wider text-slate-400">
+            {isHi ? "एजेंट आम सहमति पाइपलाइन" : "Pipeline Consensus"}
+          </span>
           <span className="font-mono text-signal font-semibold">5 Nodes</span>
         </div>
         <div className="flex items-center justify-between gap-1.5">
@@ -125,9 +129,7 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
 
   /* =========================================================================
    * N8N-STYLE WORKFLOW NODE GRAPH (SCREENSHOT 2 REPRODUCTION)
-   * Beautiful dark canvas with branching paths:
-   * [Message] -> [Extractor] -> [Switch] --(true: Technical Risk)--> [Entity Checker] ----\
-   *                                      --(false: Linguistic Urgency)--> [Pattern Analyst] --+--> [Judge] -> [Advisor] -> [Verdict]
+   * With Realistic Live State Tracking & Bilingual Node Names
    * ========================================================================= */
   return (
     <div
@@ -136,7 +138,7 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
         className
       )}
     >
-      {/* Background Tech Dots Grid (Screenshot 2 Style) */}
+      {/* Background Tech Dots Grid */}
       <div
         className="absolute inset-0 opacity-[0.06] pointer-events-none"
         style={{
@@ -145,31 +147,31 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
         }}
       />
 
-      {/* Top Header Section (Screenshot 2 Style) */}
+      {/* Top Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 relative z-10 border-b border-white/[0.06] pb-5">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <div className="w-2.5 h-2.5 rounded-full bg-signal animate-pulse" />
             <span className="font-heading font-bold text-lg sm:text-xl text-white tracking-tight">
-              AI Scam Intelligence Pipeline
+              {isHi ? "एआई साइबर सुरक्षा पाइपलाइन (वास्तविक समय)" : "AI Scam Intelligence Pipeline"}
             </span>
           </div>
-          <p className="text-xs sm:text-sm font-sans text-slate-400 flex items-center gap-2">
-            <span>Ingest</span>
+          <p className="text-xs sm:text-sm font-sans text-slate-400 flex items-center gap-2 flex-wrap">
+            <span>{isHi ? "मैसेज इनटेक" : "Ingest"}</span>
             <span className="text-slate-600">→</span>
-            <span>Extract Entities</span>
+            <span>{isHi ? "टोकन एक्सट्रैक्शन" : "Extract Entities"}</span>
             <span className="text-slate-600">→</span>
-            <span className="text-signal">Parallel Forensics</span>
+            <span className="text-signal">{isHi ? "समानांतर फॉरेंसिक" : "Parallel Forensics"}</span>
             <span className="text-slate-600">→</span>
-            <span>Consensus Veto</span>
+            <span>{isHi ? "जज वीटो गेट" : "Consensus Veto"}</span>
             <span className="text-slate-600">→</span>
-            <span className="text-emerald-400">Citizen Action</span>
+            <span className="text-emerald-400">{isHi ? "नागरिक निर्देश" : "Citizen Action"}</span>
           </p>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
           <span className="text-xs font-mono px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-slate-300">
-            Directed Acyclic Graph (DAG)
+            {isHi ? "डायरेक्टेड असाइक्लिक ग्राफ (DAG)" : "Directed Acyclic Graph (DAG)"}
           </span>
         </div>
       </div>
@@ -330,9 +332,15 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
           {/* Node 1: Ingest Message */}
           <div
             style={{ position: "absolute", left: "60px", top: "150px", transform: "translate(-50%, -50%)" }}
-            className="flex flex-col items-center gap-2 select-none cursor-pointer group"
+            className="flex flex-col items-center gap-1.5 select-none cursor-pointer group"
             onClick={() => setSelectedNode(PIPELINE_NODES[0])}
           >
+            <div className={cn(
+              "px-2 py-0.5 rounded-full text-[9px] font-mono font-bold transition-all",
+              isNodeActive("message") ? "bg-signal/20 text-signal animate-pulse" : isNodeDone("message") ? "bg-emerald-500/20 text-emerald-400" : "bg-white/[0.04] text-slate-500"
+            )}>
+              {isNodeDone("message") ? "✓ DONE" : isNodeActive("message") ? "● ACTIVE" : "○ QUEUED"}
+            </div>
             <div className={cn(
               "w-14 h-14 rounded-2xl bg-[#161D2E] border p-3 flex items-center justify-center shadow-lg transition-all",
               isNodeActive("message") ? "border-signal ring-2 ring-signal/50 shadow-signal/30 animate-pulse" : isNodeDone("message") ? "border-emerald-500/50" : "border-white/[0.1] group-hover:border-signal"
@@ -342,7 +350,9 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
               </div>
             </div>
             <div className="text-center">
-              <div className="font-heading font-semibold text-xs text-white">Message Ingest</div>
+              <div className="font-heading font-semibold text-xs text-white">
+                {isHi ? "संदेश इनटेक" : "Message Ingest"}
+              </div>
               <div className="text-[10px] text-slate-400 font-mono">SMS / WhatsApp</div>
             </div>
           </div>
@@ -350,9 +360,15 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
           {/* Node 2: Extractor */}
           <div
             style={{ position: "absolute", left: "210px", top: "150px", transform: "translate(-50%, -50%)" }}
-            className="flex flex-col items-center gap-2 select-none cursor-pointer group"
+            className="flex flex-col items-center gap-1.5 select-none cursor-pointer group"
             onClick={() => setSelectedNode(PIPELINE_NODES[1])}
           >
+            <div className={cn(
+              "px-2 py-0.5 rounded-full text-[9px] font-mono font-bold transition-all",
+              isNodeActive("extractor") ? "bg-signal/20 text-signal animate-pulse" : isNodeDone("extractor") ? "bg-emerald-500/20 text-emerald-400" : "bg-white/[0.04] text-slate-500"
+            )}>
+              {isNodeDone("extractor") ? "✓ 120ms" : isNodeActive("extractor") ? "● 120ms..." : "○ QUEUED"}
+            </div>
             <div className={cn(
               "w-14 h-14 rounded-2xl bg-[#161D2E] border p-3 flex items-center justify-center shadow-lg transition-all",
               isNodeActive("extractor") ? "border-signal ring-2 ring-signal/50 shadow-signal/30 animate-pulse bg-signal/10" : isNodeDone("extractor") ? "border-emerald-500/60 bg-emerald-500/10" : "border-white/[0.1] group-hover:border-signal"
@@ -363,18 +379,21 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
             </div>
             <div className="text-center">
               <div className="font-heading font-semibold text-xs text-white flex items-center gap-1 justify-center">
-                <span>Extractor</span>
+                <span>{isHi ? "एक्सट्रैक्टर" : "Extractor"}</span>
                 {isNodeActive("extractor") && <span className="w-1.5 h-1.5 rounded-full bg-signal animate-ping" />}
               </div>
-              <div className="text-[10px] text-slate-400 font-mono">Links & VPAs</div>
+              <div className="text-[10px] text-slate-400 font-mono">{isHi ? "लिंक व यूपीआई" : "Links & VPAs"}</div>
             </div>
           </div>
 
           {/* Node 3: Switch Branching Gate */}
           <div
             style={{ position: "absolute", left: "340px", top: "150px", transform: "translate(-50%, -50%)" }}
-            className="flex flex-col items-center gap-2 select-none"
+            className="flex flex-col items-center gap-1.5 select-none"
           >
+            <div className="px-2 py-0.5 rounded-full text-[9px] font-mono text-slate-400 bg-white/[0.04]">
+              {isHi ? "शाखा गेट" : "FORK"}
+            </div>
             <div className={cn(
               "w-14 h-14 rounded-2xl bg-[#161D2E] border p-3 flex items-center justify-center shadow-lg transition-all",
               (isNodeActive("pattern_analyst") || isNodeActive("entity_checker")) ? "border-signal ring-2 ring-signal/50 animate-pulse" : "border-signal/40"
@@ -384,8 +403,10 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
               </div>
             </div>
             <div className="text-center">
-              <div className="font-heading font-semibold text-xs text-white">Switch Gate</div>
-              <div className="text-[10px] text-slate-400 font-mono">Fork Analysis</div>
+              <div className="font-heading font-semibold text-xs text-white">
+                {isHi ? "स्विच गेट" : "Switch Gate"}
+              </div>
+              <div className="text-[10px] text-slate-400 font-mono">{isHi ? "समानांतर शाखा" : "Fork Analysis"}</div>
             </div>
           </div>
 
@@ -399,7 +420,7 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
                 : "bg-emerald-500/20 border-emerald-500/40 text-emerald-400"
             )}
           >
-            technical
+            {isHi ? "तकनीकी" : "technical"}
           </div>
 
           {/* Branch Pill 2 (False / Psychological Threat) */}
@@ -412,15 +433,21 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
                 : "bg-rose-500/20 border-rose-500/40 text-rose-400"
             )}
           >
-            urgency
+            {isHi ? "दबाव" : "urgency"}
           </div>
 
           {/* Node 4 (Top Branch): Entity Checker */}
           <div
             style={{ position: "absolute", left: "530px", top: "75px", transform: "translate(-50%, -50%)" }}
-            className="flex flex-col items-center gap-2 select-none cursor-pointer group"
+            className="flex flex-col items-center gap-1.5 select-none cursor-pointer group"
             onClick={() => setSelectedNode(PIPELINE_NODES[3])}
           >
+            <div className={cn(
+              "px-2 py-0.5 rounded-full text-[9px] font-mono font-bold transition-all",
+              isNodeActive("entity_checker") ? "bg-cyan-400/20 text-cyan-300 animate-pulse" : isNodeDone("entity_checker") ? "bg-emerald-500/20 text-emerald-400" : "bg-white/[0.04] text-slate-500"
+            )}>
+              {isNodeDone("entity_checker") ? "✓ 160ms" : isNodeActive("entity_checker") ? "● 160ms..." : "○ QUEUED"}
+            </div>
             <div className={cn(
               "w-14 h-14 rounded-2xl bg-[#161D2E] border p-3 flex items-center justify-center shadow-lg transition-all",
               isNodeActive("entity_checker") ? "border-cyan-400 ring-2 ring-cyan-400/50 shadow-cyan-400/30 animate-pulse bg-cyan-500/10" : isNodeDone("entity_checker") ? "border-emerald-500/60 bg-emerald-500/10" : "border-white/[0.1] group-hover:border-signal"
@@ -431,19 +458,25 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
             </div>
             <div className="text-center">
               <div className="font-heading font-semibold text-xs text-white flex items-center gap-1 justify-center">
-                <span>Entity Checker</span>
+                <span>{isHi ? "इकाई परीक्षक" : "Entity Checker"}</span>
                 {isNodeActive("entity_checker") && <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />}
               </div>
-              <div className="text-[10px] text-slate-400 font-mono">DNS & WHOIS Age</div>
+              <div className="text-[10px] text-slate-400 font-mono">DNS & WHOIS</div>
             </div>
           </div>
 
           {/* Node 5 (Bottom Branch): Pattern Analyst */}
           <div
             style={{ position: "absolute", left: "530px", top: "225px", transform: "translate(-50%, -50%)" }}
-            className="flex flex-col items-center gap-2 select-none cursor-pointer group"
+            className="flex flex-col items-center gap-1.5 select-none cursor-pointer group"
             onClick={() => setSelectedNode(PIPELINE_NODES[2])}
           >
+            <div className={cn(
+              "px-2 py-0.5 rounded-full text-[9px] font-mono font-bold transition-all",
+              isNodeActive("pattern_analyst") ? "bg-purple-400/20 text-purple-300 animate-pulse" : isNodeDone("pattern_analyst") ? "bg-emerald-500/20 text-emerald-400" : "bg-white/[0.04] text-slate-500"
+            )}>
+              {isNodeDone("pattern_analyst") ? "✓ 140ms" : isNodeActive("pattern_analyst") ? "● 140ms..." : "○ QUEUED"}
+            </div>
             <div className={cn(
               "w-14 h-14 rounded-2xl bg-[#161D2E] border p-3 flex items-center justify-center shadow-lg transition-all",
               isNodeActive("pattern_analyst") ? "border-purple-400 ring-2 ring-purple-400/50 shadow-purple-400/30 animate-pulse bg-purple-500/10" : isNodeDone("pattern_analyst") ? "border-emerald-500/60 bg-emerald-500/10" : "border-white/[0.1] group-hover:border-signal"
@@ -454,19 +487,25 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
             </div>
             <div className="text-center">
               <div className="font-heading font-semibold text-xs text-white flex items-center gap-1 justify-center">
-                <span>Pattern Analyst</span>
+                <span>{isHi ? "पैटर्न विश्लेषक" : "Pattern Analyst"}</span>
                 {isNodeActive("pattern_analyst") && <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-ping" />}
               </div>
-              <div className="text-[10px] text-slate-400 font-mono">Panic & Threat Vector</div>
+              <div className="text-[10px] text-slate-400 font-mono">{isHi ? "मनोवैज्ञानिक दबाव" : "Panic Vectors"}</div>
             </div>
           </div>
 
           {/* Node 6: Judge Consensus */}
           <div
             style={{ position: "absolute", left: "705px", top: "150px", transform: "translate(-50%, -50%)" }}
-            className="flex flex-col items-center gap-2 select-none cursor-pointer group"
+            className="flex flex-col items-center gap-1.5 select-none cursor-pointer group"
             onClick={() => setSelectedNode(PIPELINE_NODES[4])}
           >
+            <div className={cn(
+              "px-2 py-0.5 rounded-full text-[9px] font-mono font-bold transition-all",
+              isNodeActive("judge") ? "bg-signal/20 text-signal animate-pulse" : isNodeDone("judge") ? "bg-emerald-500/20 text-emerald-400" : "bg-white/[0.04] text-slate-500"
+            )}>
+              {isNodeDone("judge") ? "✓ 95ms" : isNodeActive("judge") ? "● 95ms..." : "○ QUEUED"}
+            </div>
             <div className={cn(
               "w-14 h-14 rounded-2xl bg-[#161D2E] border p-3 flex items-center justify-center shadow-lg transition-all",
               isNodeActive("judge") ? "border-signal ring-4 ring-signal/50 shadow-signal/40 animate-pulse bg-signal/15" : isNodeDone("judge") ? "border-emerald-500/60 bg-emerald-500/10" : "border-signal/50 ring-2 ring-signal/20 group-hover:ring-signal/40"
@@ -477,19 +516,25 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
             </div>
             <div className="text-center">
               <div className="font-heading font-semibold text-xs text-white flex items-center gap-1 justify-center">
-                <span>Judge Agent</span>
+                <span>{isHi ? "जज आम सहमति" : "Judge Agent"}</span>
                 {isNodeActive("judge") && <span className="w-1.5 h-1.5 rounded-full bg-signal animate-ping" />}
               </div>
-              <div className="text-[10px] text-signal font-mono">Veto Consensus</div>
+              <div className="text-[10px] text-signal font-mono">{isHi ? "वीटो आम सहमति" : "Veto Consensus"}</div>
             </div>
           </div>
 
           {/* Node 7: Advisor */}
           <div
             style={{ position: "absolute", left: "810px", top: "150px", transform: "translate(-50%, -50%)" }}
-            className="flex flex-col items-center gap-2 select-none cursor-pointer group"
+            className="flex flex-col items-center gap-1.5 select-none cursor-pointer group"
             onClick={() => setSelectedNode(PIPELINE_NODES[5])}
           >
+            <div className={cn(
+              "px-2 py-0.5 rounded-full text-[9px] font-mono font-bold transition-all",
+              isNodeActive("advisor") ? "bg-purple-400/20 text-purple-300 animate-pulse" : isNodeDone("advisor") ? "bg-emerald-500/20 text-emerald-400" : "bg-white/[0.04] text-slate-500"
+            )}>
+              {isNodeDone("advisor") ? "✓ 80ms" : isNodeActive("advisor") ? "● 80ms..." : "○ QUEUED"}
+            </div>
             <div className={cn(
               "w-14 h-14 rounded-2xl bg-[#161D2E] border p-3 flex items-center justify-center shadow-lg transition-all",
               isNodeActive("advisor") ? "border-purple-400 ring-2 ring-purple-400/50 shadow-purple-400/30 animate-pulse bg-purple-500/10" : isNodeDone("advisor") ? "border-emerald-500/60 bg-emerald-500/10" : "border-white/[0.1] group-hover:border-signal"
@@ -500,19 +545,22 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
             </div>
             <div className="text-center">
               <div className="font-heading font-semibold text-xs text-white flex items-center gap-1 justify-center">
-                <span>Advisor</span>
+                <span>{isHi ? "सलाहकार" : "Advisor"}</span>
                 {isNodeActive("advisor") && <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-ping" />}
               </div>
-              <div className="text-[10px] text-slate-400 font-mono">Plain Language</div>
+              <div className="text-[10px] text-slate-400 font-mono">{isHi ? "सरल नागरिक भाषा" : "Plain Language"}</div>
             </div>
           </div>
 
           {/* Node 8: Citizen Verdict */}
           <div
             style={{ position: "absolute", left: "910px", top: "150px", transform: "translate(-50%, -50%)" }}
-            className="flex flex-col items-center gap-2 select-none cursor-pointer group"
+            className="flex flex-col items-center gap-1.5 select-none cursor-pointer group"
             onClick={() => setSelectedNode(PIPELINE_NODES[6])}
           >
+            <div className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-white/[0.04] text-slate-400">
+              {verdict ? "VERDICT" : "READY"}
+            </div>
             <div className={cn(
               "w-14 h-14 rounded-2xl border p-3 flex items-center justify-center shadow-lg transition-all",
               verdict === "scam"
@@ -530,9 +578,9 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
             </div>
             <div className="text-center">
               <div className="font-heading font-semibold text-xs text-emerald-400 font-bold">
-                {verdict ? verdict.toUpperCase() : "Safe / Scam"}
+                {verdict ? (isHi ? (verdict === "scam" ? "धोखाधड़ी" : verdict === "suspicious" ? "संदिग्ध" : "सुरक्षित") : verdict.toUpperCase()) : (isHi ? "सुरक्षित / धोखा" : "Safe / Scam")}
               </div>
-              <div className="text-[10px] text-slate-300 font-mono">Action Ready</div>
+              <div className="text-[10px] text-slate-300 font-mono">{isHi ? "कार्यवाही तैयार" : "Action Ready"}</div>
             </div>
           </div>
         </div>

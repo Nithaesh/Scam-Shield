@@ -40,8 +40,8 @@
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
-  /* Enforce line length limit */
-  p, li, .prose-readable {
+  /* Enforce line length limit only for dedicated reading prose */
+  .prose-readable {
     max-width: 68ch;
   }
 

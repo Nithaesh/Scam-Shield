@@ -395,145 +395,32 @@ export default function LandingPage() {
         </section>
 
         {/* =========================================================================
-         * 4. WORKFLOW PIPELINE GRAPH (SCREENSHOT 2 REPRODUCTION)
+         * 4. LIVE MULTI-AGENT DAG PIPELINE (SCREENSHOT 2 REPRODUCTION)
          * ========================================================================= */}
         <section id="pipeline" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8 border-b border-white/[0.06]">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div className="space-y-2">
+              <div className="text-xs font-mono uppercase tracking-wider text-signal font-semibold">
+                Autonomous Consensus Pipeline
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-heading font-bold text-white tracking-tight">
+                Live Multi-Agent Forensic Architecture
+              </h2>
+              <p className="text-slate-400 text-sm max-w-2xl">
+                Ingests raw citizen evidence, extracts defanged entities, and executes parallel forensic investigations through an air-gapped Bayesian consensus veto gate.
+              </p>
+            </div>
+
+            <Link
+              href={`/${locale}/check`}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-signal text-slate-950 font-bold text-xs font-mono hover:brightness-110 transition-all shrink-0 shadow-lg"
+            >
+              <span>Launch Live Forensic Studio</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
           <PipelineGraph variant="full" locale={locale} />
-        </section>
-
-        {/* =========================================================================
-         * 5. HERMES INVESTIGATION CONSOLE SHOWCASE (SCREENSHOT 3 REPRODUCTION)
-         * ========================================================================= */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8 border-b border-white/[0.06]">
-          <div className="text-center space-y-2 max-w-2xl mx-auto">
-            <div className="text-xs font-mono uppercase tracking-wider text-signal font-semibold">
-              Investigation Workspace
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-heading font-bold text-white tracking-tight">
-              Hermes Multi-Agent Console
-            </h2>
-            <p className="text-slate-400 text-sm">
-              The unified desktop interface for inspecting incoming threats, observing parallel agent consensus, and receiving panic-free guidance.
-            </p>
-          </div>
-
-          {/* Floating Hermes 3-Column UI (Screenshot 3 Mockup) */}
-          <div className="rounded-2xl bg-[#090E1D] border border-white/[0.1] shadow-2xl p-4 sm:p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-white/[0.06] pb-3 text-xs">
-              <div className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-rose-500/80" />
-                <span className="w-3 h-3 rounded-full bg-amber-500/80" />
-                <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
-                <span className="font-mono text-slate-400 ml-2">Hermes Web UI / Scam Shield v2.0</span>
-              </div>
-              <Link
-                href={`/${locale}/check`}
-                className="px-4 py-1.5 rounded-full bg-signal text-slate-950 font-semibold text-xs hover:brightness-110 transition-all"
-              >
-                Launch Console
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 text-xs font-sans">
-              {/* Left Sidebar (Hermes Screenshot 3: Navigation list) */}
-              <div className="lg:col-span-3 rounded-xl bg-[#060913] border border-white/[0.06] p-4 space-y-3 hidden sm:block">
-                <div className="flex items-center gap-2 text-white font-heading font-semibold pb-2 border-b border-white/[0.06]">
-                  <div className="w-6 h-6 rounded-lg bg-signal/20 text-signal flex items-center justify-center">
-                    <Shield className="w-3.5 h-3.5" />
-                  </div>
-                  <span>Scam Shield</span>
-                </div>
-                <div className="space-y-1 font-mono text-[11px] text-slate-400">
-                  <div className="p-2 rounded-lg bg-white/[0.06] text-white font-semibold">● Active Cases</div>
-                  <div className="p-2 rounded-lg hover:bg-white/[0.03]">Agents (5)</div>
-                  <div className="p-2 rounded-lg hover:bg-white/[0.03]">Sessions</div>
-                  <div className="p-2 rounded-lg hover:bg-white/[0.03]">Tools & Forensics</div>
-                  <div className="p-2 rounded-lg hover:bg-white/[0.03]">Knowledge Base</div>
-                  <div className="p-2 rounded-lg hover:bg-white/[0.03]">Analytics</div>
-                  <div className="p-2 rounded-lg hover:bg-white/[0.03]">Settings</div>
-                </div>
-              </div>
-
-              {/* Center Thread (Hermes Screenshot 3: Agent chat with bubbles) */}
-              <div className="lg:col-span-6 rounded-xl bg-[#060913] border border-white/[0.06] p-4 space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b border-white/[0.06]">
-                  <div className="w-6 h-6 rounded-full bg-signal/20 text-signal flex items-center justify-center font-bold text-[10px]">
-                    SS
-                  </div>
-                  <div>
-                    <div className="font-heading font-semibold text-white">Scam Shield Agent</div>
-                    <div className="text-[10px] text-emerald-400 font-mono">● Online</div>
-                  </div>
-                </div>
-
-                {/* User Message Bubble */}
-                <div className="p-3 rounded-xl bg-[#141B2D] border border-white/[0.08] text-slate-200">
-                  "Dear SBI User, your YONO account has been suspended due to pending KYC update. Click http://sbi-update-kyc.top"
-                </div>
-
-                {/* Agent Reply Bubble */}
-                <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 space-y-2">
-                  <div className="font-heading font-bold text-sm uppercase">VERDICT: SCAM (96% CONFIDENCE)</div>
-                  <p className="text-xs text-slate-300">
-                    The link sbi-update-kyc[.]top is a newly created lookalike domain registered in Russia 4 days ago. SBI never sends SMS from personal 10-digit mobile numbers.
-                  </p>
-                  <div className="pt-1 text-[11px] font-mono text-rose-400">
-                    DO NOT: Tap link, enter OTP. | DO NEXT: Call SBI or 1930.
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Sidebar (Hermes Screenshot 3: 3 stacked cards - Agents, Conversations, Tools Donut) */}
-              <div className="lg:col-span-3 space-y-3">
-                {/* Card 1: Agents */}
-                <div className="p-3.5 rounded-xl bg-[#060913] border border-white/[0.06] space-y-2">
-                  <div className="flex items-center justify-between text-slate-400 font-mono text-[11px]">
-                    <span>Agents Active</span>
-                    <span className="text-white font-bold">5</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    {["Ex", "PA", "EC", "Jg", "Ad"].map((initial, i) => (
-                      <div key={i} className="w-6 h-6 rounded-full bg-signal/20 text-signal text-[9px] font-mono font-bold flex items-center justify-center border border-signal/40">
-                        {initial}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Card 2: Conversations */}
-                <div className="p-3.5 rounded-xl bg-[#060913] border border-white/[0.06] space-y-1">
-                  <div className="flex items-center justify-between text-slate-400 font-mono text-[11px]">
-                    <span>Verified Cases</span>
-                    <span className="text-emerald-400 font-bold">+18%</span>
-                  </div>
-                  <div className="font-heading text-xl font-bold text-white">55 Tests</div>
-                </div>
-
-                {/* Card 3: Tools Donut Chart */}
-                <div className="p-3.5 rounded-xl bg-[#060913] border border-white/[0.06] space-y-2">
-                  <div className="text-slate-400 font-mono text-[11px]">Forensic Tools</div>
-                  <EvidenceDonut
-                    items={[
-                      { label: "DNS/Domain", count: 42, color: "#38BDF8" },
-                      { label: "Psychology", count: 28, color: "#3B82F6" },
-                      { label: "UPI/Phone", count: 18, color: "#10B981" },
-                      { label: "Other", count: 12, color: "#F59E0B" },
-                    ]}
-                    size={72}
-                    strokeWidth={9}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom 4 Feature Icons (Hermes Screenshot 3 Bottom Strip) */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-white/[0.06] text-center text-xs font-mono text-slate-400">
-              <div className="p-2 rounded-lg bg-white/[0.02] border border-white/[0.04]">Analytics & Telemetry</div>
-              <div className="p-2 rounded-lg bg-white/[0.02] border border-white/[0.04]">Agent Management</div>
-              <div className="p-2 rounded-lg bg-white/[0.02] border border-white/[0.04]">Forensic Tools</div>
-              <div className="p-2 rounded-lg bg-white/[0.02] border border-white/[0.04]">Knowledge Base</div>
-            </div>
-          </div>
         </section>
 
         {/* =========================================================================

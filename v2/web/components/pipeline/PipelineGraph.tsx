@@ -184,83 +184,147 @@ export const PipelineGraph: React.FC<PipelineGraphProps> = ({
                 <stop offset="0%" stopColor="#38BDF8" />
                 <stop offset="100%" stopColor="#10B981" />
               </linearGradient>
+              <filter id="glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+              <filter id="glow-emerald" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+              <filter id="glow-rose" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
             </defs>
 
-            {/* Path 1: Message (70, 150) -> Extractor (200, 150) */}
+            {/* Path 1: Message (100, 150) -> Extractor (160, 150) */}
             <path
               d="M 120 150 L 160 150"
-              stroke="#2A354C"
-              strokeWidth="2.5"
+              stroke={isNodeActive("extractor") || isNodeDone("extractor") ? "#38BDF8" : "#2A354C"}
+              strokeWidth={isNodeActive("extractor") ? "3.5" : "2.5"}
               fill="none"
+              filter={isNodeActive("extractor") ? "url(#glow-cyan)" : undefined}
+              className="transition-all duration-300"
             />
-            {/* Path 2: Extractor (210, 150) -> Switch (350, 150) */}
+            {/* Path 2: Extractor (260, 150) -> Switch (310, 150) */}
             <path
               d="M 260 150 L 310 150"
-              stroke="#2A354C"
-              strokeWidth="2.5"
+              stroke={isNodeDone("extractor") ? "#38BDF8" : "#2A354C"}
+              strokeWidth={isNodeDone("extractor") ? "3" : "2.5"}
               fill="none"
+              className="transition-all duration-300"
             />
 
-            {/* Path 3 (Branch True): Switch (360, 150) -> Entity Checker (500, 75) */}
+            {/* Path 3 (Branch True): Switch (370, 140) -> Entity Checker (480, 75) */}
             <path
               d="M 370 140 C 420 140, 430 75, 480 75"
-              stroke="#10B981"
-              strokeWidth="2.5"
-              strokeDasharray="4 4"
+              stroke={isNodeActive("entity_checker") || isNodeDone("entity_checker") ? "#10B981" : "#1e4034"}
+              strokeWidth={isNodeActive("entity_checker") ? "3.5" : "2.5"}
+              strokeDasharray={isNodeActive("entity_checker") ? "6 6" : "4 4"}
               fill="none"
-              opacity="0.8"
+              filter={isNodeActive("entity_checker") ? "url(#glow-emerald)" : undefined}
+              className="transition-all duration-300"
             />
 
-            {/* Path 4 (Branch False): Switch (360, 150) -> Pattern Analyst (500, 225) */}
+            {/* Path 4 (Branch False): Switch (370, 160) -> Pattern Analyst (480, 225) */}
             <path
               d="M 370 160 C 420 160, 430 225, 480 225"
-              stroke="#F43F5E"
-              strokeWidth="2.5"
-              strokeDasharray="4 4"
+              stroke={isNodeActive("pattern_analyst") || isNodeDone("pattern_analyst") ? "#F43F5E" : "#4c1d28"}
+              strokeWidth={isNodeActive("pattern_analyst") ? "3.5" : "2.5"}
+              strokeDasharray={isNodeActive("pattern_analyst") ? "6 6" : "4 4"}
               fill="none"
-              opacity="0.8"
+              filter={isNodeActive("pattern_analyst") ? "url(#glow-rose)" : undefined}
+              className="transition-all duration-300"
             />
 
-            {/* Path 5: Entity Checker (580, 75) -> Judge (680, 150) */}
+            {/* Path 5: Entity Checker (580, 75) -> Judge (680, 140) */}
             <path
               d="M 580 75 C 630 75, 630 140, 680 140"
-              stroke="#2A354C"
-              strokeWidth="2.5"
+              stroke={isNodeActive("judge") || isNodeDone("judge") ? "#38BDF8" : "#2A354C"}
+              strokeWidth={isNodeActive("judge") ? "3.5" : "2.5"}
               fill="none"
+              filter={isNodeActive("judge") ? "url(#glow-cyan)" : undefined}
+              className="transition-all duration-300"
             />
 
-            {/* Path 6: Pattern Analyst (580, 225) -> Judge (680, 150) */}
+            {/* Path 6: Pattern Analyst (580, 225) -> Judge (680, 160) */}
             <path
               d="M 580 225 C 630 225, 630 160, 680 160"
-              stroke="#2A354C"
-              strokeWidth="2.5"
+              stroke={isNodeActive("judge") || isNodeDone("judge") ? "#38BDF8" : "#2A354C"}
+              strokeWidth={isNodeActive("judge") ? "3.5" : "2.5"}
               fill="none"
+              filter={isNodeActive("judge") ? "url(#glow-cyan)" : undefined}
+              className="transition-all duration-300"
             />
 
-            {/* Path 7: Judge (730, 150) -> Advisor (820, 150) */}
+            {/* Path 7: Judge (730, 150) -> Advisor (780, 150) */}
             <path
               d="M 730 150 L 780 150"
-              stroke="#2A354C"
-              strokeWidth="2.5"
+              stroke={isNodeActive("advisor") || isNodeDone("advisor") ? "#A855F7" : "#2A354C"}
+              strokeWidth={isNodeActive("advisor") ? "3.5" : "2.5"}
               fill="none"
+              className="transition-all duration-300"
             />
 
-            {/* Path 8: Advisor (840, 150) -> Verdict (910, 150) */}
+            {/* Path 8: Advisor (840, 150) -> Verdict (890, 150) */}
             <path
               d="M 840 150 L 890 150"
-              stroke="#2A354C"
-              strokeWidth="2.5"
+              stroke={verdict ? (verdict === "scam" ? "#F43F5E" : "#10B981") : "#2A354C"}
+              strokeWidth={verdict ? "3.5" : "2.5"}
               fill="none"
+              className="transition-all duration-300"
             />
 
-            {/* Animated Packet Pulse */}
-            <circle r="4.5" fill="#38BDF8" className="filter drop-shadow-[0_0_8px_#38BDF8]">
-              <animateMotion
-                dur="12s"
-                repeatCount="indefinite"
-                path="M 70 150 L 210 150 L 340 150 C 420 140, 430 75, 530 75 C 630 75, 630 140, 700 150 L 810 150 L 910 150"
-              />
-            </circle>
+            {/* LIVE PACKET PULSES: Real-Time Animated Movement */}
+            {(isNodeActive("extractor") || variant === "hero") && (
+              <circle r="4.5" fill="#38BDF8" className="filter drop-shadow-[0_0_8px_#38BDF8]">
+                <animateMotion
+                  dur={isNodeActive("extractor") ? "0.8s" : "2.4s"}
+                  repeatCount="indefinite"
+                  path="M 120 150 L 210 150"
+                />
+              </circle>
+            )}
+
+            {(isNodeActive("entity_checker") || isNodeActive("pattern_analyst") || variant === "hero") && (
+              <>
+                <circle r="4.5" fill="#10B981" className="filter drop-shadow-[0_0_8px_#10B981]">
+                  <animateMotion
+                    dur="1.2s"
+                    repeatCount="indefinite"
+                    path="M 370 140 C 420 140, 430 75, 530 75"
+                  />
+                </circle>
+                <circle r="4.5" fill="#F43F5E" className="filter drop-shadow-[0_0_8px_#F43F5E]">
+                  <animateMotion
+                    dur="1.2s"
+                    repeatCount="indefinite"
+                    path="M 370 160 C 420 160, 430 225, 530 225"
+                  />
+                </circle>
+              </>
+            )}
+
+            {(isNodeActive("judge") || variant === "hero") && (
+              <circle r="4.5" fill="#38BDF8" className="filter drop-shadow-[0_0_8px_#38BDF8]">
+                <animateMotion
+                  dur="0.9s"
+                  repeatCount="indefinite"
+                  path="M 550 75 C 630 75, 630 140, 705 150"
+                />
+              </circle>
+            )}
+
+            {!activeStage && (
+              <circle r="4" fill="#38BDF8" opacity="0.7" className="filter drop-shadow-[0_0_6px_#38BDF8]">
+                <animateMotion
+                  dur="6s"
+                  repeatCount="indefinite"
+                  path="M 70 150 L 210 150 L 340 150 C 420 140, 430 75, 530 75 C 630 75, 630 140, 705 150 L 810 150 L 910 150"
+                />
+              </circle>
+            )}
           </svg>
 
           {/* Node 1: Ingest Message */}

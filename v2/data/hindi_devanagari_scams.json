@@ -1,0 +1,152 @@
+[
+  {
+    "id": "V2_HI_001",
+    "category": "electricity_bill",
+    "language": "hi",
+    "input_type": "text",
+    "text": "प्रिय उपभोक्ता, आपके पिछले महीने के बिजली बिल का भुगतान न होने के कारण आज रात 9:30 बजे बिजली काट दी जाएगी। तुरंत हमारे बिजली अधिकारी 9000000005 पर संपर्क करें।",
+    "expected_verdict": "scam",
+    "expected_scam_type": "electricity_bill",
+    "notes": "Classic Hindi electricity disconnection scam."
+  },
+  {
+    "id": "V2_HI_002",
+    "category": "bank_kyc",
+    "language": "hi",
+    "input_type": "text",
+    "text": "भारतीय स्टेट बैंक (SBI) सूचना: आपका बैंक खाता केवाईसी न होने के कारण आज रात 12 बजे बंद कर दिया जाएगा। खाता चालू रखने हेतु तुरंत पैन कार्ड अपडेट करें: http://sbi-kyc-seva.fake/login",
+    "expected_verdict": "scam",
+    "expected_scam_type": "bank_kyc",
+    "notes": "Hindi SBI KYC account suspension phishing."
+  },
+  {
+    "id": "V2_HI_003",
+    "category": "digital_arrest",
+    "language": "hi",
+    "input_type": "text",
+    "text": "आपके नाम पर भेजे गए पार्सल में अवैध सामान मिला है। आप डिजिटल अरेस्ट में हैं। अभी वीडियो कॉल पर आएं और किसी को न बताएं, वरना गिरफ्तारी होगी।",
+    "expected_verdict": "scam",
+    "expected_scam_type": "digital_arrest",
+    "notes": "Hindi digital arrest legal extortion."
+  },
+  {
+    "id": "V2_HI_004",
+    "category": "upi_collect_refund",
+    "language": "hi",
+    "input_type": "text",
+    "text": "बधाई हो! आपको Google Pay की तरफ से ₹1,999 का कैशबैक प्राप्त हुआ है। अपने बैंक खाते में राशि स्वीकार करने के लिए यहां अपना यूपीआई पिन डालें: http://gpay-cashback.fake/claim",
+    "expected_verdict": "scam",
+    "expected_scam_type": "upi_collect_refund",
+    "notes": "UPI PIN entered to receive cashback fraud."
+  },
+  {
+    "id": "V2_HI_005",
+    "category": "job_offer",
+    "language": "hi",
+    "input_type": "text",
+    "text": "घर बैठे नौकरी: प्रतिदिन केवल यूट्यूब वीडियो लाइक करें और ₹3,000 कमाएं। कोई पंजीकरण शुल्क नहीं। टेलीग्राम पर संपर्क करें: @fake_hindi_job",
+    "expected_verdict": "scam",
+    "expected_scam_type": "job_offer",
+    "notes": "Hindi YouTube rating task scam."
+  },
+  {
+    "id": "V2_HI_006",
+    "category": "lottery_prize",
+    "language": "hi",
+    "input_type": "text",
+    "text": "केबीसी महा लॉटरी: बधाई हो! आपके मोबाइल नंबर ने केबीसी कौन बनेगा करोड़पति में ₹25,00,000 का नकद इनाम जीता है। लॉटरी फाइल चार्ज ₹5,500 जमा करें।",
+    "expected_verdict": "scam",
+    "expected_scam_type": "lottery_prize",
+    "notes": "KBC Hindi lottery advance fee scam."
+  },
+  {
+    "id": "V2_HI_007",
+    "category": "courier_customs",
+    "language": "hi",
+    "input_type": "text",
+    "text": "भारतीय डाक (India Post) सूचना: आपका पार्सल गलत पते के कारण वितरण केंद्र में रुका है। पुनः वितरण हेतु ₹35 शुल्क का भुगतान करें: http://indiapost-seva.fake/update",
+    "expected_verdict": "scam",
+    "expected_scam_type": "courier_customs",
+    "notes": "India Post address update fee phishing."
+  },
+  {
+    "id": "V2_HI_008",
+    "category": "loan_app",
+    "language": "hi",
+    "input_type": "text",
+    "text": "आसान लोन सेवा: बिना किसी गारंटी के 10 मिनट में ₹1,00,000 का पर्सनल लोन पाएं। कम ब्याज दर। अभी ऐप डाउनलोड करें: http://aasaan-loan.fake/loan.apk",
+    "expected_verdict": "scam",
+    "expected_scam_type": "loan_app",
+    "notes": "Malicious loan app APK distribution."
+  },
+  {
+    "id": "V2_HI_009",
+    "category": "govt_scheme_apk",
+    "language": "hi",
+    "input_type": "text",
+    "text": "प्रधानमंत्री किसान सम्मान निधि योजना: सभी पात्र किसानों के खाते में ₹6,000 की नई किस्त भेजी जा रही है। सूची में अपना नाम देखने हेतु ऐप इंस्टॉल करें: http://pm-kisan-portal.fake/app.apk",
+    "expected_verdict": "scam",
+    "expected_scam_type": "govt_scheme_apk",
+    "notes": "PM Kisan fake scheme APK link."
+  },
+  {
+    "id": "V2_HI_010",
+    "category": "bank_kyc",
+    "language": "hi",
+    "input_type": "text",
+    "text": "एचडीएफसी बैंक (HDFC): प्रिय ग्राहक, आपका डेबिट कार्ड ब्लॉक कर दिया गया है। कार्ड को तुरंत अनलॉक करने के लिए यहां अपना पिन और सीवीवी दर्ज करें: http://hdfc-card-unlock.fake/verify",
+    "expected_verdict": "scam",
+    "expected_scam_type": "bank_kyc",
+    "notes": "Debit card unlock PIN/CVV harvesting phishing."
+  },
+  {
+    "id": "V2_HI_011",
+    "category": "electricity_bill",
+    "language": "hi",
+    "input_type": "text",
+    "text": "विद्युत विभाग सूचना: प्रिय उपभोक्ता, आपका पिछला बिल अपडेट नहीं हुआ है। आज रात 8:30 बजे बिजली सप्लाई बंद कर दी जाएगी। लाइनमैन से बात करें: 9000000006",
+    "expected_verdict": "scam",
+    "expected_scam_type": "electricity_bill",
+    "notes": "Lineman contact power disconnection threat."
+  },
+  {
+    "id": "V2_HI_012",
+    "category": "upi_collect_refund",
+    "language": "hi",
+    "input_type": "text",
+    "text": "पेटीएम (Paytm) रिफंड अलर्ट: आपके असफल लेनदेन का ₹2,500 रिफंड स्वीकृत हो गया है। खाते में पाने के लिए अपना यूपीआई पिन दर्ज करें।",
+    "expected_verdict": "scam",
+    "expected_scam_type": "upi_collect_refund",
+    "notes": "Failed transaction refund UPI PIN trap."
+  },
+  {
+    "id": "V2_HI_013",
+    "category": "digital_arrest",
+    "language": "hi",
+    "input_type": "text",
+    "text": "केंद्रीय अन्वेषण ब्यूरो (CBI) नोटिस: आपके सिम कार्ड से अवैध वित्तीय लेन-देन पाए गए हैं। तुरंत जांच अधिकारी से स्काइप कॉल पर जुड़ें अन्यथा पुलिस टीम आपके पते पर भेजी जाएगी।",
+    "expected_verdict": "scam",
+    "expected_scam_type": "digital_arrest",
+    "notes": "CBI intimidation digital arrest extortion."
+  },
+  {
+    "id": "V2_HI_014",
+    "category": "govt_scheme_apk",
+    "language": "hi",
+    "input_type": "text",
+    "text": "लाडली बहना योजना 2026: सभी महिलाओं को प्रतिमाह ₹3,000 की राशि दी जा रही है। अपना आधार नंबर दर्ज कर ऐप डाउनलोड करें: http://ladli-behna.fake/yojana.apk",
+    "expected_verdict": "scam",
+    "expected_scam_type": "govt_scheme_apk",
+    "notes": "Ladli Behna fake government scheme APK."
+  },
+  {
+    "id": "V2_HI_015",
+    "category": "bank_kyc",
+    "language": "hi",
+    "input_type": "text",
+    "text": "पंजाब नेशनल बैंक (PNB): आपकी नेटबैंकिंग सेवा 24 घंटे में निष्क्रिय हो जाएगी। पुनः चालू करने हेतु तुरंत अपनी यूजर आईडी और पासवर्ड सत्यापित करें: http://pnb-online.fake/auth",
+    "expected_verdict": "scam",
+    "expected_scam_type": "bank_kyc",
+    "notes": "Netbanking password phishing."
+  }
+]

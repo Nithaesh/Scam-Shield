@@ -273,7 +273,7 @@ async def _stream_offline_mock(
     is_scam = any(
         kw in text_lower
         for kw in (
-            "blocked", "disconnection", "bill", "kyc", "apk", "lottery", "kbc",
+            "blocked", "disconnect", "bill", "kyc", "apk", "lottery", "kbc",
             "cbi", "arrest", "pin", "कट", "ब्लॉक", "रिफंड", "वारंट"
         )
     )

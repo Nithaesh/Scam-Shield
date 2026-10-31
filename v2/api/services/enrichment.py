@@ -112,6 +112,37 @@ def enrich_analysis_result(
         headline=str(adv_data.get("headline", "")),
     )
 
+    # Advice formatting (handles legacy orchestrator 'actions' list)
+    legacy_actions = list(adv_data.get("actions", []))
+    do_not = list(adv_data.get("do_not", []))
+    do_next = list(adv_data.get("do_next", []))
+
+    if not do_not and effective_verdict in ("scam", "suspicious"):
+        do_not = [
+            "Do not click any links or download attached APK files."
+            if language == "en"
+            else "किसी भी लिंक पर क्लिक न करें या APK फ़ाइल डाउनलोड न करें।",
+            "Never share OTPs, PINs, or banking passwords with anyone."
+            if language == "en"
+            else "किसी के भी साथ OTP, PIN या बैंकिंग पासवर्ड साझा न करें।",
+        ]
+
+    if not do_next:
+        if legacy_actions:
+            do_next = legacy_actions
+        elif effective_verdict == "safe":
+            do_next = [
+                "Keep standard security practices enabled."
+                if language == "en"
+                else "मानक सुरक्षा प्रथाओं को सक्षम रखें।"
+            ]
+        else:
+            do_next = [
+                "Verify the claim via official bank/provider mobile apps or customer care."
+                if language == "en"
+                else "आधिकारिक बैंक/प्रदाता ऐप या कस्टमर केयर के माध्यम से दावे का सत्यापन करें।"
+            ]
+
     return FinalResultEvent(
         v=1,
         request_id=request_id,
@@ -123,8 +154,8 @@ def enrich_analysis_result(
         advice=AdvicePayload(
             headline=str(adv_data.get("headline", "Safety Guidance")),
             summary=str(adv_data.get("plain_summary", "")),
-            do_not=list(adv_data.get("do_not", [])),
-            do_next=list(adv_data.get("do_next", [])),
+            do_not=do_not,
+            do_next=do_next,
             report_to=list(adv_data.get("report_to", ["National Cyber Crime Helpline: 1930"])),
         ),
         share_text=share_text,

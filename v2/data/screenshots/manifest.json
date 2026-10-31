@@ -1,0 +1,82 @@
+[
+  {
+    "id": "screen_scam_01",
+    "filename": "screen_scam_01.png",
+    "sender": "AX-SBIINB",
+    "text": "Dear customer, your SBI NetBanking will be blocked today. Update KYC urgently at http://sbi-kyc-verify.fake/login",
+    "expected_verdict": "scam",
+    "expected_scam_type": "bank_kyc"
+  },
+  {
+    "id": "screen_scam_02",
+    "filename": "screen_scam_02.png",
+    "sender": "+91 90000 00001",
+    "text": "Electricity Bill Alert: Your power will be disconnected tonight at 9:30 PM. Call officer at 9000000001 immediately.",
+    "expected_verdict": "scam",
+    "expected_scam_type": "electricity_bill"
+  },
+  {
+    "id": "screen_scam_03",
+    "filename": "screen_scam_03.png",
+    "sender": "CBI-DELHI",
+    "text": "POLICE NOTICE: Illegal parcel detected with your Aadhaar. You are under Digital Arrest. Join Skype call immediately.",
+    "expected_verdict": "scam",
+    "expected_scam_type": "digital_arrest"
+  },
+  {
+    "id": "screen_scam_04",
+    "filename": "screen_scam_04.png",
+    "sender": "PhonePe-Bonus",
+    "text": "You won Rs 1,999 cashback! Open link and enter your UPI PIN to transfer money into your account.",
+    "expected_verdict": "scam",
+    "expected_scam_type": "upi_collect_refund"
+  },
+  {
+    "id": "screen_scam_05",
+    "filename": "screen_scam_05.png",
+    "sender": "PM-Kisan",
+    "text": "Pradhan Mantri Kisan Yojana: Install new official mobile app to claim Rs 6,000 subsidy at http://pmkisan.fake/app.apk",
+    "expected_verdict": "scam",
+    "expected_scam_type": "govt_scheme_apk"
+  },
+  {
+    "id": "screen_safe_01",
+    "filename": "screen_safe_01.png",
+    "sender": "AD-HDFCBK",
+    "text": "INR 2,450.00 debited from A/c XX4521 on 31-Oct-26 to UPI/Sample Store. Ref 612345678901. Not you? Call 18002664332.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none"
+  },
+  {
+    "id": "screen_safe_02",
+    "filename": "screen_safe_02.png",
+    "sender": "VK-SBIOTP",
+    "text": "892145 is your secret OTP for NetBanking login. Valid for 5 mins. NEVER share OTP with anyone including bank staff.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none"
+  },
+  {
+    "id": "screen_safe_03",
+    "filename": "screen_safe_03.png",
+    "sender": "AMAZON",
+    "text": "Your package with order #402-9871234 is arriving today by delivery associate Ramesh. Track via Amazon mobile app.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none"
+  },
+  {
+    "id": "screen_safe_04",
+    "filename": "screen_safe_04.png",
+    "sender": "IRCTC-SMS",
+    "text": "IRCTC PNR 2415678901: Train 12423 RAJDHANI EXP confirmed coach B3-45. Chart prepared. Track at irctc.co.in.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none"
+  },
+  {
+    "id": "screen_safe_05",
+    "filename": "screen_safe_05.png",
+    "sender": "BESCOM",
+    "text": "Payment received: Thank you for paying your BESCOM electricity bill of Rs 1,450.00 for A/c 5421098. Receipt: RCP897123.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none"
+  }
+]

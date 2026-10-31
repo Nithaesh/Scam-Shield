@@ -1,0 +1,74 @@
+{
+  "brand": {
+    "title": "Scam Shield",
+    "tagline": "Citizen Fraud Protection for India",
+    "subtitle": "Check suspicious messages, links, and payment requests safely before you tap or pay."
+  },
+  "nav": {
+    "home": "Check Message",
+    "howItWorks": "How It Works",
+    "community": "Community Reports",
+    "about": "Privacy & Safety"
+  },
+  "accessibility": {
+    "seniorMode": "Senior Mode (Large Text)",
+    "seniorModeActive": "Senior Mode Active",
+    "normalMode": "Standard View",
+    "speechInput": "Voice Input",
+    "listening": "Listening... speak now",
+    "stopListening": "Stop Listening"
+  },
+  "input": {
+    "label": "Paste SMS, WhatsApp message, UPI ID, or URL:",
+    "placeholder": "e.g. Your electricity connection will be disconnected at 9:30 PM tonight...",
+    "samplesTitle": "Or try an example:",
+    "sampleKyc": "SBI KYC Block Alert",
+    "sampleElectricity": "Electricity Disconnect Threat",
+    "sampleArrest": "Digital Arrest Warrant",
+    "sampleGenuine": "Bank Account Debit (Genuine)",
+    "pasteButton": "Paste from Clipboard",
+    "clearButton": "Clear",
+    "dropzone": "Drag & drop screenshot or click to browse",
+    "dropzoneHint": "PNG, JPG, WebP up to 10MB. We never save your image.",
+    "analyzing": "Analyzing with 5 Agents...",
+    "analyzeButton": "Scan for Fraud Now"
+  },
+  "pipeline": {
+    "heading": "Real-Time 5-Agent Analysis",
+    "extractor": "Entity Extractor",
+    "pattern": "Pattern & Tactic Analyst",
+    "checker": "Domain & UPI Reputation Checker",
+    "judge": "Verdict Synthesis Judge",
+    "advisor": "Citizen Safety Advisor",
+    "statusPending": "Waiting",
+    "statusRunning": "Investigating...",
+    "statusDone": "Completed"
+  },
+  "verdict": {
+    "scam": "FRAUD DETECTED (SCAM)",
+    "scamSub": "Do NOT tap any link, pay money, or reply to this message.",
+    "suspicious": "HIGH RISK / SUSPICIOUS",
+    "suspiciousSub": "Exercise extreme caution. Verify independently through official channels.",
+    "safe": "LIKELY SAFE",
+    "safeSub": "Matches regular non-fraud patterns. Always guard your OTP.",
+    "confidence": "Confidence Score",
+    "scamType": "Scam Category",
+    "why": "Reasoning & Findings",
+    "conflictAlert": "Evidence Discrepancy Detected"
+  },
+  "advice": {
+    "title": "What You Must Do",
+    "doNot": "DO NOT:",
+    "doNext": "ONE NEXT STEP:",
+    "helplineTitle": "National Cyber Crime Helpline",
+    "helplineCall": "Dial 1930 (Toll Free)",
+    "helplineWeb": "Report on cybercrime.gov.in",
+    "shareWhatsApp": "Share Alert with Family on WhatsApp",
+    "reportCommunity": "Flag as Scammer to Help Others"
+  },
+  "history": {
+    "title": "Recent Checks (On This Device Only)",
+    "empty": "No recent scans on this device.",
+    "clear": "Clear History"
+  }
+}

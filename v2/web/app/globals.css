@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  min-height: 100vh;
+}
+
+/* Senior Mode Accessibility Styles */
+.senior-mode {
+  font-size: 1.15rem;
+  line-height: 1.75;
+}
+
+.senior-mode button,
+.senior-mode input,
+.senior-mode textarea {
+  font-size: 1.15rem;
+}
+
+.senior-mode h1 {
+  font-size: 2.25rem !important;
+}
+
+.senior-mode h2 {
+  font-size: 1.85rem !important;
+}
+
+.senior-mode h3 {
+  font-size: 1.5rem !important;
+}
+
+/* Ensure focus visibility for WCAG AAA */
+*:focus-visible {
+  outline: 3px solid #2563eb !important;
+  outline-offset: 2px !important;
+}

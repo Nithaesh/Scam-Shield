@@ -65,11 +65,14 @@ export function generateStaticParams() {
 
 export default async function LocaleLayout({
   children,
-  params: { locale },
+  params,
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }> | { locale: string };
 }) {
+  const resolvedParams = await Promise.resolve(params);
+  const locale = resolvedParams.locale;
+
   if (!locales.includes(locale as any)) {
     notFound();
   }

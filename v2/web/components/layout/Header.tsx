@@ -4,9 +4,8 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { Sun, Moon, Shield, Menu, X } from "lucide-react";
+import { Sun, Moon, Shield, Menu, X, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/Button";
 
 export const Header: React.FC = () => {
   const t = useTranslations();
@@ -38,87 +37,94 @@ export const Header: React.FC = () => {
   };
 
   const otherLocale = locale === "en" ? "hi" : "en";
-  // Swap locale prefix in pathname
   const otherPath = pathname.replace(`/${locale}`, `/${otherLocale}`) || `/${otherLocale}`;
 
   return (
-    <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-page/85 border-b border-hairline/80 transition-colors">
+    <header className="sticky top-0 z-50 w-full backdrop-blur-xl bg-[#060913]/80 border-b border-white/[0.06] transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-        {/* Brand Logo & Name */}
+        {/* Brand Logo & Name (Screenshot 1 Style) */}
         <Link
           href={`/${locale}`}
-          className="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal rounded-lg p-1"
+          className="flex items-center gap-3 group focus-visible:outline-none rounded-lg"
         >
-          <div className="relative w-8 h-8 rounded-lg bg-signal/10 border border-signal/30 flex items-center justify-center text-signal group-hover:scale-105 transition-transform">
-            {/* Custom SVG Shield */}
-            <svg
-              className="w-5 h-5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              <path d="m9 12 2 2 4-4" />
-            </svg>
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-signal to-blue-600 p-[1px] shadow-sm group-hover:scale-105 transition-transform">
+            <div className="w-full h-full bg-[#060913] rounded-[7px] flex items-center justify-center text-signal">
+              <Shield className="w-4 h-4 fill-signal/20" />
+            </div>
           </div>
-          <div className="flex flex-col">
-            <span className="font-heading font-bold text-base tracking-tight text-paper leading-none">
-              Scam Shield
-            </span>
-            <span className="text-[10px] font-mono text-fog uppercase tracking-wider mt-0.5">
-              5-Agent Defense
-            </span>
-          </div>
+          <span className="font-heading font-bold text-base tracking-tight text-white">
+            Scam Shield
+          </span>
         </Link>
 
-        {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-6 text-xs font-medium text-fog">
-          <Link href={`/${locale}#how-it-works`} className="hover:text-paper transition-colors">
-            {t("nav.howItWorks")}
+        {/* Center Floating Pill Navigation (Screenshot 1 Style) */}
+        <nav className="hidden md:flex items-center gap-1 p-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-medium text-slate-400">
+          <Link
+            href={`/${locale}#threat-map`}
+            className="px-3.5 py-1.5 rounded-full hover:text-white hover:bg-white/[0.06] transition-colors"
+          >
+            Threat Map
           </Link>
-          <Link href={`/${locale}#scams-we-catch`} className="hover:text-paper transition-colors">
-            {t("nav.scamsWeCatch")}
+          <Link
+            href={`/${locale}#pipeline`}
+            className="px-3.5 py-1.5 rounded-full hover:text-white hover:bg-white/[0.06] transition-colors"
+          >
+            Pipeline
           </Link>
-          <Link href={`/${locale}#honest-numbers`} className="hover:text-paper transition-colors">
-            {t("nav.honestNumbers")}
+          <Link
+            href={`/${locale}#security-stack`}
+            className="px-3.5 py-1.5 rounded-full hover:text-white hover:bg-white/[0.06] transition-colors"
+          >
+            Forensics
           </Link>
-          <Link href={`/${locale}/community`} className="hover:text-paper transition-colors">
-            {t("nav.community")}
+          <Link
+            href={`/${locale}/community`}
+            className="px-3.5 py-1.5 rounded-full hover:text-white hover:bg-white/[0.06] transition-colors"
+          >
+            Community
           </Link>
-          <Link href={`/${locale}/about`} className="hover:text-paper transition-colors">
-            {t("nav.about")}
+          <Link
+            href={`/${locale}/about`}
+            className="px-3.5 py-1.5 rounded-full hover:text-white hover:bg-white/[0.06] transition-colors"
+          >
+            About
           </Link>
         </nav>
 
-        {/* Right Controls: Language, Theme, Pill CTA */}
+        {/* Right Controls: Status Pill, Language, Theme, Action Button (Screenshot 1 Style) */}
         <div className="hidden sm:flex items-center gap-3">
+          {/* Status Badge */}
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span>5 AGENTS ONLINE</span>
+          </div>
+
           {/* Language Switcher */}
           <Link
             href={otherPath}
-            className="px-2.5 py-1 rounded-md border border-hairline bg-raised text-paper text-xs font-mono font-medium hover:border-signal transition-colors"
+            className="px-2.5 py-1 rounded-full border border-white/[0.08] bg-white/[0.04] text-slate-300 text-xs font-mono hover:border-signal transition-colors"
             title="Switch Language"
           >
-            {locale === "en" ? "हिन्दी" : "English"}
+            {locale === "en" ? "हिन्दी" : "EN"}
           </Link>
 
           {/* Theme Switcher */}
           <button
             type="button"
             onClick={toggleTheme}
-            className="p-2 rounded-md border border-hairline bg-raised text-fog hover:text-paper hover:border-signal transition-colors"
+            className="p-2 rounded-full border border-white/[0.08] bg-white/[0.04] text-slate-400 hover:text-white hover:border-signal transition-colors"
             aria-label="Toggle theme"
           >
-            {theme === "dark" ? <Sun className="w-4 h-4 text-signal" /> : <Moon className="w-4 h-4 text-signal" />}
+            {theme === "dark" ? <Sun className="w-3.5 h-3.5 text-signal" /> : <Moon className="w-3.5 h-3.5 text-signal" />}
           </button>
 
-          {/* Check Button Pill */}
-          <Link href={`/${locale}/check`}>
-            <Button variant="signal" size="sm" className="font-sans">
-              {t("nav.check")}
-            </Button>
+          {/* Primary Action Button (Screenshot 1 Style: Pill with Arrow) */}
+          <Link
+            href={`/${locale}/check`}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white text-slate-950 font-semibold text-xs hover:bg-slate-200 transition-all shadow-sm group"
+          >
+            <span>Check Message</span>
+            <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </div>
 
@@ -126,14 +132,14 @@ export const Header: React.FC = () => {
         <div className="flex sm:hidden items-center gap-2">
           <Link
             href={otherPath}
-            className="px-2 py-1 rounded border border-hairline bg-raised text-paper text-xs font-mono"
+            className="px-2 py-1 rounded border border-white/[0.08] bg-white/[0.04] text-white text-xs font-mono"
           >
             {locale === "en" ? "हिं" : "EN"}
           </Link>
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded border border-hairline bg-raised text-fog"
+            className="p-2 rounded border border-white/[0.08] bg-white/[0.04] text-slate-300"
             aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -141,60 +147,51 @@ export const Header: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="sm:hidden px-4 pt-3 pb-6 border-t border-hairline bg-panel space-y-4 animate-in slide-in-from-top-2">
-          <nav className="flex flex-col space-y-3 text-sm font-medium text-fog">
+        <div className="sm:hidden px-4 pt-3 pb-6 border-t border-white/[0.08] bg-[#0A0F1E] space-y-4">
+          <nav className="flex flex-col space-y-3 text-sm font-medium text-slate-300">
             <Link
-              href={`/${locale}#how-it-works`}
+              href={`/${locale}#threat-map`}
               onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-paper"
+              className="hover:text-white"
             >
-              {t("nav.howItWorks")}
+              Threat Map
             </Link>
             <Link
-              href={`/${locale}#scams-we-catch`}
+              href={`/${locale}#pipeline`}
               onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-paper"
+              className="hover:text-white"
             >
-              {t("nav.scamsWeCatch")}
+              Pipeline
             </Link>
             <Link
-              href={`/${locale}#honest-numbers`}
+              href={`/${locale}#security-stack`}
               onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-paper"
+              className="hover:text-white"
             >
-              {t("nav.honestNumbers")}
+              Forensics
             </Link>
             <Link
               href={`/${locale}/community`}
               onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-paper"
+              className="hover:text-white"
             >
-              {t("nav.community")}
+              Community
             </Link>
             <Link
               href={`/${locale}/about`}
               onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-paper"
+              className="hover:text-white"
             >
-              {t("nav.about")}
+              About
             </Link>
           </nav>
-
-          <div className="flex items-center justify-between pt-3 border-t border-hairline">
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="flex items-center gap-2 text-xs text-fog"
-            >
-              {theme === "dark" ? <Sun className="w-4 h-4 text-signal" /> : <Moon className="w-4 h-4 text-signal" />}
-              <span>{theme === "dark" ? "Light theme" : "Dark theme"}</span>
-            </button>
+          <div className="pt-3 border-t border-white/[0.08] flex items-center justify-between">
             <Link href={`/${locale}/check`} onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="signal" size="sm">
-                {t("nav.check")}
-              </Button>
+              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white text-slate-950 font-semibold text-xs">
+                Check Message →
+              </span>
             </Link>
           </div>
         </div>

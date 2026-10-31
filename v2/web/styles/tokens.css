@@ -1,86 +1,93 @@
-/* ==========================================================================
-   SCAM SHIELD DESIGN TOKENS
-   Investigation Desk Archetype
-   ========================================================================== */
-
 :root {
-  /* Dark Theme (Default) */
-  --page: #080F1D;
-  --panel: #0C1730;
-  --raised: #111F3D;
-  --hairline: rgba(160, 185, 235, 0.12);
-  --text: #E9EEF8;
-  --fog: #93A3C2;
-  --signal: #6EA8FF;
-  --text-on-signal: #06122B;
+  /* CyberSafe & Hermes Dark Palette (Default) */
+  --color-page: #060913;
+  --color-panel: #0A0F1E;
+  --color-raised: #10182C;
+  --color-hairline: rgba(255, 255, 255, 0.08);
+  --color-hairline-bright: rgba(255, 255, 255, 0.16);
 
-  /* Verdict & Risk (Consistent Physics & Surfaces) */
-  --verdict-safe: #16a34a;
-  --verdict-safe-text: #4ADE80;
-  --verdict-safe-surface: rgba(22, 163, 74, 0.12);
+  /* Text Hierarchy */
+  --color-paper: #F1F5F9;
+  --color-fog: #94A3B8;
+  --color-muted: #64748B;
 
-  --verdict-warn: #f59e0b;
-  --verdict-warn-text: #FBBF24;
-  --verdict-warn-surface: rgba(245, 158, 11, 0.12);
+  /* Primary Accent: Electric Cyan / Blue */
+  --color-signal: #38BDF8;
+  --color-signal-glow: rgba(56, 189, 248, 0.25);
+  --color-signal-dark: #0284C7;
+  --color-on-signal: #030712;
 
-  --verdict-scam: #dc2626;
-  --verdict-scam-text: #F87171;
-  --verdict-scam-surface: rgba(220, 38, 38, 0.12);
+  /* Verdict & Status Colors */
+  --color-verdict-safe: #10B981;
+  --color-verdict-safe-surface: rgba(16, 185, 129, 0.10);
+  --color-verdict-safe-text: #34D399;
 
-  /* Motion & Physics */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
-  --stamp-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --duration-micro: 150ms;
-  --duration-node: 250ms;
-  --duration-packet: 400ms;
-  --duration-stamp: 250ms;
-  --duration-logo: 600ms;
+  --color-verdict-warn: #F59E0B;
+  --color-verdict-warn-surface: rgba(245, 158, 11, 0.10);
+  --color-verdict-warn-text: #FBBF24;
 
-  /* Geometry & Radius */
-  --radius-sm: 12px;
-  --radius-tile: 18px;
+  --color-verdict-scam: #EF4444;
+  --color-verdict-scam-surface: rgba(239, 68, 68, 0.12);
+  --color-verdict-scam-text: #F87171;
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-tile: 14px;
   --radius-panel: 20px;
   --radius-pill: 9999px;
-
-  /* Elevation Highlights */
-  --inner-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-.light, [data-theme="light"] {
-  /* Light Theme */
-  --page: #F4F6FB;
-  --panel: #FFFFFF;
-  --raised: #EAEFF8;
-  --hairline: rgba(14, 25, 48, 0.12);
-  --text: #0E1930;
-  --fog: #4B5B7A;
-  --signal: #1F5FD6;
-  --text-on-signal: #FFFFFF;
+[data-theme="light"],
+.light {
+  --color-page: #F8FAFC;
+  --color-panel: #FFFFFF;
+  --color-raised: #EDF2F7;
+  --color-hairline: rgba(15, 23, 42, 0.08);
+  --color-hairline-bright: rgba(15, 23, 42, 0.16);
 
-  /* Verdict Tint adjustments for WCAG AA on Light backgrounds */
-  --verdict-safe-text: #166534;
-  --verdict-safe-surface: rgba(22, 163, 74, 0.12);
+  --color-paper: #0F172A;
+  --color-fog: #475569;
+  --color-muted: #64748B;
 
-  --verdict-warn-text: #92400e;
-  --verdict-warn-surface: rgba(245, 158, 11, 0.12);
+  --color-signal: #0284C7;
+  --color-signal-glow: rgba(2, 132, 199, 0.2);
+  --color-signal-dark: #0369A1;
+  --color-on-signal: #FFFFFF;
 
-  --verdict-scam-text: #991b1b;
-  --verdict-scam-surface: rgba(220, 38, 38, 0.12);
+  --color-verdict-safe: #059669;
+  --color-verdict-safe-surface: #ECFDF5;
+  --color-verdict-safe-text: #065F46;
 
-  --inner-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --color-verdict-warn: #D97706;
+  --color-verdict-warn-surface: #FFFBEB;
+  --color-verdict-warn-text: #92400E;
+
+  --color-verdict-scam: #DC2626;
+  --color-verdict-scam-surface: #FEF2F2;
+  --color-verdict-scam-text: #991B1B;
 }
 
-/* Subtle 3% Grain Overlay from tiny inline SVG data URI */
-.grain-overlay {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+/* Glassmorphic card glow helper */
+.glass-panel {
+  background: rgba(10, 15, 30, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
 }
 
-/* Hero Ambient Soft Glow */
-.hero-glow {
-  background: radial-gradient(ellipse 55% 45% at 15% 10%, rgba(110, 168, 255, 0.14), transparent 60%);
+.glass-panel-elevated {
+  background: rgba(16, 24, 44, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.light .hero-glow, [data-theme="light"] .hero-glow {
-  background: radial-gradient(ellipse 55% 45% at 15% 10%, rgba(31, 95, 214, 0.08), transparent 60%);
+.glow-blue {
+  box-shadow: 0 0 25px -5px rgba(56, 189, 248, 0.35);
+}
+
+.glow-emerald {
+  box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.35);
 }

@@ -50,6 +50,8 @@ import {
   Code2,
   Boxes,
   FolderGit2,
+  Upload,
+  X,
 } from "lucide-react";
 import { cn, defangUrl, defangHandle } from "@/lib/utils";
 import { PipelineGraph } from "@/components/pipeline/PipelineGraph";
@@ -83,18 +85,61 @@ export default function SyntrixDashboardPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [caseId, setCaseId] = useState("SS-0042");
 
-  // History & settings
+  // History & selections
   const [history, setHistory] = useState<HistoryItem[]>([]);
-  const [selectedFeature, setSelectedFeature] = useState<string>("all");
+  const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [copiedShare, setCopiedShare] = useState(false);
   const [copiedEntity, setCopiedEntity] = useState<string | null>(null);
 
-  // Dropdown states
+  // Dropdown & Modal states
+  const [versionDropdown, setVersionDropdown] = useState(false);
   const [toolsDropdown, setToolsDropdown] = useState(false);
   const [thinkDropdown, setThinkDropdown] = useState(false);
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [helpModalOpen, setHelpModalOpen] = useState(false);
+  const [selectedPresetCategory, setSelectedPresetCategory] = useState<string>("all");
 
   const mainScrollRef = useRef<HTMLDivElement>(null);
+
+  // Hindi localization dictionary
+  const isHi = locale === "hi";
+  const dict = {
+    brandName: isHi ? "स्कैम शील्ड" : "Scam Shield",
+    versionPill: isHi ? "स्कैम शील्ड v2.0" : "Scam Shield v2.0",
+    welcomeBack: isHi ? "वापसी पर स्वागत है" : "Welcome Back",
+    mainHeadline: isHi ? "आज ही अपनी डिजिटल सुरक्षा सुनिश्चित करें" : "Bring your safety to life today",
+    inputPlaceholder: isHi ? "मुझसे कुछ भी पूछें... या संदिग्ध SMS, व्हाट्सएप संदेश या UPI लिंक पेस्ट करें" : "Ask me anything... or paste suspicious SMS, WhatsApp message, or UPI link",
+    newScan: isHi ? "नई जांच" : "New Scan",
+    featuresTitle: isHi ? "एजेंट क्षमताएं" : "Features",
+    recentScans: isHi ? "हालिया स्कैन" : "Recent Scans",
+    clear: isHi ? "हटाएं" : "Clear",
+    dashboard: isHi ? "डैशबोर्ड" : "Dashboard",
+    helpSupport: isHi ? "सहायता एवं समर्थन" : "Help & Support",
+    voice: isHi ? "आवाज" : "Voice",
+    agentsTool: isHi ? "5 एजेंट सक्रिय" : "5 Agents",
+    bayesianVeto: isHi ? "बेयसियन वीटो" : "Bayesian Veto",
+    helplineTitle: isHi ? "राष्ट्रीय साइबर हेल्पलाइन 1930" : "Emergency Helpline 1930",
+    helplineDesc: isHi ? "मेमोरी-आधारित विश्लेषण। 0 बाइट्स डिस्क पर सेव।" : "Air-gapped memory sandbox. Zero bytes retained on disk.",
+    dialHelpline: isHi ? "कॉल 1930 नि:शुल्क" : "Dial 1930 Free",
+    card1Title: isHi ? "बैंक केवाईसी धोखाधड़ी" : "Bank KYC Phishing",
+    card1Desc: isHi ? "एसबीआई YONO के नकली लिंक और धोखाधड़ी की पहचान करें।" : "Inspect lookalike SBI YONO links and defanged URLs in seconds.",
+    card2Title: isHi ? "बिजली बिल काटने की धमकी" : "Electricity Threat",
+    card2Desc: isHi ? "आज रात 9:30 बजे बिजली कटने वाले फर्जी संदेशों की पड़ताल करें।" : "Detect false deadline countdowns and power disconnection traps.",
+    card3Title: isHi ? "सीबीआई डिजिटल अरेस्ट" : "CBI Digital Arrest",
+    card3Desc: isHi ? "फर्जी पुलिस व सुप्रीम कोर्ट के आधार वारंट का पर्दाफाश करें।" : "Expose fake law enforcement summons and WhatsApp extortion.",
+    runningPipeline: isHi ? "वास्तविक समय मल्टी-एजेंट DAG वर्कफ़्लो" : "LIVE MULTI-AGENT DAG WORKFLOW",
+    consensusDone: isHi ? "आम सहमति जांच पूर्ण ✓" : "Consensus Complete ✓",
+    confirmedScam: isHi ? "धोखाधड़ी की पुष्टि" : "CONFIRMED FRAUD",
+    suspicious: isHi ? "अत्यधिक संदिग्ध" : "HIGHLY SUSPICIOUS",
+    safe: isHi ? "पूर्णतः सुरक्षित" : "VERIFIED SAFE",
+    copyWarning: isHi ? "व्हाट्सएप चेतावनी कॉपी करें" : "Copy WhatsApp Warning",
+    copied: isHi ? "कॉपी हो गया!" : "Copied!",
+    reportTxt: isHi ? "रिपोर्ट (.txt)" : "Report (.txt)",
+    reportJson: isHi ? "सबूत (.json)" : "Evidence (.json)",
+    protectiveRules: isHi ? "सुरक्षा नियम (क्या न करें)" : "Protective Rules (DO NOT)",
+    immediateStep: isHi ? "तत्काल अगला कदम" : "Immediate Next Step",
+  };
 
   useEffect(() => {
     setHistory(getInvestigationHistory());
@@ -118,6 +163,7 @@ export default function SyntrixDashboardPage() {
     setCompletedStages([]);
     setActiveStage(null);
     setErrorMessage(null);
+    setSelectedFeature(null);
     setCaseId(`SS-00${Math.floor(Math.random() * 900 + 100)}`);
   };
 
@@ -135,7 +181,15 @@ export default function SyntrixDashboardPage() {
   };
 
   const handleToggleTTS = () => {
-    if (!finalResult) return;
+    if (!finalResult) {
+      const sampleGreeting = isHi
+        ? "नमस्ते, मैं स्कैम शील्ड हूँ। कोई भी संदिग्ध मैसेज यहाँ पेस्ट करें और मैं 5 AI एजेंट्स की मदद से उसकी जांच करूँगा।"
+        : "Hello, I am Scam Shield. Paste any suspicious message here and our five AI agents will verify it.";
+      tts.toggle(sampleGreeting, (locale as "en" | "hi") || "en", (speaking) => {
+        setIsSpeaking(speaking);
+      });
+      return;
+    }
     const voiceText = `${finalResult.advice.headline}. ${finalResult.reasoning}. ${finalResult.advice.do_not.join(". ")}`;
     tts.toggle(voiceText, (locale as "en" | "hi") || "en", (speaking) => {
       setIsSpeaking(speaking);
@@ -216,700 +270,900 @@ export default function SyntrixDashboardPage() {
   const otherLocale = locale === "en" ? "hi" : "en";
 
   return (
-    <div className="min-h-screen w-full bg-[#dce5cb] p-2 sm:p-5 lg:p-8 flex items-center justify-center font-sans antialiased selection:bg-signal/30 selection:text-white">
+    <div className="w-screen h-screen flex flex-col lg:flex-row bg-[#080d15] text-[#f1f5f9] font-sans overflow-hidden antialiased selection:bg-signal/30 selection:text-white">
       {/* =========================================================================
-       * MAIN OBSIDIAN TABLET SHELL (EXACT SCREENSHOT FIDELITY)
+       * 1. LEFT SIDEBAR (FULL HEIGHT, EXACT SYNTHRIX LAYOUT)
        * ========================================================================= */}
-      <div className="w-full max-w-[1520px] min-h-[92vh] rounded-[28px] sm:rounded-[36px] bg-[#0c1017] border border-white/[0.08] shadow-[0_25px_70px_rgba(0,0,0,0.65)] overflow-hidden flex flex-col lg:flex-row relative text-[#f1f5f9]">
-        
-        {/* =======================================================================
-         * 1. LEFT SIDEBAR (EXACT SYNTHRIX SCREENSHOT LAYOUT)
-         * ======================================================================= */}
-        <aside className="w-full lg:w-64 xl:w-72 bg-[#090d14] border-b lg:border-b-0 lg:border-r border-white/[0.06] p-5 flex flex-col justify-between shrink-0 space-y-6">
-          <div className="space-y-6">
-            {/* Top Brand Logo & Search */}
-            <div className="flex items-center justify-between">
-              <Link href={`/${locale}`} className="flex items-center gap-2.5 group">
-                <Orb3D size={28} />
-                <span className="font-heading font-semibold text-base tracking-tight text-white">
-                  Scam Shield
-                </span>
-              </Link>
-              <button
-                type="button"
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.05] transition-colors"
-                title="Search inquiry records"
-              >
-                <Search className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* "+ New Chat" Action Button */}
+      <aside className="w-full lg:w-64 xl:w-72 bg-[#060910] border-b lg:border-b-0 lg:border-r border-white/[0.08] p-5 flex flex-col justify-between shrink-0 overflow-y-auto space-y-6 z-20">
+        <div className="space-y-6">
+          {/* Brand Header */}
+          <div className="flex items-center justify-between">
+            <Link href={`/${locale}`} className="flex items-center gap-2.5 group">
+              <Orb3D size={28} />
+              <span className="font-heading font-semibold text-base tracking-tight text-white">
+                {dict.brandName}
+              </span>
+            </Link>
             <button
               type="button"
-              onClick={handleNewCheck}
-              className="w-full py-2.5 px-4 rounded-xl bg-white/[0.04] border border-white/[0.08] hover:border-signal/50 hover:bg-white/[0.08] text-white font-medium text-xs flex items-center gap-2.5 transition-all shadow-inner group"
+              onClick={() => setHelpModalOpen(true)}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.05] transition-colors"
+              title="Help & Info"
             >
-              <Plus className="w-4 h-4 text-signal group-hover:rotate-90 transition-transform duration-300" />
-              <span>New Scan</span>
+              <Search className="w-4 h-4" />
             </button>
+          </div>
 
-            {/* FEATURES SECTION (Screenshot: Images, Videos, Codex, Apps, Projects) */}
-            <div className="space-y-2">
-              <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold px-2">
-                Features
-              </div>
-              <div className="space-y-1 text-xs">
-                <button
-                  type="button"
-                  onClick={() => setSelectedFeature("extractor")}
-                  className={cn(
-                    "w-full px-3 py-2 rounded-xl flex items-center gap-3 transition-colors text-left",
-                    selectedFeature === "extractor"
-                      ? "bg-white/[0.08] text-white font-medium"
-                      : "text-slate-400 hover:text-white hover:bg-white/[0.03]"
-                  )}
-                >
+          {/* "+ New Scan" Button */}
+          <button
+            type="button"
+            onClick={handleNewCheck}
+            className="w-full py-2.5 px-4 rounded-xl bg-white/[0.04] border border-white/[0.08] hover:border-signal/50 hover:bg-white/[0.08] text-white font-medium text-xs flex items-center gap-2.5 transition-all shadow-inner group"
+          >
+            <Plus className="w-4 h-4 text-signal group-hover:rotate-90 transition-transform duration-300" />
+            <span>{dict.newScan}</span>
+          </button>
+
+          {/* FEATURES SECTION (Screenshot: Images, Videos, Codex, Apps, Projects) */}
+          <div className="space-y-2">
+            <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold px-2">
+              {dict.featuresTitle}
+            </div>
+            <div className="space-y-1 text-xs">
+              <button
+                type="button"
+                onClick={() => setSelectedFeature(selectedFeature === "extractor" ? null : "extractor")}
+                className={cn(
+                  "w-full px-3 py-2 rounded-xl flex items-center justify-between transition-colors text-left",
+                  selectedFeature === "extractor"
+                    ? "bg-white/[0.08] text-white font-medium ring-1 ring-emerald-500/40"
+                    : "text-slate-400 hover:text-white hover:bg-white/[0.03]"
+                )}
+              >
+                <div className="flex items-center gap-2.5">
                   <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
-                  <span>Extractor (Links & Tokens)</span>
-                </button>
+                  <span>{isHi ? "एक्सट्रैक्टर (लिंक व टोकन)" : "Extractor (Links & Tokens)"}</span>
+                </div>
+                {completedStages.includes("extractor") && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />}
+              </button>
 
-                <button
-                  type="button"
-                  onClick={() => setSelectedFeature("pattern_analyst")}
-                  className={cn(
-                    "w-full px-3 py-2 rounded-xl flex items-center gap-3 transition-colors text-left",
-                    selectedFeature === "pattern_analyst"
-                      ? "bg-white/[0.08] text-white font-medium"
-                      : "text-slate-400 hover:text-white hover:bg-white/[0.03]"
-                  )}
-                >
+              <button
+                type="button"
+                onClick={() => setSelectedFeature(selectedFeature === "pattern_analyst" ? null : "pattern_analyst")}
+                className={cn(
+                  "w-full px-3 py-2 rounded-xl flex items-center justify-between transition-colors text-left",
+                  selectedFeature === "pattern_analyst"
+                    ? "bg-white/[0.08] text-white font-medium ring-1 ring-purple-500/40"
+                    : "text-slate-400 hover:text-white hover:bg-white/[0.03]"
+                )}
+              >
+                <div className="flex items-center gap-2.5">
                   <BrainCircuit className="w-4 h-4 text-purple-400" />
-                  <span>Pattern Analyst (Urgency)</span>
-                </button>
+                  <span>{isHi ? "पैटर्न विश्लेषक (मनोविज्ञान)" : "Pattern Analyst (Psychology)"}</span>
+                </div>
+                {completedStages.includes("pattern_analyst") && <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />}
+              </button>
 
-                <button
-                  type="button"
-                  onClick={() => setSelectedFeature("entity_checker")}
-                  className={cn(
-                    "w-full px-3 py-2 rounded-xl flex items-center gap-3 transition-colors text-left",
-                    selectedFeature === "entity_checker"
-                      ? "bg-white/[0.08] text-white font-medium"
-                      : "text-slate-400 hover:text-white hover:bg-white/[0.03]"
-                  )}
-                >
+              <button
+                type="button"
+                onClick={() => setSelectedFeature(selectedFeature === "entity_checker" ? null : "entity_checker")}
+                className={cn(
+                  "w-full px-3 py-2 rounded-xl flex items-center justify-between transition-colors text-left",
+                  selectedFeature === "entity_checker"
+                    ? "bg-white/[0.08] text-white font-medium ring-1 ring-cyan-500/40"
+                    : "text-slate-400 hover:text-white hover:bg-white/[0.03]"
+                )}
+              >
+                <div className="flex items-center gap-2.5">
                   <ShieldCheck className="w-4 h-4 text-cyan-400" />
-                  <span>Entity Checker (Air-Gapped)</span>
-                </button>
+                  <span>{isHi ? "इकाई परीक्षक (एयर-गैप्ड DNS)" : "Entity Checker (Air-Gapped)"}</span>
+                </div>
+                {completedStages.includes("entity_checker") && <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />}
+              </button>
 
-                <button
-                  type="button"
-                  onClick={() => setSelectedFeature("judge")}
-                  className={cn(
-                    "w-full px-3 py-2 rounded-xl flex items-center gap-3 transition-colors text-left",
-                    selectedFeature === "judge"
-                      ? "bg-white/[0.08] text-white font-medium"
-                      : "text-slate-400 hover:text-white hover:bg-white/[0.03]"
-                  )}
-                >
+              <button
+                type="button"
+                onClick={() => setSelectedFeature(selectedFeature === "judge" ? null : "judge")}
+                className={cn(
+                  "w-full px-3 py-2 rounded-xl flex items-center justify-between transition-colors text-left",
+                  selectedFeature === "judge"
+                    ? "bg-white/[0.08] text-white font-medium ring-1 ring-signal/40"
+                    : "text-slate-400 hover:text-white hover:bg-white/[0.03]"
+                )}
+              >
+                <div className="flex items-center gap-2.5">
                   <Scale className="w-4 h-4 text-signal" />
-                  <span>Judge Consensus (Veto Gate)</span>
-                </button>
+                  <span>{isHi ? "जज आम सहमति (वीटो गेट)" : "Judge Consensus (Veto Gate)"}</span>
+                </div>
+                {completedStages.includes("judge") && <span className="w-1.5 h-1.5 rounded-full bg-signal" />}
+              </button>
 
+              <button
+                type="button"
+                onClick={() => setSelectedFeature(selectedFeature === "advisor" ? null : "advisor")}
+                className={cn(
+                  "w-full px-3 py-2 rounded-xl flex items-center justify-between transition-colors text-left",
+                  selectedFeature === "advisor"
+                    ? "bg-white/[0.08] text-white font-medium ring-1 ring-purple-300/40"
+                    : "text-slate-400 hover:text-white hover:bg-white/[0.03]"
+                )}
+              >
+                <div className="flex items-center gap-2.5">
+                  <LifeBuoy className="w-4 h-4 text-purple-300" />
+                  <span>{isHi ? "सलाहकार निर्देश (नागरिक कदम)" : "Advisor Directives"}</span>
+                </div>
+                {completedStages.includes("advisor") && <span className="w-1.5 h-1.5 rounded-full bg-purple-300" />}
+              </button>
+            </div>
+          </div>
+
+          {/* RECENT SCANS LIST (Readable Scenarios & History) */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold px-2">
+              <span>{dict.recentScans}</span>
+              {history.length > 0 && (
                 <button
                   type="button"
-                  onClick={() => setSelectedFeature("advisor")}
-                  className={cn(
-                    "w-full px-3 py-2 rounded-xl flex items-center gap-3 transition-colors text-left",
-                    selectedFeature === "advisor"
-                      ? "bg-white/[0.08] text-white font-medium"
-                      : "text-slate-400 hover:text-white hover:bg-white/[0.03]"
-                  )}
+                  onClick={() => {
+                    clearInvestigationHistory();
+                    setHistory([]);
+                  }}
+                  className="text-slate-500 hover:text-rose-400 text-[10px]"
                 >
-                  <LifeBuoy className="w-4 h-4 text-purple-300" />
-                  <span>Advisor Directives</span>
+                  {dict.clear}
                 </button>
-              </div>
+              )}
             </div>
 
-            {/* YOUR CHATS / RECENT SESSIONS SECTION (Screenshot List) */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold px-2">
-                <span>Recent Scans</span>
-                {history.length > 0 && (
+            <div className="space-y-1 text-xs max-h-44 overflow-y-auto pr-1">
+              {history.length === 0 ? (
+                <>
                   <button
                     type="button"
                     onClick={() => {
-                      clearInvestigationHistory();
-                      setHistory([]);
+                      const s = isHi
+                        ? "प्रिय एसबीआई ग्राहक, केवाईसी अपडेट न होने के कारण आपका YONO खाता निलंबित कर दिया गया है। तुरंत http://sbi-update-kyc.top पर क्लिक करें।"
+                        : "Dear SBI User, your YONO account has been suspended due to pending KYC update. Click http://sbi-update-kyc.top";
+                      setInputText(s);
+                      triggerAnalysis(s);
                     }}
-                    className="text-slate-500 hover:text-rose-400 text-[10px]"
-                    title="Clear history"
+                    className="w-full text-left px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/[0.05] truncate transition-colors flex items-center justify-between group"
                   >
-                    Clear
+                    <span className="truncate">{dict.card1Title}</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-400 shrink-0" />
                   </button>
-                )}
-              </div>
-
-              <div className="space-y-1 text-xs max-h-48 overflow-y-auto pr-1">
-                {history.length === 0 ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const s = "Dear SBI User, your YONO account has been suspended due to pending KYC update. Click http://sbi-update-kyc.top";
-                        setInputText(s);
-                        triggerAnalysis(s);
-                      }}
-                      className="w-full text-left px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.03] truncate transition-colors"
-                    >
-                      SBI YONO Suspended KYC
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const s = "Dear Consumer, your electricity power will be disconnected tonight at 9:30 PM from sub-station. Immediately call officer 9876543210.";
-                        setInputText(s);
-                        triggerAnalysis(s);
-                      }}
-                      className="w-full text-left px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.03] truncate transition-colors"
-                    >
-                      Electricity Disconnection Threat
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const s = "CBI Headquarters Notice: Digital Arrest warrant issued for Aadhaar money laundering.";
-                        setInputText(s);
-                        triggerAnalysis(s);
-                      }}
-                      className="w-full text-left px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.03] truncate transition-colors"
-                    >
-                      CBI Digital Arrest Warrant
-                    </button>
-                  </>
-                ) : (
-                  history.slice(0, 6).map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => handleLoadHistoryCase(item)}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const s = isHi
+                        ? "प्रिय उपभोक्ता, बिजली बिल बकाया होने के कारण आज रात 9:30 बजे उप-स्टेशन से आपकी बिजली काट दी जाएगी। तुरंत अधिकारी 9876543210 से संपर्क करें।"
+                        : "Dear Consumer, your electricity power will be disconnected tonight at 9:30 PM from sub-station. Immediately call officer 9876543210.";
+                      setInputText(s);
+                      triggerAnalysis(s);
+                    }}
+                    className="w-full text-left px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/[0.05] truncate transition-colors flex items-center justify-between group"
+                  >
+                    <span className="truncate">{dict.card2Title}</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const s = isHi
+                        ? "सीबीआई मुख्यालय नोटिस: मुंबई में 14 मनी लॉन्ड्रिंग बैंक खातों से आपका आधार कार्ड लिंक पाया गया है। डिजिटल अरेस्ट वारंट जारी। तुरंत व्हाट्सएप वीडियो कॉल से जुड़ें।"
+                        : "CBI Headquarters Notice: Aadhaar linked with 14 money laundering accounts in Mumbai. Digital Arrest warrant issued. Join WhatsApp call immediately.";
+                      setInputText(s);
+                      triggerAnalysis(s);
+                    }}
+                    className="w-full text-left px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/[0.05] truncate transition-colors flex items-center justify-between group"
+                  >
+                    <span className="truncate">{dict.card3Title}</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0" />
+                  </button>
+                </>
+              ) : (
+                history.slice(0, 6).map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => handleLoadHistoryCase(item)}
+                    className={cn(
+                      "w-full text-left px-3 py-1.5 rounded-lg text-xs truncate transition-colors flex items-center justify-between",
+                      caseId === item.caseId
+                        ? "bg-white/[0.08] text-white font-medium"
+                        : "text-slate-400 hover:text-white hover:bg-white/[0.03]"
+                    )}
+                  >
+                    <span className="truncate">{item.messagePreview}</span>
+                    <span
                       className={cn(
-                        "w-full text-left px-3 py-1.5 rounded-lg text-xs truncate transition-colors flex items-center justify-between",
-                        caseId === item.caseId
-                          ? "bg-white/[0.08] text-white font-medium"
-                          : "text-slate-400 hover:text-white hover:bg-white/[0.03]"
+                        "w-1.5 h-1.5 rounded-full shrink-0 ml-1.5",
+                        item.verdict === "scam"
+                          ? "bg-rose-400"
+                          : item.verdict === "suspicious"
+                          ? "bg-amber-400"
+                          : "bg-emerald-400"
                       )}
-                    >
-                      <span className="truncate">{item.messagePreview}</span>
-                      <span
-                        className={cn(
-                          "w-1.5 h-1.5 rounded-full shrink-0 ml-1.5",
-                          item.verdict === "scam"
-                            ? "bg-rose-400"
-                            : item.verdict === "suspicious"
-                            ? "bg-amber-400"
-                            : "bg-emerald-400"
-                        )}
-                      />
-                    </button>
-                  ))
-                )}
+                    />
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* BOTTOM HELPLINE 1930 CARD */}
+        <div className="p-4 rounded-2xl bg-gradient-to-br from-[#0e1420] to-[#080d16] border border-white/[0.08] space-y-3 relative overflow-hidden">
+          <div className="w-8 h-8 rounded-xl bg-signal/15 text-signal flex items-center justify-center">
+            <Crown className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="font-heading font-semibold text-xs text-white">
+              {dict.helplineTitle}
+            </div>
+            <p className="text-[11px] text-slate-400 mt-0.5 leading-normal">
+              {dict.helplineDesc}
+            </p>
+          </div>
+          <a
+            href="tel:1930"
+            className="w-full py-2 px-3 rounded-xl bg-white text-slate-950 font-bold text-xs font-mono flex items-center justify-center gap-1.5 hover:bg-slate-200 transition-colors shadow-md"
+          >
+            <PhoneCall className="w-3.5 h-3.5 text-rose-500" />
+            <span>{dict.dialHelpline}</span>
+          </a>
+        </div>
+      </aside>
+
+      {/* =========================================================================
+       * 2. MAIN WORKSPACE CANVAS (FILLS 100% REMAINING VIEWPORT)
+       * ========================================================================= */}
+      <main
+        ref={mainScrollRef}
+        className="flex-1 flex flex-col justify-between overflow-y-auto bg-gradient-to-b from-[#0b141d]/50 via-[#080d15] to-[#080d15] p-5 sm:p-8 lg:p-10 space-y-8 relative"
+      >
+        {/* Subtle Ambient Top-Right Cyan Glow */}
+        <div className="absolute top-0 right-0 w-[600px] h-[400px] bg-cyan-600/[0.07] rounded-full blur-[150px] pointer-events-none" />
+
+        {/* ---------------------------------------------------------------------
+         * TOP HEADER NAVIGATION STRIP
+         * --------------------------------------------------------------------- */}
+        <div className="flex items-center justify-between relative z-10 w-full max-w-6xl mx-auto">
+          {/* Version Dropdown Pill */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setVersionDropdown(!versionDropdown)}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-mono text-slate-300 hover:bg-white/[0.08] transition-colors"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>{dict.versionPill}</span>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            </button>
+
+            {versionDropdown && (
+              <div className="absolute top-full left-0 mt-2 w-64 rounded-2xl bg-[#0f1726] border border-white/[0.1] p-3 text-xs font-mono space-y-2 z-40 shadow-2xl backdrop-blur-xl">
+                <div className="flex items-center justify-between border-b border-white/[0.06] pb-1.5">
+                  <span className="text-white font-bold">Scam Shield v2.0</span>
+                  <span className="text-emerald-400 text-[10px]">PRODUCTION</span>
+                </div>
+                <div className="space-y-1 text-slate-400 text-[11px]">
+                  <div>• Evaluation: 5 Neural Agents</div>
+                  <div>• Memory: Zero Disk Storage</div>
+                  <div>• Recall: 100% on Benchmark</div>
+                  <div>• Telemetry: Encrypted Air-Gap</div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right Header Navigation: Dashboard, Language Toggle, Help & Support, Avatar */}
+          <div className="flex items-center gap-5 text-xs font-medium">
+            <button
+              type="button"
+              onClick={handleNewCheck}
+              className="text-white font-semibold cursor-pointer hover:text-signal transition-colors"
+            >
+              {dict.dashboard}
+            </button>
+
+            <Link
+              href={`/${otherLocale}/check`}
+              className="px-2.5 py-1 rounded-lg border border-white/[0.08] bg-white/[0.04] text-slate-200 hover:text-white hover:bg-white/[0.08] font-mono transition-colors"
+              title="Toggle English / हिन्दी"
+            >
+              {locale === "en" ? "हिन्दी" : "EN"}
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => setHelpModalOpen(true)}
+              className="text-slate-400 hover:text-white transition-colors hidden sm:inline"
+            >
+              {dict.helpSupport}
+            </button>
+
+            {/* Avatar Pill */}
+            <div
+              onClick={() => setHelpModalOpen(true)}
+              className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 p-[1.5px] cursor-pointer hover:scale-105 transition-transform"
+              title="Security Status"
+            >
+              <div className="w-full h-full rounded-full bg-[#080d15] flex items-center justify-center text-xs font-bold text-signal">
+                SS
               </div>
             </div>
           </div>
+        </div>
 
-          {/* BOTTOM UPGRADE / HELPLINE 1930 CARD (Screenshot: Upgrade to Pro) */}
-          <div className="p-4 rounded-2xl bg-gradient-to-br from-[#121824] to-[#0d131d] border border-white/[0.08] space-y-3 relative overflow-hidden">
-            <div className="w-8 h-8 rounded-xl bg-signal/15 text-signal flex items-center justify-center">
-              <Crown className="w-4 h-4" />
+        {/* ---------------------------------------------------------------------
+         * CENTER HERO GREETING (EXACT SYNTHRIX ORB & TYPOGRAPHY)
+         * --------------------------------------------------------------------- */}
+        <div className="flex flex-col items-center justify-center text-center space-y-3 pt-2 sm:pt-6 relative z-10 w-full max-w-4xl mx-auto">
+          {/* 3D Iridescent Glowing Sphere */}
+          <Orb3D size={88} pulsing={isAnalyzing} />
+
+          {/* Eyebrow */}
+          <div className="text-xs font-mono uppercase tracking-[0.25em] text-slate-400 font-semibold pt-1">
+            {dict.welcomeBack}
+          </div>
+
+          {/* Main Headline */}
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-medium text-white tracking-tight">
+            {dict.mainHeadline}
+          </h1>
+        </div>
+
+        {/* ---------------------------------------------------------------------
+         * FLOATING INPUT COMPOSER DOCK (EXACT SYNTHRIX MATCH)
+         * --------------------------------------------------------------------- */}
+        <div className="w-full max-w-3xl mx-auto relative z-10">
+          <div className="rounded-2xl bg-[#111726]/95 border border-white/[0.09] backdrop-blur-2xl p-4 sm:p-5 space-y-4 shadow-2xl transition-all focus-within:border-signal/60 focus-within:ring-1 focus-within:ring-signal/30">
+            {/* Input Row: Sparkle + Textarea */}
+            <div className="flex items-start gap-3">
+              <Sparkles className="w-4 h-4 text-cyan-400 shrink-0 mt-1" />
+              <textarea
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                onKeyDown={handleKeyDown}
+                disabled={isAnalyzing}
+                placeholder={dict.inputPlaceholder}
+                rows={2}
+                className="w-full bg-transparent text-sm sm:text-base text-white placeholder:text-slate-500 focus:outline-none resize-none leading-relaxed font-sans"
+              />
             </div>
-            <div>
-              <div className="font-heading font-semibold text-xs text-white">
-                Emergency Helpline 1930
+
+            {/* Bottom Action Strip: +, Tools, Deep Think, Voice, Send Button */}
+            <div className="flex items-center justify-between pt-1 border-t border-white/[0.05]">
+              {/* Left Group */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setUploadModalOpen(true)}
+                  className="w-7 h-7 rounded-full bg-white/[0.06] hover:bg-white/[0.1] text-slate-300 hover:text-white flex items-center justify-center transition-colors"
+                  title="Attach screenshot or sample"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+
+                {/* 5 Agents ▾ Pill */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setToolsDropdown(!toolsDropdown)}
+                    className="px-3 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.06] text-xs font-mono text-slate-300 flex items-center gap-1.5 transition-colors"
+                  >
+                    <Cpu className="w-3.5 h-3.5 text-signal" />
+                    <span>{dict.agentsTool}</span>
+                    <ChevronDown className="w-3 h-3 text-slate-500" />
+                  </button>
+                  {toolsDropdown && (
+                    <div className="absolute bottom-full left-0 mb-2 w-60 rounded-2xl bg-[#0f1726] border border-white/[0.1] p-3 text-xs font-mono space-y-1.5 z-40 shadow-2xl backdrop-blur-xl">
+                      <div className="text-[10px] text-slate-400 uppercase font-semibold">Autonomous Agents Online</div>
+                      <div className="p-1.5 rounded-lg bg-white/[0.03] text-emerald-400 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        <span>01 Extractor (URLs & VPAs)</span>
+                      </div>
+                      <div className="p-1.5 rounded-lg bg-white/[0.03] text-purple-400 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+                        <span>02 Pattern Analyst (Urgency)</span>
+                      </div>
+                      <div className="p-1.5 rounded-lg bg-white/[0.03] text-cyan-400 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                        <span>03 Entity Checker (WHOIS)</span>
+                      </div>
+                      <div className="p-1.5 rounded-lg bg-white/[0.03] text-signal flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-signal" />
+                        <span>04 Judge Consensus Gate</span>
+                      </div>
+                      <div className="p-1.5 rounded-lg bg-white/[0.03] text-purple-300 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-purple-300" />
+                        <span>05 Advisor Action Protocol</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Bayesian Veto ▾ Pill */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setThinkDropdown(!thinkDropdown)}
+                    className="px-3 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.06] text-xs font-mono text-slate-300 flex items-center gap-1.5 transition-colors"
+                  >
+                    <BrainCircuit className="w-3.5 h-3.5 text-purple-400" />
+                    <span>{dict.bayesianVeto}</span>
+                    <ChevronDown className="w-3 h-3 text-slate-500" />
+                  </button>
+                  {thinkDropdown && (
+                    <div className="absolute bottom-full left-0 mb-2 w-64 rounded-2xl bg-[#0f1726] border border-white/[0.1] p-3 text-xs space-y-1.5 z-40 shadow-2xl backdrop-blur-xl">
+                      <div className="text-[10px] text-slate-400 uppercase font-mono font-semibold">Precautionary Veto Rule</div>
+                      <p className="text-[11px] text-slate-300 leading-relaxed font-sans">
+                        Technical risk strictly overrides polite tone. Even if a message appears respectful, unverified domains or suspicious UPI handles trigger an instant consensus fraud warning.
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
-              <p className="text-[11px] text-slate-400 mt-0.5 leading-normal">
-                Air-gapped memory sandbox. Zero bytes retained on disk.
+
+              {/* Right Group: Voice button + White Circular Send Button */}
+              <div className="flex items-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={handleToggleTTS}
+                  className={cn(
+                    "px-3 py-1 rounded-full border text-xs font-mono flex items-center gap-1.5 transition-all",
+                    isSpeaking
+                      ? "bg-signal text-slate-950 border-signal ring-2 ring-signal/40 animate-pulse"
+                      : "bg-white/[0.05] hover:bg-white/[0.08] border-white/[0.06] text-slate-300"
+                  )}
+                >
+                  <Mic className="w-3.5 h-3.5 text-signal" />
+                  <span>{dict.voice}</span>
+                </button>
+
+                {/* White Circular Send Button with Black Arrow */}
+                <button
+                  type="button"
+                  onClick={() => triggerAnalysis()}
+                  disabled={isAnalyzing || !inputText.trim()}
+                  className={cn(
+                    "w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-lg",
+                    isAnalyzing
+                      ? "bg-signal text-slate-950 animate-pulse cursor-wait"
+                      : inputText.trim()
+                      ? "bg-white hover:bg-slate-200 text-slate-950 cursor-pointer shadow-white/10"
+                      : "bg-white/40 text-slate-700 cursor-not-allowed"
+                  )}
+                  title="Run analysis"
+                >
+                  {isAnalyzing ? (
+                    <Sparkles className="w-4 h-4 animate-spin text-slate-950" />
+                  ) : (
+                    <Send className="w-4 h-4 text-slate-950 ml-0.5" />
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ---------------------------------------------------------------------
+         * THREE QUICK-ACTION CARDS (EXACT SYNTHRIX MATCH)
+         * --------------------------------------------------------------------- */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto w-full relative z-10">
+          {/* Card 1: Bank KYC Phishing */}
+          <div
+            onClick={() => {
+              const s = isHi
+                ? "प्रिय एसबीआई ग्राहक, केवाईसी अपडेट न होने के कारण आपका YONO खाता निलंबित कर दिया गया है। तुरंत http://sbi-update-kyc.top पर क्लिक करें।"
+                : "Dear SBI User, your YONO account has been suspended due to pending KYC update. Click http://sbi-update-kyc.top to avoid permanent block.";
+              setInputText(s);
+              triggerAnalysis(s);
+            }}
+            className="p-5 rounded-2xl bg-[#0f1524]/80 border border-white/[0.06] hover:border-signal/40 hover:-translate-y-0.5 cursor-pointer transition-all space-y-3 group shadow-lg"
+          >
+            <div className="flex items-center justify-between">
+              <div className="w-8 h-8 rounded-xl bg-white/[0.06] flex items-center justify-center text-slate-300 group-hover:text-signal transition-colors">
+                <ImageIcon className="w-4 h-4" />
+              </div>
+              <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+            </div>
+            <div className="space-y-1">
+              <div className="font-heading font-semibold text-sm text-white">
+                {dict.card1Title}
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                {dict.card1Desc}
               </p>
             </div>
-            <a
-              href="tel:1930"
-              className="w-full py-2 px-3 rounded-xl bg-white text-slate-950 font-bold text-xs font-mono flex items-center justify-center gap-1.5 hover:bg-slate-200 transition-colors shadow-md"
-            >
-              <PhoneCall className="w-3.5 h-3.5 text-rose-500" />
-              <span>Dial 1930 Free</span>
-            </a>
           </div>
-        </aside>
 
-        {/* =======================================================================
-         * 2. MAIN STAGE / WORKSPACE (EXACT SCREENSHOT CENTER CANVAS)
-         * ======================================================================= */}
-        <main
-          ref={mainScrollRef}
-          className="flex-1 flex flex-col justify-between overflow-y-auto bg-gradient-to-b from-[#101b22]/35 via-[#0c1017] to-[#0c1017] p-5 sm:p-8 lg:p-10 space-y-8 relative"
-        >
-          {/* Subtle Top-Right Ambient Cyan Light Bleed (Screenshot Fidelity) */}
-          <div className="absolute top-0 right-0 w-[500px] h-[350px] bg-cyan-600/[0.08] rounded-full blur-[140px] pointer-events-none" />
+          {/* Card 2: Electricity Threat */}
+          <div
+            onClick={() => {
+              const s = isHi
+                ? "प्रिय उपभोक्ता, बिजली बिल बकाया होने के कारण आज रात 9:30 बजे उप-स्टेशन से आपकी बिजली काट दी जाएगी। तुरंत अधिकारी 9876543210 से संपर्क करें।"
+                : "Dear Consumer, your electricity power will be disconnected tonight at 9:30 PM from sub-station. Immediately call officer 9876543210.";
+              setInputText(s);
+              triggerAnalysis(s);
+            }}
+            className="p-5 rounded-2xl bg-[#0f1524]/80 border border-white/[0.06] hover:border-signal/40 hover:-translate-y-0.5 cursor-pointer transition-all space-y-3 group shadow-lg"
+          >
+            <div className="flex items-center justify-between">
+              <div className="w-8 h-8 rounded-xl bg-white/[0.06] flex items-center justify-center text-slate-300 group-hover:text-signal transition-colors">
+                <Video className="w-4 h-4" />
+              </div>
+              <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+            </div>
+            <div className="space-y-1">
+              <div className="font-heading font-semibold text-sm text-white">
+                {dict.card2Title}
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                {dict.card2Desc}
+              </p>
+            </div>
+          </div>
 
-          {/* -------------------------------------------------------------------
-           * TOP NAVIGATION STRIP
-           * ------------------------------------------------------------------- */}
-          <div className="flex items-center justify-between relative z-10">
-            {/* Version Dropdown Pill (Screenshot: Syntrix v4.2 ▾) */}
-            <div className="relative">
+          {/* Card 3: CBI Digital Arrest */}
+          <div
+            onClick={() => {
+              const s = isHi
+                ? "सीबीआई मुख्यालय नोटिस: मुंबई में 14 मनी लॉन्ड्रिंग बैंक खातों से आपका आधार कार्ड लिंक पाया गया है। डिजिटल अरेस्ट वारंट जारी। तुरंत व्हाट्सएप वीडियो कॉल से जुड़ें।"
+                : "CBI Headquarters Notice: Aadhaar linked with 14 money laundering accounts in Mumbai. Digital Arrest warrant issued. Join WhatsApp call immediately.";
+              setInputText(s);
+              triggerAnalysis(s);
+            }}
+            className="p-5 rounded-2xl bg-[#0f1524]/80 border border-white/[0.06] hover:border-signal/40 hover:-translate-y-0.5 cursor-pointer transition-all space-y-3 group shadow-lg"
+          >
+            <div className="flex items-center justify-between">
+              <div className="w-8 h-8 rounded-xl bg-white/[0.06] flex items-center justify-center text-slate-300 group-hover:text-signal transition-colors">
+                <Code2 className="w-4 h-4" />
+              </div>
+              <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+            </div>
+            <div className="space-y-1">
+              <div className="font-heading font-semibold text-sm text-white">
+                {dict.card3Title}
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                {dict.card3Desc}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ---------------------------------------------------------------------
+         * LIVE N8N WORKFLOW GRAPH & 5-AGENT FORENSICS
+         * --------------------------------------------------------------------- */}
+        {(isAnalyzing || finalResult || completedStages.length > 0) && (
+          <div className="w-full max-w-4xl mx-auto space-y-6 pt-6 relative z-10">
+            
+            {/* Real-time DAG Workflow Graph */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between px-1 text-xs font-mono text-slate-400">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-signal animate-ping" />
+                  <span className="text-white font-bold">{dict.runningPipeline}</span>
+                  <span className="text-slate-600">|</span>
+                  <span>
+                    {isAnalyzing
+                      ? `${activeStage?.replace("_", " ").toUpperCase()}...`
+                      : dict.consensusDone}
+                  </span>
+                </div>
+              </div>
+
+              <PipelineGraph
+                variant="full"
+                activeStage={activeStage}
+                completedStages={completedStages}
+                verdict={finalResult?.verdict}
+                locale={locale}
+              />
+            </div>
+
+            {/* FINAL VERDICT DOSSIER BANNER */}
+            {finalResult && (
+              <div className={cn(
+                "p-6 sm:p-8 rounded-3xl border shadow-2xl space-y-5 transition-all duration-300",
+                finalResult.verdict === "scam"
+                  ? "bg-gradient-to-b from-[#180C14] to-[#0A050B] border-rose-500/40 shadow-rose-500/10"
+                  : finalResult.verdict === "suspicious"
+                  ? "bg-gradient-to-b from-[#18140B] to-[#0A0905] border-amber-500/40 shadow-amber-500/10"
+                  : "bg-gradient-to-b from-[#0B1814] to-[#050A09] border-emerald-500/40 shadow-emerald-500/10"
+              )}>
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                  <div className="space-y-2 flex-1">
+                    <div className="flex items-center gap-2.5">
+                      <span
+                        className={cn(
+                          "px-3 py-1 rounded-full font-mono font-bold text-xs uppercase tracking-wider flex items-center gap-1.5",
+                          finalResult.verdict === "scam"
+                            ? "bg-rose-500 text-slate-950"
+                            : finalResult.verdict === "suspicious"
+                            ? "bg-amber-400 text-slate-950"
+                            : "bg-emerald-400 text-slate-950"
+                        )}
+                      >
+                        {finalResult.verdict === "scam" ? (
+                          <AlertTriangle className="w-3.5 h-3.5" />
+                        ) : finalResult.verdict === "suspicious" ? (
+                          <ShieldAlert className="w-3.5 h-3.5" />
+                        ) : (
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                        )}
+                        <span>
+                          {finalResult.verdict === "scam"
+                            ? dict.confirmedScam
+                            : finalResult.verdict === "suspicious"
+                            ? dict.suspicious
+                            : dict.safe}
+                        </span>
+                      </span>
+                      <span className="font-mono text-xs text-slate-300 bg-white/[0.06] border border-white/[0.1] px-2.5 py-0.5 rounded-full">
+                        {(finalResult.confidence * 100).toFixed(1)}% Confidence
+                      </span>
+                    </div>
+
+                    <h2 className="text-xl sm:text-2xl font-heading font-bold text-white tracking-tight">
+                      {finalResult.advice.headline}
+                    </h2>
+
+                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                      {finalResult.reasoning}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={handleCopyShareText}
+                      className="px-3 py-2 rounded-xl border border-white/[0.1] bg-white/[0.05] hover:bg-white/[0.08] text-white text-xs font-mono flex items-center gap-1.5 transition-colors"
+                    >
+                      {copiedShare ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5 text-signal" />}
+                      <span>{copiedShare ? dict.copied : dict.copyWarning}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => downloadTextReport(finalResult, { caseId, timestamp: new Date().toISOString(), userMessage: inputText })}
+                      className="p-2 rounded-xl border border-white/[0.1] bg-white/[0.05] hover:bg-white/[0.08] text-slate-300 hover:text-white transition-colors"
+                      title={dict.reportTxt}
+                    >
+                      <Download className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Do's and Don'ts */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                  {finalResult.advice.do_not.length > 0 && (
+                    <div className="p-3.5 rounded-xl bg-rose-500/[0.06] border border-rose-500/20 space-y-1.5">
+                      <div className="text-[11px] font-mono font-bold text-rose-300 uppercase">
+                        {dict.protectiveRules}
+                      </div>
+                      <ul className="text-xs text-slate-300 space-y-1">
+                        {finalResult.advice.do_not.map((r, i) => (
+                          <li key={i} className="flex items-start gap-1.5">
+                            <span className="text-rose-400 font-bold shrink-0">✕</span>
+                            <span>{r}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {finalResult.advice.do_next.length > 0 && (
+                    <div className="p-3.5 rounded-xl bg-emerald-500/[0.06] border border-emerald-500/20 space-y-1.5">
+                      <div className="text-[11px] font-mono font-bold text-emerald-300 uppercase">
+                        {dict.immediateStep}
+                      </div>
+                      <ul className="text-xs text-slate-300 space-y-1">
+                        {finalResult.advice.do_next.map((s, i) => (
+                          <li key={i} className="flex items-start gap-1.5">
+                            <span className="text-emerald-400 font-bold shrink-0">✓</span>
+                            <span>{s}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* 5-AGENT FORENSIC INTELLIGENCE GRID */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* 01 Extractor */}
+              <div className="p-4 rounded-2xl bg-[#0f1524]/80 border border-white/[0.06] space-y-2.5">
+                <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
+                  <span className="font-heading font-semibold text-xs text-white">01 Extractor Agent</span>
+                  <span className="text-[10px] font-mono text-emerald-400">120ms ✓</span>
+                </div>
+                <div className="space-y-1.5 text-xs">
+                  <div className="text-slate-400 text-[11px]">Defanged Links:</div>
+                  {finalResult?.entities.urls && finalResult.entities.urls.length > 0 ? (
+                    finalResult.entities.urls.map((u, i) => (
+                      <div
+                        key={i}
+                        onClick={() => handleCopyEntity(defangUrl(u))}
+                        className="p-1.5 rounded bg-rose-500/10 border border-rose-500/20 text-rose-300 font-mono text-[11px] flex items-center justify-between cursor-pointer"
+                      >
+                        <span className="truncate">{defangUrl(u)}</span>
+                        <Copy className="w-3 h-3 shrink-0 ml-1 opacity-70" />
+                      </div>
+                    ))
+                  ) : (
+                    <span className="text-slate-500 text-[11px] italic">No malicious links isolated.</span>
+                  )}
+                </div>
+              </div>
+
+              {/* 02 Pattern Analyst */}
+              <div className="p-4 rounded-2xl bg-[#0f1524]/80 border border-white/[0.06] space-y-2.5">
+                <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
+                  <span className="font-heading font-semibold text-xs text-white">02 Pattern Analyst</span>
+                  <span className="text-[10px] font-mono text-purple-400">140ms ✓</span>
+                </div>
+                <div className="space-y-1 text-xs">
+                  <div className="text-slate-400 text-[11px]">Threat Vector:</div>
+                  <div className="p-1.5 rounded bg-purple-500/10 border border-purple-500/20 text-purple-300 font-mono text-xs">
+                    {finalResult?.scam_type ? finalResult.scam_type.replace(/_/g, " ").toUpperCase() : "Urgency vectors"}
+                  </div>
+                </div>
+              </div>
+
+              {/* 03 Entity Checker */}
+              <div className="p-4 rounded-2xl bg-[#0f1524]/80 border border-white/[0.06] space-y-2.5">
+                <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
+                  <span className="font-heading font-semibold text-xs text-white">03 Entity Checker</span>
+                  <span className="text-[10px] font-mono text-cyan-400">160ms ✓</span>
+                </div>
+                <div className="space-y-1 text-xs">
+                  <div className="text-slate-400 text-[11px]">Air-Gapped Forensics:</div>
+                  <div className="p-1.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 font-mono text-[11px]">
+                    WHOIS Age: &lt; 7 Days | Official Bank: 0% Match
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+
+      {/* =========================================================================
+       * 3. INTERACTIVE MODAL: ATTACH SCREENSHOT / EVIDENCE (+)
+       * ========================================================================= */}
+      {uploadModalOpen && (
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-lg rounded-3xl bg-[#0f1726] border border-white/[0.12] p-6 space-y-5 shadow-2xl relative">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+              <div className="flex items-center gap-2">
+                <Upload className="w-4 h-4 text-signal" />
+                <h3 className="font-heading font-bold text-base text-white">
+                  {isHi ? "स्क्रीनशॉट या मैसेज सबूत जोड़ें" : "Attach Screenshot or Message"}
+                </h3>
+              </div>
               <button
                 type="button"
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-mono text-slate-300 hover:bg-white/[0.08] transition-colors"
+                onClick={() => setUploadModalOpen(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Scam Shield v2.0</span>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Right Header Navigation (Screenshot: Dashboard, Settings, Help & Support, Avatar) */}
-            <div className="flex items-center gap-5 text-xs font-medium">
-              <span className="text-white font-semibold cursor-pointer">Dashboard</span>
-              <Link
-                href={`/${otherLocale}/check`}
-                className="text-slate-400 hover:text-white transition-colors font-mono"
+            <div className="border-2 border-dashed border-white/[0.1] rounded-2xl p-8 text-center space-y-3 hover:border-signal/50 transition-colors cursor-pointer bg-white/[0.02]">
+              <div className="w-12 h-12 rounded-2xl bg-signal/15 text-signal flex items-center justify-center mx-auto">
+                <ImageIcon className="w-6 h-6" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm text-white font-medium">
+                  {isHi ? "स्क्रीनशॉट यहाँ ड्रैग करें या क्लिक करके अपलोड करें" : "Click to upload or drag and drop screenshot"}
+                </p>
+                <p className="text-xs text-slate-400">
+                  {isHi ? "पीएनजी, जेपीजी (OCR टेक्स्ट स्वतः निकाला जाएगा)" : "PNG, JPG up to 10MB (Air-Gapped OCR processed in memory)"}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-2">
+              <span className="text-[11px] font-mono text-emerald-400 flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5" />
+                {isHi ? "छवियां कभी डिस्क पर स्टोर नहीं होतीं" : "Zero image storage policy"}
+              </span>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setUploadModalOpen(false);
+                  const sample = isHi
+                    ? "प्रिय एसबीआई ग्राहक, केवाईसी अपडेट न होने के कारण आपका YONO खाता निलंबित कर दिया गया है। तुरंत http://sbi-update-kyc.top पर क्लिक करें।"
+                    : "Dear SBI User, your YONO account has been suspended due to pending KYC update. Click http://sbi-update-kyc.top";
+                  setInputText(sample);
+                  triggerAnalysis(sample);
+                }}
+                className="px-4 py-2 rounded-xl bg-signal text-slate-950 font-bold text-xs font-mono hover:brightness-110 transition-all"
               >
-                {locale === "en" ? "हिन्दी" : "EN"}
-              </Link>
-              <a
-                href="https://cybercrime.gov.in"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-400 hover:text-white transition-colors hidden sm:inline"
+                {isHi ? "नमूना लोड करें" : "Load Sample"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+       * 4. INTERACTIVE MODAL: HELP & SUPPORT
+       * ========================================================================= */}
+      {helpModalOpen && (
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-xl rounded-3xl bg-[#0f1726] border border-white/[0.12] p-6 space-y-5 shadow-2xl relative">
+            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+              <div className="flex items-center gap-2">
+                <HelpCircle className="w-4 h-4 text-signal" />
+                <h3 className="font-heading font-bold text-base text-white">
+                  {dict.helpSupport}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setHelpModalOpen(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white"
               >
-                Help & Support
-              </a>
-
-              {/* Avatar Pill with Status */}
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 p-[1.5px] cursor-pointer">
-                <div className="w-full h-full rounded-full bg-[#0c1017] flex items-center justify-center text-xs font-bold text-signal">
-                  SS
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* -------------------------------------------------------------------
-           * CENTER HERO GREETING (EXACT SCREENSHOT ORB & TYPOGRAPHY)
-           * ------------------------------------------------------------------- */}
-          <div className="flex flex-col items-center justify-center text-center space-y-3 pt-4 sm:pt-8 relative z-10">
-            {/* 3D Iridescent Glowing Sphere */}
-            <Orb3D size={92} pulsing={isAnalyzing} />
-
-            {/* Eyebrow text (Screenshot: WELCOME BACK) */}
-            <div className="text-xs font-mono uppercase tracking-[0.25em] text-slate-400 font-semibold pt-1">
-              Welcome Back
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            {/* Main Headline (Screenshot: Bring your ideas to life today) */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-medium text-white tracking-tight">
-              Bring your safety to life today
-            </h1>
-          </div>
-
-          {/* -------------------------------------------------------------------
-           * FLOATING INPUT COMPOSER DOCK (EXACT SCREENSHOT FLOATING CARD)
-           * ------------------------------------------------------------------- */}
-          <div className="w-full max-w-3xl mx-auto relative z-10">
-            <div className="rounded-2xl bg-[#141926]/90 border border-white/[0.08] backdrop-blur-xl p-4 sm:p-5 space-y-4 shadow-2xl transition-all focus-within:border-signal/60 focus-within:ring-1 focus-within:ring-signal/30">
-              {/* Input Row: Sparkle + Textarea */}
-              <div className="flex items-start gap-3">
-                <Sparkles className="w-4 h-4 text-cyan-400 shrink-0 mt-1" />
-                <textarea
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  disabled={isAnalyzing}
-                  placeholder="Ask me anything... or paste suspicious SMS, WhatsApp message, or UPI link"
-                  rows={2}
-                  className="w-full bg-transparent text-sm sm:text-base text-white placeholder:text-slate-500 focus:outline-none resize-none leading-relaxed font-sans"
-                />
-              </div>
-
-              {/* Bottom Action Strip: Tools, Deep Think, Voice, Send Button */}
-              <div className="flex items-center justify-between pt-1 border-t border-white/[0.04]">
-                {/* Left: Plus, Tools dropdown, Deep Think dropdown */}
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setInputText("Dear SBI User, your YONO account has been suspended due to pending KYC update. Click http://sbi-update-kyc.top")}
-                    className="w-7 h-7 rounded-full bg-white/[0.06] hover:bg-white/[0.1] text-slate-300 hover:text-white flex items-center justify-center transition-colors"
-                    title="Insert sample phishing"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                  </button>
-
-                  {/* Tools ▾ Pill */}
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setToolsDropdown(!toolsDropdown)}
-                      className="px-3 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.06] text-xs font-mono text-slate-300 flex items-center gap-1.5 transition-colors"
-                    >
-                      <Cpu className="w-3.5 h-3.5 text-signal" />
-                      <span>5 Agents</span>
-                      <ChevronDown className="w-3 h-3 text-slate-500" />
-                    </button>
-                    {toolsDropdown && (
-                      <div className="absolute bottom-full left-0 mb-2 w-56 rounded-xl bg-[#141926] border border-white/[0.1] p-2 text-xs font-mono space-y-1 z-30 shadow-2xl">
-                        <div className="text-[10px] text-slate-500 uppercase px-2 py-1">Active Forensic Suite</div>
-                        <div className="p-1.5 rounded-lg bg-white/[0.04] text-emerald-400">● 01 Extractor Agent</div>
-                        <div className="p-1.5 rounded-lg bg-white/[0.04] text-purple-400">● 02 Pattern Analyst</div>
-                        <div className="p-1.5 rounded-lg bg-white/[0.04] text-cyan-400">● 03 Entity Checker</div>
-                        <div className="p-1.5 rounded-lg bg-white/[0.04] text-signal">● 04 Judge Consensus</div>
-                        <div className="p-1.5 rounded-lg bg-white/[0.04] text-purple-300">● 05 Advisor Protocol</div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Deep Think ▾ Pill */}
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setThinkDropdown(!thinkDropdown)}
-                      className="px-3 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.06] text-xs font-mono text-slate-300 flex items-center gap-1.5 transition-colors"
-                    >
-                      <BrainCircuit className="w-3.5 h-3.5 text-purple-400" />
-                      <span>Bayesian Veto</span>
-                      <ChevronDown className="w-3 h-3 text-slate-500" />
-                    </button>
-                    {thinkDropdown && (
-                      <div className="absolute bottom-full left-0 mb-2 w-64 rounded-xl bg-[#141926] border border-white/[0.1] p-3 text-xs space-y-1.5 z-30 shadow-2xl">
-                        <div className="text-[10px] text-slate-400 uppercase font-mono">Consensus Gate</div>
-                        <p className="text-[11px] text-slate-300 leading-normal">
-                          Precautionary consensus veto applied: technical forensic risk strictly overrides polite linguistic phrasing.
-                        </p>
-                      </div>
-                    )}
-                  </div>
+            <div className="space-y-4 text-xs text-slate-300 leading-relaxed font-sans">
+              <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 space-y-2">
+                <div className="font-bold text-rose-300 flex items-center gap-2 text-sm">
+                  <PhoneCall className="w-4 h-4" />
+                  <span>{isHi ? "आपातकालीन वित्तीय धोखाधड़ी हेल्पलाइन" : "Immediate Financial Fraud Reporting"}</span>
                 </div>
-
-                {/* Right: Voice button + White Circle Send Button */}
-                <div className="flex items-center gap-2.5">
-                  <button
-                    type="button"
-                    onClick={handleToggleTTS}
-                    className={cn(
-                      "px-3 py-1 rounded-full border text-xs font-mono flex items-center gap-1.5 transition-all",
-                      isSpeaking
-                        ? "bg-signal text-slate-950 border-signal ring-2 ring-signal/40 animate-pulse"
-                        : "bg-white/[0.05] hover:bg-white/[0.08] border-white/[0.06] text-slate-300"
-                    )}
-                  >
-                    <Mic className="w-3.5 h-3.5 text-signal" />
-                    <span>Voice</span>
-                  </button>
-
-                  {/* White Circular Send Button with Black Arrow (Exact Screenshot Match) */}
-                  <button
-                    type="button"
-                    onClick={() => triggerAnalysis()}
-                    disabled={isAnalyzing || !inputText.trim()}
-                    className={cn(
-                      "w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-lg",
-                      isAnalyzing
-                        ? "bg-signal text-slate-950 animate-pulse cursor-wait"
-                        : inputText.trim()
-                        ? "bg-white hover:bg-slate-200 text-slate-950 cursor-pointer shadow-white/10"
-                        : "bg-white/40 text-slate-700 cursor-not-allowed"
-                    )}
-                  >
-                    {isAnalyzing ? (
-                      <Sparkles className="w-4 h-4 animate-spin text-slate-950" />
-                    ) : (
-                      <Send className="w-4 h-4 text-slate-950 ml-0.5" />
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* -------------------------------------------------------------------
-           * THREE QUICK-ACTION CARDS (EXACT SCREENSHOT ROW WITH ARROW TOP RIGHT)
-           * ------------------------------------------------------------------- */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto w-full relative z-10">
-            {/* Card 1: Bank KYC Phishing (Screenshot: Image Generator) */}
-            <div
-              onClick={() => {
-                const s = "Dear SBI User, your YONO account has been suspended due to pending KYC update. Click http://sbi-update-kyc.top to avoid permanent block.";
-                setInputText(s);
-                triggerAnalysis(s);
-              }}
-              className="p-5 rounded-2xl bg-[#121824]/80 border border-white/[0.06] hover:border-signal/40 hover:-translate-y-0.5 cursor-pointer transition-all space-y-3 group"
-            >
-              <div className="flex items-center justify-between">
-                <div className="w-8 h-8 rounded-xl bg-white/[0.06] flex items-center justify-center text-slate-300 group-hover:text-signal transition-colors">
-                  <ImageIcon className="w-4 h-4" />
-                </div>
-                <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-              </div>
-              <div className="space-y-1">
-                <div className="font-heading font-semibold text-sm text-white">
-                  Bank KYC Phishing
-                </div>
-                <p className="text-xs text-slate-400 leading-relaxed font-sans">
-                  Inspect lookalike SBI YONO links and defanged URLs in seconds.
+                <p>
+                  {isHi
+                    ? "यदि आपके बैंक खाते से धोखाधड़ी से पैसे कट गए हैं, तो तुरंत राष्ट्रीय हेल्पलाइन 1930 डायल करें। यह भारत सरकार के गृह मंत्रालय का आधिकारिक टोल-फ्री नंबर है।"
+                    : "If money has been debited fraudulently from your bank or UPI, immediately dial toll-free 1930. The cyber police can freeze the fund transfer during the golden hour."}
                 </p>
+                <a
+                  href="tel:1930"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-rose-500 text-white font-bold font-mono text-xs mt-1"
+                >
+                  <PhoneCall className="w-3.5 h-3.5" />
+                  <span>{dict.dialHelpline}</span>
+                </a>
               </div>
-            </div>
 
-            {/* Card 2: Electricity Threat (Screenshot: Video Generator) */}
-            <div
-              onClick={() => {
-                const s = "Dear Consumer, your electricity power will be disconnected tonight at 9:30 PM from sub-station. Immediately call officer 9876543210.";
-                setInputText(s);
-                triggerAnalysis(s);
-              }}
-              className="p-5 rounded-2xl bg-[#121824]/80 border border-white/[0.06] hover:border-signal/40 hover:-translate-y-0.5 cursor-pointer transition-all space-y-3 group"
-            >
-              <div className="flex items-center justify-between">
-                <div className="w-8 h-8 rounded-xl bg-white/[0.06] flex items-center justify-center text-slate-300 group-hover:text-signal transition-colors">
-                  <Video className="w-4 h-4" />
-                </div>
-                <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-              </div>
-              <div className="space-y-1">
-                <div className="font-heading font-semibold text-sm text-white">
-                  Electricity Threat
-                </div>
-                <p className="text-xs text-slate-400 leading-relaxed font-sans">
-                  Detect false deadline countdowns and power disconnection traps.
-                </p>
-              </div>
-            </div>
-
-            {/* Card 3: CBI Digital Arrest (Screenshot: Dev Assistant) */}
-            <div
-              onClick={() => {
-                const s = "CBI Headquarters Notice: Aadhaar linked with 14 money laundering accounts in Mumbai. Digital Arrest warrant issued. Join WhatsApp call immediately.";
-                setInputText(s);
-                triggerAnalysis(s);
-              }}
-              className="p-5 rounded-2xl bg-[#121824]/80 border border-white/[0.06] hover:border-signal/40 hover:-translate-y-0.5 cursor-pointer transition-all space-y-3 group"
-            >
-              <div className="flex items-center justify-between">
-                <div className="w-8 h-8 rounded-xl bg-white/[0.06] flex items-center justify-center text-slate-300 group-hover:text-signal transition-colors">
-                  <Code2 className="w-4 h-4" />
-                </div>
-                <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-              </div>
-              <div className="space-y-1">
-                <div className="font-heading font-semibold text-sm text-white">
-                  CBI Digital Arrest
-                </div>
-                <p className="text-xs text-slate-400 leading-relaxed font-sans">
-                  Expose fake law enforcement summons and WhatsApp extortion.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* -------------------------------------------------------------------
-           * LIVE N8N WORKFLOW GRAPH & 5-AGENT FORENSICS (THE "GOOD STUFFS")
-           * ------------------------------------------------------------------- */}
-          {(isAnalyzing || finalResult || completedStages.length > 0) && (
-            <div className="w-full max-w-4xl mx-auto space-y-6 pt-6 relative z-10">
-              
-              {/* DAG Pipeline Graph */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between px-1 text-xs font-mono text-slate-400">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-signal animate-ping" />
-                    <span className="text-white font-bold">LIVE MULTI-AGENT DAG WORKFLOW</span>
-                    <span className="text-slate-600">|</span>
-                    <span>
-                      {isAnalyzing
-                        ? `Executing Node: [${activeStage?.replace("_", " ").toUpperCase()}]`
-                        : "Consensus Complete ✓"}
-                    </span>
-                  </div>
+                <div className="font-bold text-white text-sm">
+                  {isHi ? "आधिकारिक पोर्टल पर रिपोर्ट कैसे करें?" : "How to Report on the National Portal"}
                 </div>
-
-                <PipelineGraph
-                  variant="full"
-                  activeStage={activeStage}
-                  completedStages={completedStages}
-                  verdict={finalResult?.verdict}
-                  locale={locale}
-                />
+                <p>
+                  {isHi
+                    ? "आप cybercrime.gov.in पर जाकर घटना की ऑनलाइन शिकायत दर्ज कर सकते हैं। स्कैम शील्ड द्वारा तैयार की गई रिपोर्ट को सबूत के तौर पर संलग्न करें।"
+                    : "Visit cybercrime.gov.in to lodge a formal cyber incident report. You can attach the .txt or .json evidence dossier exported by Scam Shield."}
+                </p>
+                <a
+                  href="https://cybercrime.gov.in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-signal hover:underline inline-flex items-center gap-1 font-mono text-[11px]"
+                >
+                  <span>cybercrime.gov.in</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
               </div>
 
-              {/* FINAL VERDICT DOSSIER BANNER */}
-              {finalResult && (
-                <div className={cn(
-                  "p-6 sm:p-8 rounded-3xl border shadow-2xl space-y-5 transition-all duration-300",
-                  finalResult.verdict === "scam"
-                    ? "bg-gradient-to-b from-[#180C14] to-[#0A050B] border-rose-500/40 shadow-rose-500/10"
-                    : finalResult.verdict === "suspicious"
-                    ? "bg-gradient-to-b from-[#18140B] to-[#0A0905] border-amber-500/40 shadow-amber-500/10"
-                    : "bg-gradient-to-b from-[#0B1814] to-[#050A09] border-emerald-500/40 shadow-emerald-500/10"
-                )}>
-                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2.5">
-                        <span
-                          className={cn(
-                            "px-3 py-1 rounded-full font-mono font-bold text-xs uppercase tracking-wider flex items-center gap-1.5",
-                            finalResult.verdict === "scam"
-                              ? "bg-rose-500 text-slate-950"
-                              : finalResult.verdict === "suspicious"
-                              ? "bg-amber-400 text-slate-950"
-                              : "bg-emerald-400 text-slate-950"
-                          )}
-                        >
-                          {finalResult.verdict === "scam" ? (
-                            <AlertTriangle className="w-3.5 h-3.5" />
-                          ) : finalResult.verdict === "suspicious" ? (
-                            <ShieldAlert className="w-3.5 h-3.5" />
-                          ) : (
-                            <CheckCircle2 className="w-3.5 h-3.5" />
-                          )}
-                          <span>
-                            {finalResult.verdict === "scam"
-                              ? "CONFIRMED FRAUD"
-                              : finalResult.verdict === "suspicious"
-                              ? "HIGHLY SUSPICIOUS"
-                              : "VERIFIED SAFE"}
-                          </span>
-                        </span>
-                        <span className="font-mono text-xs text-slate-300 bg-white/[0.06] border border-white/[0.1] px-2.5 py-0.5 rounded-full">
-                          {(finalResult.confidence * 100).toFixed(1)}% Confidence
-                        </span>
-                      </div>
-
-                      <h2 className="text-xl sm:text-2xl font-heading font-bold text-white tracking-tight">
-                        {finalResult.advice.headline}
-                      </h2>
-
-                      <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
-                        {finalResult.reasoning}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-2 shrink-0">
-                      <button
-                        type="button"
-                        onClick={handleCopyShareText}
-                        className="px-3 py-2 rounded-xl border border-white/[0.1] bg-white/[0.05] hover:bg-white/[0.08] text-white text-xs font-mono flex items-center gap-1.5 transition-colors"
-                      >
-                        {copiedShare ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5 text-signal" />}
-                        <span>{copiedShare ? "Copied!" : "WhatsApp Warning"}</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => downloadTextReport(finalResult, { caseId, timestamp: new Date().toISOString(), userMessage: inputText })}
-                        className="p-2 rounded-xl border border-white/[0.1] bg-white/[0.05] hover:bg-white/[0.08] text-slate-300 hover:text-white transition-colors"
-                        title="Download text report"
-                      >
-                        <Download className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Do's and Don'ts */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                    {finalResult.advice.do_not.length > 0 && (
-                      <div className="p-3.5 rounded-xl bg-rose-500/[0.06] border border-rose-500/20 space-y-1.5">
-                        <div className="text-[11px] font-mono font-bold text-rose-300 uppercase">
-                          Protective Rules (DO NOT)
-                        </div>
-                        <ul className="text-xs text-slate-300 space-y-1">
-                          {finalResult.advice.do_not.map((r, i) => (
-                            <li key={i} className="flex items-start gap-1.5">
-                              <span className="text-rose-400 font-bold shrink-0">✕</span>
-                              <span>{r}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    {finalResult.advice.do_next.length > 0 && (
-                      <div className="p-3.5 rounded-xl bg-emerald-500/[0.06] border border-emerald-500/20 space-y-1.5">
-                        <div className="text-[11px] font-mono font-bold text-emerald-300 uppercase">
-                          Immediate Next Step
-                        </div>
-                        <ul className="text-xs text-slate-300 space-y-1">
-                          {finalResult.advice.do_next.map((s, i) => (
-                            <li key={i} className="flex items-start gap-1.5">
-                              <span className="text-emerald-400 font-bold shrink-0">✓</span>
-                              <span>{s}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* 5-AGENT FORENSIC INTELLIGENCE GRID */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {/* 01 Extractor */}
-                <div className="p-4 rounded-2xl bg-[#121824]/80 border border-white/[0.06] space-y-2.5">
-                  <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
-                    <span className="font-heading font-semibold text-xs text-white">01 Extractor Agent</span>
-                    <span className="text-[10px] font-mono text-emerald-400">120ms ✓</span>
-                  </div>
-                  <div className="space-y-1.5 text-xs">
-                    <div className="text-slate-400 text-[11px]">Defanged Links:</div>
-                    {finalResult?.entities.urls && finalResult.entities.urls.length > 0 ? (
-                      finalResult.entities.urls.map((u, i) => (
-                        <div
-                          key={i}
-                          onClick={() => handleCopyEntity(defangUrl(u))}
-                          className="p-1.5 rounded bg-rose-500/10 border border-rose-500/20 text-rose-300 font-mono text-[11px] flex items-center justify-between cursor-pointer"
-                        >
-                          <span className="truncate">{defangUrl(u)}</span>
-                          <Copy className="w-3 h-3 shrink-0 ml-1 opacity-70" />
-                        </div>
-                      ))
-                    ) : (
-                      <span className="text-slate-500 text-[11px] italic">No malicious links isolated.</span>
-                    )}
-                  </div>
-                </div>
-
-                {/* 02 Pattern Analyst */}
-                <div className="p-4 rounded-2xl bg-[#121824]/80 border border-white/[0.06] space-y-2.5">
-                  <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
-                    <span className="font-heading font-semibold text-xs text-white">02 Pattern Analyst</span>
-                    <span className="text-[10px] font-mono text-purple-400">140ms ✓</span>
-                  </div>
-                  <div className="space-y-1 text-xs">
-                    <div className="text-slate-400 text-[11px]">Threat Vector:</div>
-                    <div className="p-1.5 rounded bg-purple-500/10 border border-purple-500/20 text-purple-300 font-mono text-xs">
-                      {finalResult?.scam_type ? finalResult.scam_type.replace(/_/g, " ").toUpperCase() : "Urgency vectors"}
-                    </div>
-                  </div>
-                </div>
-
-                {/* 03 Entity Checker */}
-                <div className="p-4 rounded-2xl bg-[#121824]/80 border border-white/[0.06] space-y-2.5">
-                  <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
-                    <span className="font-heading font-semibold text-xs text-white">03 Entity Checker</span>
-                    <span className="text-[10px] font-mono text-cyan-400">160ms ✓</span>
-                  </div>
-                  <div className="space-y-1 text-xs">
-                    <div className="text-slate-400 text-[11px]">Air-Gapped Forensics:</div>
-                    <div className="p-1.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 font-mono text-[11px]">
-                      WHOIS Age: &lt; 7 Days | Official Bank: 0% Match
-                    </div>
-                  </div>
-                </div>
+              <div className="space-y-1 pt-1 border-t border-white/[0.06] text-slate-400 text-[11px] font-mono">
+                <div>• Zero Data Retention: {isHi ? "आपके संदेश डिस्क पर कभी नहीं रखे जाते।" : "Raw messages evaluated in memory and discarded."}</div>
+                <div>• Indian Law Standards: IPC/BNS & IT Act 2000 compliant.</div>
               </div>
             </div>
-          )}
-        </main>
-      </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

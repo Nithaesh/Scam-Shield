@@ -1,22 +1,22 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Mukta, JetBrains_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Mukta, JetBrains_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { locales } from "../../i18n";
 import "../globals.css";
 
-const bricolage = Bricolage_Grotesque({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-display",
-  weight: ["600", "700"],
+  variable: "--font-sans-modern",
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
 const mukta = Mukta({
   subsets: ["latin", "devanagari"],
   variable: "--font-body",
-  weight: ["400", "500", "700"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -83,7 +83,7 @@ export default async function LocaleLayout({
     <html
       lang={locale}
       data-theme="dark"
-      className={`${bricolage.variable} ${mukta.variable} ${jetbrains.variable}`}
+      className={`${jakarta.variable} ${mukta.variable} ${jetbrains.variable}`}
     >
       <body className="min-h-screen bg-page text-paper antialiased grain-overlay selection:bg-signal selection:text-on-signal">
         {/* Skip to Content for Accessibility */}

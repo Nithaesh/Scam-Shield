@@ -243,7 +243,10 @@ export default function LandingPage() {
 
             {/* Right Column: Floating Cyber-Card Visual */}
             <div className="lg:col-span-5 relative flex justify-center">
-              <div className="w-full max-w-md rounded-2xl bg-[#0A0F1E]/95 border border-white/[0.12] p-5 shadow-2xl backdrop-blur-xl space-y-5 relative">
+              <div className="w-full max-w-md rounded-3xl bg-[#0A0F1E]/95 border border-white/[0.12] hover:border-signal/50 p-6 shadow-2xl shadow-cyan-500/10 backdrop-blur-2xl space-y-5 relative overflow-hidden group hover:-translate-y-1.5 transition-all duration-500 animate-float">
+                {/* Real-time Sweeping Cyber Laser Scanning Line */}
+                <div className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_15px_#38BDF8] pointer-events-none animate-laser z-20" />
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-cyan-500/20 transition-colors" />
                 {/* Window Header */}
                 <div className="flex items-center justify-between border-b border-white/[0.08] pb-3 text-xs">
                   <div className="flex items-center gap-1.5">
@@ -280,25 +283,25 @@ export default function LandingPage() {
 
                 {/* 2x2 Forensic Metrics Grid */}
                 <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-1">
+                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-signal/40 hover:bg-white/[0.06] transition-all space-y-1">
                     <div className="text-[10px] text-slate-400 uppercase">
                       {isHi ? "नागरिक पहचान" : "CITIZEN IDENTITY"}
                     </div>
                     <div className="text-white font-bold">{isHi ? "शून्य डेटा सुरक्षित ✓" : "Hashed & Salted ✓"}</div>
                   </div>
-                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-1">
+                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-signal/40 hover:bg-white/[0.06] transition-all space-y-1">
                     <div className="text-[10px] text-slate-400 uppercase">
                       {isHi ? "डिस्क स्टोरेज" : "DISK LOGS"}
                     </div>
                     <div className="text-emerald-400 font-bold">{isHi ? "0 बाइट्स सेव ✓" : "0 Bytes Retained ✓"}</div>
                   </div>
-                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-1">
+                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-signal/40 hover:bg-white/[0.06] transition-all space-y-1">
                     <div className="text-[10px] text-slate-400 uppercase">
                       {isHi ? "लिंक फॉरेंसिक्स" : "LINK FORENSICS"}
                     </div>
                     <div className="text-signal font-bold">{isHi ? "सुरक्षित DNS ✓" : "Air-Gapped DNS ✓"}</div>
                   </div>
-                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] space-y-1">
+                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-signal/40 hover:bg-white/[0.06] transition-all space-y-1">
                     <div className="text-[10px] text-slate-400 uppercase">
                       {isHi ? "आम सहमति गेट" : "CONSENSUS GATE"}
                     </div>
@@ -321,9 +324,10 @@ export default function LandingPage() {
          * ========================================================================= */}
         <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-b border-white/[0.06]">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-6 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/40 transition-all flex flex-col justify-between space-y-4">
-              <div className="w-8 h-8 rounded-lg bg-blue-500/15 border border-blue-500/30 text-blue-400 flex items-center justify-center">
-                <Server className="w-4 h-4" />
+            <div className="p-6 sm:p-7 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/60 hover:-translate-y-2 hover:shadow-2xl hover:shadow-signal/10 group transition-all duration-300 flex flex-col justify-between space-y-4 relative overflow-hidden">
+              <div className="absolute -top-12 -right-12 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-colors" />
+              <div className="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-500/30 text-blue-400 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                <Server className="w-5 h-5" />
               </div>
               <div>
                 <div className="font-heading text-4xl font-bold text-white tracking-tight">120+</div>
@@ -336,9 +340,10 @@ export default function LandingPage() {
               </span>
             </div>
 
-            <div className="p-6 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/40 transition-all flex flex-col justify-between space-y-4">
-              <div className="w-8 h-8 rounded-lg bg-signal/15 border border-signal/30 text-signal flex items-center justify-center">
-                <ShieldCheck className="w-4 h-4" />
+            <div className="p-6 sm:p-7 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/60 hover:-translate-y-2 hover:shadow-2xl hover:shadow-signal/10 group transition-all duration-300 flex flex-col justify-between space-y-4 relative overflow-hidden">
+              <div className="absolute -top-12 -right-12 w-24 h-24 bg-signal/10 rounded-full blur-2xl group-hover:bg-signal/20 transition-colors" />
+              <div className="w-10 h-10 rounded-xl bg-signal/15 border border-signal/30 text-signal flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300">
+                <ShieldCheck className="w-5 h-5" />
               </div>
               <div>
                 <div className="font-heading text-4xl font-bold text-white tracking-tight">100%</div>
@@ -351,9 +356,10 @@ export default function LandingPage() {
               </span>
             </div>
 
-            <div className="p-6 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/40 transition-all flex flex-col justify-between space-y-4">
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
-                <Lock className="w-4 h-4" />
+            <div className="p-6 sm:p-7 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/60 hover:-translate-y-2 hover:shadow-2xl hover:shadow-signal/10 group transition-all duration-300 flex flex-col justify-between space-y-4 relative overflow-hidden">
+              <div className="absolute -top-12 -right-12 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-colors" />
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                <Lock className="w-5 h-5" />
               </div>
               <div>
                 <div className="font-heading text-4xl font-bold text-white tracking-tight">0 Bytes</div>
@@ -366,9 +372,10 @@ export default function LandingPage() {
               </span>
             </div>
 
-            <div className="p-6 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/40 transition-all flex flex-col justify-between space-y-4">
-              <div className="w-8 h-8 rounded-lg bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 flex items-center justify-center">
-                <Activity className="w-4 h-4" />
+            <div className="p-6 sm:p-7 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/60 hover:-translate-y-2 hover:shadow-2xl hover:shadow-signal/10 group transition-all duration-300 flex flex-col justify-between space-y-4 relative overflow-hidden">
+              <div className="absolute -top-12 -right-12 w-24 h-24 bg-cyan-500/10 rounded-full blur-2xl group-hover:bg-cyan-500/20 transition-colors" />
+              <div className="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300">
+                <Activity className="w-5 h-5" />
               </div>
               <div>
                 <div className="font-heading text-4xl font-bold text-white tracking-tight">99.98%</div>
@@ -475,7 +482,7 @@ export default function LandingPage() {
                 ].map((item, idx) => (
                   <div
                     key={idx}
-                    className="p-3 rounded-xl bg-[#060913] border border-white/[0.06] flex items-center justify-between text-xs font-mono hover:border-signal/30 transition-colors"
+                    className="p-3.5 rounded-xl bg-[#060913] border border-white/[0.06] flex items-center justify-between text-xs font-mono hover:border-signal/50 hover:bg-white/[0.04] hover:translate-x-1.5 transition-all duration-200 cursor-default group"
                   >
                     <div className="flex items-center gap-2.5">
                       <span className="w-2 h-2 rounded-full bg-emerald-400" />
@@ -543,11 +550,11 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="p-6 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/40 transition-all space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-signal/15 text-signal flex items-center justify-center">
-                <Lock className="w-5 h-5" />
+            <div className="p-6 sm:p-7 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/60 hover:-translate-y-2 hover:shadow-2xl hover:shadow-signal/15 group transition-all duration-300 space-y-4 relative overflow-hidden">
+              <div className="w-12 h-12 rounded-xl bg-signal/15 text-signal flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                <Lock className="w-6 h-6" />
               </div>
-              <h3 className="font-heading font-bold text-base text-white">
+              <h3 className="font-heading font-bold text-base text-white group-hover:text-signal transition-colors">
                 {isHi ? "एयर-गैप्ड डीएनएस" : "Air-Gapped DNS"}
               </h3>
               <p className="text-xs text-slate-400 leading-relaxed font-sans">
@@ -557,11 +564,11 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/40 transition-all space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center">
-                <BrainCircuit className="w-5 h-5" />
+            <div className="p-6 sm:p-7 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-purple-500/60 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/15 group transition-all duration-300 space-y-4 relative overflow-hidden">
+              <div className="w-12 h-12 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300">
+                <BrainCircuit className="w-6 h-6" />
               </div>
-              <h3 className="font-heading font-bold text-base text-white">
+              <h3 className="font-heading font-bold text-base text-white group-hover:text-purple-400 transition-colors">
                 {isHi ? "मनोवैज्ञानिक दबाव जांच" : "Psychology Matrix"}
               </h3>
               <p className="text-xs text-slate-400 leading-relaxed font-sans">
@@ -571,11 +578,11 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/40 transition-all space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center">
-                <Scale className="w-5 h-5" />
+            <div className="p-6 sm:p-7 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-cyan-500/60 hover:-translate-y-2 hover:shadow-2xl hover:shadow-cyan-500/15 group transition-all duration-300 space-y-4 relative overflow-hidden">
+              <div className="w-12 h-12 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                <Scale className="w-6 h-6" />
               </div>
-              <h3 className="font-heading font-bold text-base text-white">
+              <h3 className="font-heading font-bold text-base text-white group-hover:text-cyan-400 transition-colors">
                 {isHi ? "बेयसियन वीटो गेट" : "Consensus Veto"}
               </h3>
               <p className="text-xs text-slate-400 leading-relaxed font-sans">
@@ -585,11 +592,11 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-signal/40 transition-all space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center">
-                <PhoneCall className="w-5 h-5" />
+            <div className="p-6 sm:p-7 rounded-2xl bg-[#090E1D] border border-white/[0.08] hover:border-emerald-500/60 hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-500/15 group transition-all duration-300 space-y-4 relative overflow-hidden">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300">
+                <PhoneCall className="w-6 h-6" />
               </div>
-              <h3 className="font-heading font-bold text-base text-white">
+              <h3 className="font-heading font-bold text-base text-white group-hover:text-emerald-400 transition-colors">
                 {isHi ? "1930 सहायता सीधे जुड़ी" : "1930 Helpline"}
               </h3>
               <p className="text-xs text-slate-400 leading-relaxed font-sans">
@@ -635,7 +642,7 @@ export default function LandingPage() {
               <Accordion.Item
                 key={idx}
                 value={`item-${idx}`}
-                className="rounded-xl border border-white/[0.08] bg-[#090E1D] overflow-hidden"
+                className="rounded-2xl border border-white/[0.08] bg-[#090E1D] hover:border-signal/50 data-[state=open]:border-signal/50 transition-all duration-300 overflow-hidden shadow-md"
               >
                 <Accordion.Header>
                   <Accordion.Trigger className="w-full p-4 text-left font-heading font-semibold text-sm text-white flex items-center justify-between hover:text-signal transition-colors">

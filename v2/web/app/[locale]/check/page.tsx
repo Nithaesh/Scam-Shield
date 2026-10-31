@@ -52,6 +52,7 @@ import {
   FolderGit2,
   Upload,
   X,
+  Menu,
 } from "lucide-react";
 import { cn, defangUrl, defangHandle } from "@/lib/utils";
 import { PipelineGraph } from "@/components/pipeline/PipelineGraph";
@@ -109,6 +110,30 @@ export default function SyntrixDashboardPage() {
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [helpModalOpen, setHelpModalOpen] = useState(false);
   const [selectedPresetCategory, setSelectedPresetCategory] = useState<string>("all");
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("scam_shield_theme") as "dark" | "light" | null;
+    if (saved) {
+      setTheme(saved);
+      document.documentElement.setAttribute("data-theme", saved);
+      if (saved === "light") document.documentElement.classList.add("light");
+      else document.documentElement.classList.remove("light");
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    localStorage.setItem("scam_shield_theme", next);
+    document.documentElement.setAttribute("data-theme", next);
+    if (next === "light") {
+      document.documentElement.classList.add("light");
+    } else {
+      document.documentElement.classList.remove("light");
+    }
+  };
 
   const mainScrollRef = useRef<HTMLDivElement>(null);
   const resultContainerRef = useRef<HTMLDivElement>(null);
@@ -490,10 +515,24 @@ export default function SyntrixDashboardPage() {
         className="hidden"
         id="global-screenshot-picker"
       />
+      {/* Mobile Sidebar Backdrop Overlay */}
+      {mobileSidebarOpen && (
+        <div
+          onClick={() => setMobileSidebarOpen(false)}
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+        />
+      )}
+
       {/* =========================================================================
-       * 1. LEFT SIDEBAR (FULL HEIGHT, EXACT SYNTHRIX LAYOUT)
+       * 1. LEFT SIDEBAR (DYNAMIC RESPONSIVE DRAWER ON MOBILE, FIXED COLUMN ON DESKTOP)
        * ========================================================================= */}
-      <aside className="w-full lg:w-64 xl:w-72 bg-[#060910] border-b lg:border-b-0 lg:border-r border-white/[0.08] p-5 flex flex-col justify-between shrink-0 overflow-y-auto space-y-6 z-20">
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 w-72 sm:w-80 bg-[#060910] border-r border-white/[0.08] p-5 flex flex-col justify-between shrink-0 overflow-y-auto space-y-6 transition-transform duration-300 ease-in-out",
+          "lg:relative lg:translate-x-0 lg:w-64 xl:w-72 2xl:w-80",
+          mobileSidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
+        )}
+      >
         <div className="space-y-6">
           {/* Brand Header */}
           <div className="flex items-center justify-between">
@@ -503,14 +542,24 @@ export default function SyntrixDashboardPage() {
                 {dict.brandName}
               </span>
             </Link>
-            <button
-              type="button"
-              onClick={() => setHelpModalOpen(true)}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.05] transition-colors"
-              title="Help & Info"
-            >
-              <Search className="w-4 h-4" />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setHelpModalOpen(true)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.05] transition-colors"
+                title="Help & Info"
+              >
+                <Search className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setMobileSidebarOpen(false)}
+                className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.08]"
+                aria-label="Close sidebar"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
           {/* "+ New Scan" Button */}
@@ -754,7 +803,7 @@ export default function SyntrixDashboardPage() {
        * ========================================================================= */}
       <main
         ref={mainScrollRef}
-        className="flex-1 flex flex-col justify-between overflow-y-auto bg-gradient-to-b from-[#0b141d]/50 via-[#080d15] to-[#080d15] p-5 sm:p-8 lg:p-10 space-y-8 relative"
+        className="flex-1 flex flex-col justify-between overflow-y-auto bg-gradient-to-b from-[#0b141d]/50 via-[#080d15] to-[#080d15] p-3.5 sm:p-6 lg:p-8 2xl:p-12 space-y-8 relative"
       >
         {/* Subtle Ambient Top-Right Cyan Glow */}
         <div className="absolute top-0 right-0 w-[600px] h-[400px] bg-cyan-600/[0.07] rounded-full blur-[150px] pointer-events-none" />
@@ -762,9 +811,21 @@ export default function SyntrixDashboardPage() {
         {/* ---------------------------------------------------------------------
          * TOP HEADER NAVIGATION STRIP
          * --------------------------------------------------------------------- */}
-        <div className="flex items-center justify-between relative z-10 w-full max-w-6xl mx-auto">
-          {/* Version Dropdown Pill */}
-          <div className="relative">
+        <div className="flex items-center justify-between relative z-10 w-full max-w-6xl 2xl:max-w-7xl mx-auto gap-2">
+          {/* Mobile Sidebar Hamburger Toggle & Version Pill */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setMobileSidebarOpen(true)}
+              className="lg:hidden p-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-slate-300 hover:text-white hover:bg-white/[0.08] transition-colors"
+              aria-label="Open sidebar"
+              title="Open Navigation"
+            >
+              <Menu className="w-4 h-4 text-signal" />
+            </button>
+
+            {/* Version Dropdown Pill */}
+            <div className="relative">
             <button
               type="button"
               onClick={() => setVersionDropdown(!versionDropdown)}
@@ -789,6 +850,7 @@ export default function SyntrixDashboardPage() {
                 </div>
               </div>
             )}
+            </div>
           </div>
 
           {/* Right Header Navigation: Dashboard, Language Toggle, Help & Support, Avatar */}
@@ -808,6 +870,21 @@ export default function SyntrixDashboardPage() {
             >
               {locale === "en" ? "हिन्दी" : "EN"}
             </Link>
+
+            {/* Dark / Light Theme Toggle Button */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="p-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] text-slate-300 hover:text-white hover:border-signal transition-colors"
+              aria-label="Toggle theme"
+              title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {theme === "dark" ? (
+                <Sun className="w-4 h-4 text-signal animate-in spin-in-180 duration-300" />
+              ) : (
+                <Moon className="w-4 h-4 text-signal animate-in spin-in-180 duration-300" />
+              )}
+            </button>
 
             <button
               type="button"
@@ -1072,9 +1149,9 @@ export default function SyntrixDashboardPage() {
         </div>
 
         {/* ---------------------------------------------------------------------
-         * THREE QUICK-ACTION CARDS (EXACT SYNTHRIX MATCH)
+         * THREE QUICK-ACTION CARDS (EXACT SYNTHRIX MATCH, FULLY RESPONSIVE)
          * --------------------------------------------------------------------- */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto w-full relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4 max-w-3xl 2xl:max-w-4xl mx-auto w-full relative z-10">
           {/* Card 1: Bank KYC Phishing */}
           <div
             onClick={() => {

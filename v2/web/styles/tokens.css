@@ -1,34 +1,57 @@
 :root {
   /* CyberSafe & Hermes Dark Palette (Default) */
   --color-page: #060913;
+  --page: #060913;
   --color-panel: #0A0F1E;
+  --panel: #0A0F1E;
   --color-raised: #10182C;
+  --raised: #10182C;
   --color-hairline: rgba(255, 255, 255, 0.08);
+  --hairline: rgba(255, 255, 255, 0.08);
   --color-hairline-bright: rgba(255, 255, 255, 0.16);
+  --hairline-bright: rgba(255, 255, 255, 0.16);
 
   /* Text Hierarchy */
   --color-paper: #F1F5F9;
+  --paper: #F1F5F9;
+  --text: #F1F5F9;
   --color-fog: #94A3B8;
+  --fog: #94A3B8;
   --color-muted: #64748B;
+  --muted: #64748B;
 
   /* Primary Accent: Electric Cyan / Blue */
   --color-signal: #38BDF8;
+  --signal: #38BDF8;
   --color-signal-glow: rgba(56, 189, 248, 0.25);
+  --signal-glow: rgba(56, 189, 248, 0.25);
   --color-signal-dark: #0284C7;
+  --signal-dark: #0284C7;
   --color-on-signal: #030712;
+  --on-signal: #030712;
+  --text-on-signal: #030712;
 
   /* Verdict & Status Colors */
   --color-verdict-safe: #10B981;
+  --verdict-safe: #10B981;
   --color-verdict-safe-surface: rgba(16, 185, 129, 0.10);
+  --verdict-safe-surface: rgba(16, 185, 129, 0.10);
   --color-verdict-safe-text: #34D399;
+  --verdict-safe-text: #34D399;
 
   --color-verdict-warn: #F59E0B;
+  --verdict-warn: #F59E0B;
   --color-verdict-warn-surface: rgba(245, 158, 11, 0.10);
+  --verdict-warn-surface: rgba(245, 158, 11, 0.10);
   --color-verdict-warn-text: #FBBF24;
+  --verdict-warn-text: #FBBF24;
 
   --color-verdict-scam: #EF4444;
+  --verdict-scam: #EF4444;
   --color-verdict-scam-surface: rgba(239, 68, 68, 0.12);
+  --verdict-scam-surface: rgba(239, 68, 68, 0.12);
   --color-verdict-scam-text: #F87171;
+  --verdict-scam-text: #F87171;
 
   /* Radii */
   --radius-sm: 8px;
@@ -40,31 +63,119 @@
 [data-theme="light"],
 .light {
   --color-page: #F8FAFC;
+  --page: #F8FAFC;
   --color-panel: #FFFFFF;
-  --color-raised: #EDF2F7;
+  --panel: #FFFFFF;
+  --color-raised: #F1F5F9;
+  --raised: #F1F5F9;
   --color-hairline: rgba(15, 23, 42, 0.08);
+  --hairline: rgba(15, 23, 42, 0.08);
   --color-hairline-bright: rgba(15, 23, 42, 0.16);
+  --hairline-bright: rgba(15, 23, 42, 0.16);
 
   --color-paper: #0F172A;
+  --paper: #0F172A;
+  --text: #0F172A;
   --color-fog: #475569;
+  --fog: #475569;
   --color-muted: #64748B;
+  --muted: #64748B;
 
   --color-signal: #0284C7;
+  --signal: #0284C7;
   --color-signal-glow: rgba(2, 132, 199, 0.2);
+  --signal-glow: rgba(2, 132, 199, 0.2);
   --color-signal-dark: #0369A1;
+  --signal-dark: #0369A1;
   --color-on-signal: #FFFFFF;
+  --on-signal: #FFFFFF;
+  --text-on-signal: #FFFFFF;
 
   --color-verdict-safe: #059669;
+  --verdict-safe: #059669;
   --color-verdict-safe-surface: #ECFDF5;
+  --verdict-safe-surface: #ECFDF5;
   --color-verdict-safe-text: #065F46;
+  --verdict-safe-text: #065F46;
 
   --color-verdict-warn: #D97706;
+  --verdict-warn: #D97706;
   --color-verdict-warn-surface: #FFFBEB;
+  --verdict-warn-surface: #FFFBEB;
   --color-verdict-warn-text: #92400E;
+  --verdict-warn-text: #92400E;
 
   --color-verdict-scam: #DC2626;
+  --verdict-scam: #DC2626;
   --color-verdict-scam-surface: #FEF2F2;
+  --verdict-scam-surface: #FEF2F2;
   --color-verdict-scam-text: #991B1B;
+  --verdict-scam-text: #991B1B;
+}
+
+/* =========================================================================
+ * LIGHT THEME GLOBAL COMPONENT ADAPTATIONS
+ * ========================================================================= */
+.light body {
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+}
+
+.light header {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+.light aside {
+  background-color: #F1F5F9 !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+.light main {
+  background: #F8FAFC !important;
+}
+
+.light .bg-\[\#050811\],
+.light .bg-\[\#060913\],
+.light .bg-\[\#080d15\],
+.light .bg-\[\#060910\],
+.light .bg-\[\#0A0F1E\],
+.light .bg-\[\#090E1D\],
+.light .bg-\[\#111726\]\/95,
+.light .bg-\[\#0c1220\]\/95,
+.light .bg-\[\#0f1524\]\/80,
+.light .bg-\[\#0A0F1E\]\/95 {
+  background-color: #FFFFFF !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05) !important;
+}
+
+.light .text-white {
+  color: #0F172A !important;
+}
+
+.light .text-slate-300,
+.light .text-slate-400 {
+  color: #475569 !important;
+}
+
+.light .text-slate-500 {
+  color: #64748B !important;
+}
+
+.light .border-white\/\[0\.06\],
+.light .border-white\/\[0\.08\],
+.light .border-white\/\[0\.1\],
+.light .border-white\/\[0\.12\] {
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+.light .bg-white\/\[0\.03\],
+.light .bg-white\/\[0\.04\],
+.light .bg-white\/\[0\.05\],
+.light .bg-white\/\[0\.06\],
+.light .bg-white\/\[0\.08\] {
+  background-color: rgba(15, 23, 42, 0.04) !important;
 }
 
 /* Glassmorphic card glow helper */
@@ -90,4 +201,53 @@
 
 .glow-emerald {
   box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.35);
+}
+
+/* =========================================================================
+ * LANDING PAGE HIGH-IMPACT ANIMATIONS
+ * ========================================================================= */
+@keyframes laser-sweep {
+  0% {
+    top: 0%;
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0.8;
+  }
+}
+
+.animate-laser {
+  animation: laser-sweep 3s ease-in-out infinite alternate;
+}
+
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float {
+  animation: float-gentle 4s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+.animate-glow-pulse {
+  animation: pulse-glow 3.5s ease-in-out infinite;
 }

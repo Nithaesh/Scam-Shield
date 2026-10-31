@@ -42,7 +42,7 @@ export const Header: React.FC = () => {
   const otherPath = pathname.replace(`/${locale}`, `/${otherLocale}`) || `/${otherLocale}`;
 
   return (
-    <header className="sticky top-0 z-50 w-full backdrop-blur-xl bg-[#060913]/80 border-b border-white/[0.06] transition-colors">
+    <header className="sticky top-0 z-50 w-full backdrop-blur-xl bg-[#060913]/85 border-b border-white/[0.06] transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {/* Brand Logo & Name */}
         <Link
@@ -110,14 +110,19 @@ export const Header: React.FC = () => {
             {locale === "en" ? "हिन्दी" : "EN"}
           </Link>
 
-          {/* Theme Switcher */}
+          {/* Theme Switcher Button */}
           <button
             type="button"
             onClick={toggleTheme}
             className="p-2 rounded-full border border-white/[0.08] bg-white/[0.04] text-slate-400 hover:text-white hover:border-signal transition-colors"
-            aria-label="Toggle theme"
+            aria-label="Toggle dark/light theme"
+            title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
           >
-            {theme === "dark" ? <Sun className="w-3.5 h-3.5 text-signal" /> : <Moon className="w-3.5 h-3.5 text-signal" />}
+            {theme === "dark" ? (
+              <Sun className="w-3.5 h-3.5 text-signal animate-in spin-in-180 duration-300" />
+            ) : (
+              <Moon className="w-3.5 h-3.5 text-signal animate-in spin-in-180 duration-300" />
+            )}
           </button>
 
           {/* Primary Action Button */}
@@ -130,18 +135,29 @@ export const Header: React.FC = () => {
           </Link>
         </div>
 
-        {/* Mobile Hamburger Toggle */}
+        {/* Mobile Hamburger Toggle & Quick Controls */}
         <div className="flex sm:hidden items-center gap-2">
+          {/* Mobile Theme Toggle */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="p-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] text-slate-300"
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? <Sun className="w-4 h-4 text-signal" /> : <Moon className="w-4 h-4 text-signal" />}
+          </button>
+
           <Link
             href={otherPath}
-            className="px-2 py-1 rounded border border-white/[0.08] bg-white/[0.04] text-white text-xs font-mono"
+            className="px-2 py-1 rounded-lg border border-white/[0.08] bg-white/[0.04] text-white text-xs font-mono"
           >
             {locale === "en" ? "हिं" : "EN"}
           </Link>
+
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded border border-white/[0.08] bg-white/[0.04] text-slate-300"
+            className="p-2 rounded-lg border border-white/[0.08] bg-white/[0.04] text-slate-300"
             aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -151,49 +167,64 @@ export const Header: React.FC = () => {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="sm:hidden px-4 pt-3 pb-6 border-t border-white/[0.08] bg-[#0A0F1E] space-y-4">
+        <div className="sm:hidden px-4 pt-3 pb-6 border-t border-white/[0.08] bg-[#0A0F1E] space-y-4 animate-in slide-in-from-top-2 duration-200">
           <nav className="flex flex-col space-y-3 text-sm font-medium text-slate-300">
             <Link
               href={`/${locale}#threat-map`}
               onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-white"
+              className="hover:text-white transition-colors"
             >
               {isHi ? "खतरा मानचित्र" : "Threat Map"}
             </Link>
             <Link
               href={`/${locale}#pipeline`}
               onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-white"
+              className="hover:text-white transition-colors"
             >
               {isHi ? "पाइपलाइन" : "Pipeline"}
             </Link>
             <Link
               href={`/${locale}#security-stack`}
               onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-white"
+              className="hover:text-white transition-colors"
             >
               {isHi ? "सुरक्षा ढांचा" : "Forensics"}
             </Link>
             <Link
               href={`/${locale}/community`}
               onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-white"
+              className="hover:text-white transition-colors"
             >
               {isHi ? "समुदाय" : "Community"}
             </Link>
             <Link
               href={`/${locale}/about`}
               onClick={() => setMobileMenuOpen(false)}
-              className="hover:text-white"
+              className="hover:text-white transition-colors"
             >
               {isHi ? "परिचय" : "About"}
             </Link>
           </nav>
-          <div className="pt-2 border-t border-white/[0.08]">
+
+          <div className="pt-3 border-t border-white/[0.08] flex items-center justify-between">
+            <span className="text-xs font-mono text-slate-400">
+              {theme === "dark" ? (isHi ? "डार्क थीम सक्रिय" : "Dark Theme Active") : (isHi ? "लाइट थीम सक्रिय" : "Light Theme Active")}
+            </span>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="px-3 py-1.5 rounded-lg border border-white/[0.1] bg-white/[0.05] text-xs font-mono flex items-center gap-1.5 text-white"
+            >
+              {theme === "dark" ? <Sun className="w-3.5 h-3.5 text-signal" /> : <Moon className="w-3.5 h-3.5 text-signal" />}
+              <span>{theme === "dark" ? "Light" : "Dark"}</span>
+            </button>
+          </div>
+
+          <div className="pt-2">
             <Link
               href={`/${locale}/check`}
               onClick={() => setMobileMenuOpen(false)}
-              className="block w-full text-center py-2.5 rounded-xl bg-signal text-slate-950 font-bold text-xs"
+              className="block w-full text-center py-2.5 rounded-xl bg-signal text-slate-950 font-bold text-xs shadow-lg"
             >
               {isHi ? "मैसेज जांचें" : "Check Message"}
             </Link>

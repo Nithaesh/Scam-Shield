@@ -32,6 +32,7 @@ import {
   Sparkles,
   BrainCircuit,
   Scale,
+  Image as ImageIcon,
 } from "lucide-react";
 import * as Accordion from "@radix-ui/react-accordion";
 import { Header } from "@/components/layout/Header";
@@ -46,6 +47,23 @@ export default function LandingPage() {
   const isHi = locale === "hi";
 
   const [inputText, setInputText] = useState("");
+  const heroFileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleHeroImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const base64 = ev.target?.result as string;
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("scam_shield_image_prefill", base64);
+          sessionStorage.setItem("scam_shield_image_name", file.name || "screenshot.png");
+        }
+        router.push(`/${locale}/check`);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleLaunchCheck = (sampleText?: string) => {
     const defaultText = isHi
@@ -153,6 +171,24 @@ export default function LandingPage() {
                     }
                     className="w-full bg-transparent text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none"
                   />
+
+                  {/* Screenshot Upload Button in Hero */}
+                  <input
+                    ref={heroFileInputRef}
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp,image/gif"
+                    onChange={handleHeroImageSelect}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => heroFileInputRef.current?.click()}
+                    className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.08] transition-colors shrink-0"
+                    title={isHi ? "स्क्रीनशॉट अपलोड करें" : "Upload Screenshot"}
+                  >
+                    <ImageIcon className="w-4 h-4 text-signal" />
+                  </button>
+
                   <button
                     type="button"
                     onClick={() => handleLaunchCheck()}

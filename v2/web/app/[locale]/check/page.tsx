@@ -148,17 +148,69 @@ export default function SyntrixDashboardPage() {
     immediateStep: isHi ? "तत्काल अगला कदम" : "Immediate Next Step",
   };
 
+  const loadSampleScreenshot = async (filename: string, title: string) => {
+    try {
+      const response = await fetch(`/screenshots/${filename}`);
+      const blob = await response.blob();
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64 = e.target?.result as string;
+        setAttachedImage(base64);
+        setAttachedImageName(title);
+        const kb = Math.round(blob.size / 1024);
+        setAttachedImageSize(`${kb} KB`);
+        setUploadModalOpen(false);
+        setErrorMessage(null);
+        triggerAnalysis("", base64);
+      };
+      reader.readAsDataURL(blob);
+    } catch (err) {
+      console.error("Failed to load sample screenshot:", err);
+    }
+  };
+
   useEffect(() => {
     setHistory(getInvestigationHistory());
 
     if (typeof window !== "undefined") {
       const prefill = sessionStorage.getItem("scam_shield_prefill");
-      if (prefill) {
+      const imgPrefill = sessionStorage.getItem("scam_shield_image_prefill");
+      const imgName = sessionStorage.getItem("scam_shield_image_name");
+
+      if (imgPrefill) {
+        sessionStorage.removeItem("scam_shield_image_prefill");
+        sessionStorage.removeItem("scam_shield_image_name");
+        setAttachedImage(imgPrefill);
+        setAttachedImageName(imgName || "screenshot.png");
+        triggerAnalysis(prefill || "", imgPrefill);
+      } else if (prefill) {
         sessionStorage.removeItem("scam_shield_prefill");
         setInputText(prefill);
         triggerAnalysis(prefill);
       }
     }
+  }, []);
+
+  // Global drag-and-drop listener for screenshots
+  useEffect(() => {
+    const handleWindowDragOver = (e: DragEvent) => {
+      e.preventDefault();
+    };
+    const handleWindowDrop = (e: DragEvent) => {
+      e.preventDefault();
+      if (e.dataTransfer && e.dataTransfer.files.length > 0) {
+        const file = e.dataTransfer.files[0];
+        if (file.type.startsWith("image/")) {
+          processImageFile(file);
+        }
+      }
+    };
+    window.addEventListener("dragover", handleWindowDragOver);
+    window.addEventListener("drop", handleWindowDrop);
+    return () => {
+      window.removeEventListener("dragover", handleWindowDragOver);
+      window.removeEventListener("drop", handleWindowDrop);
+    };
   }, []);
 
   const processImageFile = (file: File) => {
@@ -273,9 +325,10 @@ export default function SyntrixDashboardPage() {
     setErrorMessage(null);
   };
 
-  const triggerAnalysis = async (textToAnalyze?: string) => {
-    const rawMessage = textToAnalyze || inputText;
-    if ((!rawMessage.trim() && !attachedImage) || isAnalyzing) return;
+  const triggerAnalysis = async (textToAnalyze?: string, imageToAnalyze?: string) => {
+    const rawMessage = textToAnalyze !== undefined ? textToAnalyze : inputText;
+    const currentImage = imageToAnalyze !== undefined ? imageToAnalyze : attachedImage;
+    if ((!rawMessage.trim() && !currentImage) || isAnalyzing) return;
 
     const message = rawMessage.trim() || (isHi ? "[संलग्न स्क्रीनशॉट का फॉरेंसिक OCR विश्लेषण]" : "[Attached Screenshot Forensic OCR Analysis]");
 
@@ -297,7 +350,7 @@ export default function SyntrixDashboardPage() {
 
     const payload: AnalyzePayload = {
       text: message,
-      image_base64: attachedImage || undefined,
+      image_base64: currentImage || undefined,
       language: locale,
       stream: true,
     };
@@ -340,6 +393,15 @@ export default function SyntrixDashboardPage() {
 
   return (
     <div className="w-screen h-screen flex flex-col lg:flex-row bg-[#080d15] text-[#f1f5f9] font-sans overflow-hidden antialiased selection:bg-signal/30 selection:text-white">
+      {/* Global Unconditionally Mounted Screenshot File Input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/png,image/jpeg,image/webp,image/gif"
+        onChange={handleFileInputChange}
+        className="hidden"
+        id="global-screenshot-picker"
+      />
       {/* =========================================================================
        * 1. LEFT SIDEBAR (FULL HEIGHT, EXACT SYNTHRIX LAYOUT)
        * ========================================================================= */}
@@ -379,6 +441,21 @@ export default function SyntrixDashboardPage() {
               {dict.featuresTitle}
             </div>
             <div className="space-y-1 text-xs">
+              {/* Direct Screenshot Upload Button in Sidebar */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (fileInputRef.current) fileInputRef.current.click();
+                  else setUploadModalOpen(true);
+                }}
+                className="w-full px-3 py-2 rounded-xl flex items-center justify-between text-slate-300 hover:text-white hover:bg-white/[0.06] border border-white/[0.06] transition-colors text-left"
+              >
+                <div className="flex items-center gap-2.5">
+                  <ImageIcon className="w-4 h-4 text-signal" />
+                  <span className="font-medium">{isHi ? "स्क्रीनशॉट अपलोड करें" : "Upload Screenshot"}</span>
+                </div>
+                <Upload className="w-3.5 h-3.5 text-slate-400" />
+              </button>
               <button
                 type="button"
                 onClick={() => setSelectedFeature(selectedFeature === "extractor" ? null : "extractor")}
@@ -763,13 +840,28 @@ export default function SyntrixDashboardPage() {
             <div className="flex items-center justify-between pt-1 border-t border-white/[0.05]">
               {/* Left Group */}
               <div className="flex items-center gap-2">
+                {/* Plus Button to open Upload Modal */}
                 <button
                   type="button"
-                  onClick={() => fileInputRef.current?.click()}
+                  onClick={() => setUploadModalOpen(true)}
                   className="w-7 h-7 rounded-full bg-white/[0.06] hover:bg-white/[0.1] text-slate-300 hover:text-white flex items-center justify-center transition-colors"
-                  title={isHi ? "स्क्रीनशॉट चुनें" : "Attach screenshot or evidence"}
+                  title={isHi ? "स्क्रीनशॉट या सबूत जोड़ें (+)" : "Attach Screenshot or Evidence (+)"}
                 >
                   <Plus className="w-3.5 h-3.5" />
+                </button>
+
+                {/* Direct Screenshot File Picker Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (fileInputRef.current) fileInputRef.current.click();
+                    else setUploadModalOpen(true);
+                  }}
+                  className="px-2.5 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.06] text-xs font-mono text-slate-300 flex items-center gap-1.5 transition-colors cursor-pointer"
+                  title={isHi ? "स्क्रीनशॉट चुनें" : "Upload Screenshot from Device"}
+                >
+                  <ImageIcon className="w-3.5 h-3.5 text-signal" />
+                  <span className="hidden sm:inline">{isHi ? "स्क्रीनशॉट" : "Screenshot"}</span>
                 </button>
 
                 {/* 5 Agents ▾ Pill */}
@@ -1337,14 +1429,7 @@ export default function SyntrixDashboardPage() {
               </button>
             </div>
 
-            {/* Hidden File Input for Device Upload */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/png,image/jpeg,image/webp,image/gif"
-              onChange={handleFileInputChange}
-              className="hidden"
-            />
+
 
             {/* Clickable & Draggable Upload Area */}
             <div
@@ -1392,18 +1477,52 @@ export default function SyntrixDashboardPage() {
 
               <button
                 type="button"
-                onClick={() => {
-                  setUploadModalOpen(false);
-                  const sample = isHi
-                    ? "प्रिय एसबीआई ग्राहक, केवाईसी अपडेट न होने के कारण आपका YONO खाता निलंबित कर दिया गया है। तुरंत http://sbi-update-kyc.top पर क्लिक करें।"
-                    : "Dear SBI User, your YONO account has been suspended due to pending KYC update. Click http://sbi-update-kyc.top";
-                  setInputText(sample);
-                  triggerAnalysis(sample);
-                }}
+                onClick={() => fileInputRef.current?.click()}
                 className="px-4 py-2 rounded-xl bg-signal text-slate-950 font-bold text-xs font-mono hover:brightness-110 transition-all"
               >
-                {isHi ? "नमूना लोड करें" : "Load Sample"}
+                {isHi ? "फ़ाइल चुनें" : "Browse Image"}
               </button>
+            </div>
+
+            {/* Benchmark Real Sample Screenshots */}
+            <div className="space-y-2 pt-2 border-t border-white/[0.08]">
+              <div className="text-[11px] font-mono uppercase text-slate-400">
+                {isHi ? "या वास्तविक परीक्षण स्क्रीनशॉट चुनें:" : "Or test with real benchmark screenshots:"}
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+                <button
+                  type="button"
+                  onClick={() => loadSampleScreenshot("screen_scam_01.png", "SBI YONO Phishing Screenshot")}
+                  className="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-rose-300 text-left flex items-center gap-2 transition-colors"
+                >
+                  <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-rose-400" />
+                  <span className="truncate">SBI YONO Phishing</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => loadSampleScreenshot("screen_scam_02.png", "Electricity Threat Screenshot")}
+                  className="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-amber-300 text-left flex items-center gap-2 transition-colors"
+                >
+                  <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-amber-400" />
+                  <span className="truncate">Electricity Cut Threat</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => loadSampleScreenshot("screen_scam_03.png", "CBI Notice Screenshot")}
+                  className="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-purple-300 text-left flex items-center gap-2 transition-colors"
+                >
+                  <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-purple-400" />
+                  <span className="truncate">CBI Police Notice</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => loadSampleScreenshot("screen_safe_01.png", "HDFC Bank Alert Screenshot")}
+                  className="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-emerald-300 text-left flex items-center gap-2 transition-colors"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-emerald-400" />
+                  <span className="truncate">Legitimate Bank Alert</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

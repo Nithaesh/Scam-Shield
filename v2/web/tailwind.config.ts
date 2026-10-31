@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: "class",
+  darkMode: ["class", '[data-theme="dark"]'],
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -10,25 +10,44 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        brand: {
-          50: "#f0f9ff",
-          100: "#e0f2fe",
-          500: "#0284c7",
-          600: "#0369a1",
-          700: "#075985",
-          900: "#0c4a6e",
-        },
+        page: "var(--page)",
+        panel: "var(--panel)",
+        raised: "var(--raised)",
+        hairline: "var(--hairline)",
+        paper: "var(--text)",
+        fog: "var(--fog)",
+        signal: "var(--signal)",
+        "on-signal": "var(--text-on-signal)",
         verdict: {
-          safe: "#10b981",
-          safeBg: "#ecfdf5",
-          safeBorder: "#6ee7b7",
-          suspicious: "#f59e0b",
-          suspiciousBg: "#fffbeb",
-          suspiciousBorder: "#fcd34d",
-          scam: "#ef4444",
-          scamBg: "#fef2f2",
-          scamBorder: "#fca5a5",
+          safe: "var(--verdict-safe)",
+          "safe-text": "var(--verdict-safe-text)",
+          "safe-surface": "var(--verdict-safe-surface)",
+          warn: "var(--verdict-warn)",
+          "warn-text": "var(--verdict-warn-text)",
+          "warn-surface": "var(--verdict-warn-surface)",
+          scam: "var(--verdict-scam)",
+          "scam-text": "var(--verdict-scam-text)",
+          "scam-surface": "var(--verdict-scam-surface)",
         },
+      },
+      fontFamily: {
+        display: ["var(--font-display)", "system-ui", "sans-serif"],
+        sans: ["var(--font-body)", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "monospace"],
+      },
+      borderRadius: {
+        sm: "var(--radius-sm)",
+        tile: "var(--radius-tile)",
+        panel: "var(--radius-panel)",
+        pill: "var(--radius-pill)",
+      },
+      boxShadow: {
+        innerHighlight: "var(--inner-highlight)",
+      },
+      transitionTimingFunction: {
+        out: "var(--ease-out)",
+        inOut: "var(--ease-in-out)",
+        spring: "var(--stamp-spring)",
       },
     },
   },

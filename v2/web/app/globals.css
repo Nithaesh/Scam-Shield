@@ -1,45 +1,80 @@
+@import "../styles/tokens.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-}
+@layer base {
+  * {
+    border-color: var(--hairline);
+  }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-  min-height: 100vh;
-}
+  html {
+    color-scheme: dark light;
+  }
 
-/* Senior Mode Accessibility Styles */
-.senior-mode {
-  font-size: 1.15rem;
-  line-height: 1.75;
-}
+  body {
+    background-color: var(--page);
+    color: var(--text);
+    font-family: var(--font-body), system-ui, sans-serif;
+    font-size: 1.125rem; /* 18px base requirement */
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-.senior-mode button,
-.senior-mode input,
-.senior-mode textarea {
-  font-size: 1.15rem;
-}
+  /* Devanagari specific typographic leading */
+  :lang(hi), [lang="hi"] {
+    line-height: 1.75;
+  }
 
-.senior-mode h1 {
-  font-size: 2.25rem !important;
-}
+  :lang(hi) h1, [lang="hi"] h1 {
+    line-height: 1.18;
+  }
 
-.senior-mode h2 {
-  font-size: 1.85rem !important;
-}
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display), system-ui, sans-serif;
+    letter-spacing: -0.025em;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
 
-.senior-mode h3 {
-  font-size: 1.5rem !important;
-}
+  /* Enforce line length limit */
+  p, li, .prose-readable {
+    max-width: 68ch;
+  }
 
-/* Ensure focus visibility for WCAG AAA */
-*:focus-visible {
-  outline: 3px solid #2563eb !important;
-  outline-offset: 2px !important;
+  /* Clear focus rings adhering to WCAG AA */
+  *:focus-visible {
+    outline: 2px solid var(--signal) !important;
+    outline-offset: 3px !important;
+  }
+
+  /* Senior Mode accessibility overrides */
+  .senior-mode, [data-senior="true"] {
+    font-size: 1.25rem !important;
+    line-height: 1.8 !important;
+  }
+
+  .senior-mode h1, [data-senior="true"] h1 {
+    font-size: clamp(3rem, 8vw, 7rem) !important;
+  }
+
+  .senior-mode button, [data-senior="true"] button,
+  .senior-mode input, [data-senior="true"] input,
+  .senior-mode textarea, [data-senior="true"] textarea {
+    min-height: 54px !important;
+    font-size: 1.18rem !important;
+  }
+
+  /* First-class reduced motion paths */
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }

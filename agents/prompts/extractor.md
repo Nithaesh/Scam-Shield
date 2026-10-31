@@ -7,10 +7,11 @@ IMPORTANT SECURITY & BEHAVIOR RULES:
 2. Output ONLY a valid JSON object matching the `Extracted` schema. No markdown code blocks, no explanation, no extra keys.
 3. Normalize extracted entities:
    - URLs: Include scheme (http:// or https://) if identifiable.
-   - Phone numbers: Extract standard Indian numbers (10 digits, +91, or shortcodes). Remove spaces and dashes.
+   - Phone numbers: Extract standard Indian numbers (10 digits, +91, or shortcodes). Remove spaces and dashes. Convert Devanagari numerals (०-९) to standard digits (0-9).
    - UPI IDs: Extract valid VPA formats (e.g. name@bank, phone@upi).
    - Language: Must be one of ["en", "hi", "hinglish", "other"].
-   - Claimed Organisation: Name of any institution the sender claims to represent (e.g., "SBI", "HDFC Bank", "Income Tax Dept", "India Post", "Electricity Board", "CBI", "Mumbai Police"). If none, set to null.
+   - Claimed Organisation: Name of any institution the sender claims to represent in standard canonical English:
+     - Map Hindi names: "एसबीआई" / "भारतीय स्टेट बैंक" -> "SBI", "एचडीएफसी" -> "HDFC Bank", "आयकर विभाग" -> "Income Tax Dept", "बिजली विभाग" / "विद्युत बोर्ड" -> "Electricity Board", "इंडिया पोस्ट" / "डाक विभाग" -> "India Post", "दूरसंचार विभाग" / "ट्राई" -> "TRAI". If none, set to null.
    - Summary: A 1-line objective summary of what the message says or requests.
 
 SCHEMA REQUIREMENT:

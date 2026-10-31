@@ -93,7 +93,7 @@ def _call_gemini(
     config = types.GenerateContentConfig(
         system_instruction=system,
         response_mime_type="application/json" if json_mode else None,
-        temperature=0.1,
+        temperature=0.0,
         automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
     )
 
@@ -136,7 +136,7 @@ def _call_groq(
         model=model_name,
         messages=messages,
         response_format=response_format,
-        temperature=0.1,
+        temperature=0.0,
     )
 
     content = completion.choices[0].message.content

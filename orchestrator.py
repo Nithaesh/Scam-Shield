@@ -47,14 +47,13 @@ MAX_INPUT_CHARS = 5000
 AGENT_TIMEOUT_SECONDS = 35.0
 
 
-def _compute_input_hash(input_data: str | bytes, language: str) -> str:
-    """Generate SHA-256 fingerprint for cache key.
+def _compute_input_hash(input_data: str | bytes, language: str = "") -> str:
+    """Generate SHA-256 fingerprint for cache key based on message content.
 
     Normalizes whitespace for text inputs so exact message content matches
     even with leading/trailing spaces or newline variations.
     """
     hasher = hashlib.sha256()
-    hasher.update(language.encode("utf-8"))
     if isinstance(input_data, bytes):
         hasher.update(input_data)
     else:
@@ -189,9 +188,15 @@ def analyse(
         input_data = input_data[:MAX_INPUT_CHARS]
 
     # Check Cache
-    cache_key = _compute_input_hash(input_data, language)
+    cache_key = _compute_input_hash(input_data)
     cached = _get_cached_result(cache_key, start_time=total_start)
     if cached:
+        # If user explicitly requested Hindi and cached advice is English (or vice versa):
+        # Update only Stage 4 Advisor while preserving exact verdict and confidence.
+        requested_target = "hi" if language == "hi" else ("en" if language == "en" else cached.advice.language)
+        if cached.advice.language != requested_target and language in ("en", "hi"):
+            cached.advice = advise(cached.verdict, cached.extracted, requested_language=requested_target)
+            _save_cached_result(cache_key, cached)
         return cached
 
     # Stage 1: Extractor Agent
@@ -277,9 +282,13 @@ def analyse_stream(
     timings: dict[str, float] = {}
 
     yield {"stage": "cache", "status": "checking"}
-    cache_key = _compute_input_hash(input_data if isinstance(input_data, (str, bytes)) else str(input_data), language)
+    cache_key = _compute_input_hash(input_data if isinstance(input_data, (str, bytes)) else str(input_data))
     cached = _get_cached_result(cache_key, start_time=total_start)
     if cached:
+        requested_target = "hi" if language == "hi" else ("en" if language == "en" else cached.advice.language)
+        if cached.advice.language != requested_target and language in ("en", "hi"):
+            cached.advice = advise(cached.verdict, cached.extracted, requested_language=requested_target)
+            _save_cached_result(cache_key, cached)
         yield {"stage": "cache", "status": "done", "data": cached.model_dump(mode="json")}
         return cached
 

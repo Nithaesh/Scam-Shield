@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     # Community Intelligence (Database)
     COMMUNITY_ENABLED: bool = False
     COMMUNITY_ESCALATION: bool = False
-    DATABASE_URL: str = "sqlite:///./scam_shield_v2.db"
+    DATABASE_URL: str = "sqlite:///./v2/scam_shield_v2.db"
     HASH_SALT: str = "scam_shield_v2_salt_change_in_production"
 
     # LLM Settings (read from environment, matching existing agents)

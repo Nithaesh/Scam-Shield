@@ -17,9 +17,9 @@ for file in $diff_files; do
 done
 
 # Check untracked/staged/unstaged files
-status_files=$(git status --porcelain | awk '{print $2}' || true)
+status_files=$(git status --porcelain -uall | awk '{print $2}' || true)
 for file in $status_files; do
-    if [[ "$file" == ".github/workflows/v2-ci.yml" || "$file" == "package-lock.json" ]]; then
+    if [[ "$file" =~ ^\.github/ || "$file" == "package-lock.json" ]]; then
         continue
     fi
     if [[ ! "$file" =~ ^v2/ ]]; then

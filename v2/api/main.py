@@ -97,12 +97,15 @@ def create_app() -> FastAPI:
             headers={"X-Request-ID": req_id},
         )
 
-    # Register API v1 Routers
-    api_prefix = "/api/v1"
-    app.include_router(health.router, prefix=api_prefix)
-    app.include_router(analyze.router, prefix=api_prefix)
-    app.include_router(samples.router, prefix=api_prefix)
-    app.include_router(community.router, prefix=api_prefix)
+    # Register API Routers (support both /api/v2 and legacy /api/v1 prefixes)
+    for prefix in ("/api/v2", "/api/v1"):
+        app.include_router(health.router, prefix=prefix)
+        app.include_router(analyze.router, prefix=prefix)
+        app.include_router(samples.router, prefix=prefix)
+        app.include_router(community.router, prefix=prefix)
+
+    # Top-level health probe
+    app.include_router(health.router)
 
     return app
 

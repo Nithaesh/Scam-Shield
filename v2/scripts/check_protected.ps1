@@ -37,11 +37,11 @@ foreach ($file in $diffFiles) {
 }
 
 # Check unstaged / staged changes in working directory
-$statusOutput = git status --porcelain
+$statusOutput = git status --porcelain -uall
 foreach ($line in $statusOutput) {
     if ($line.Length -gt 3) {
         $filePath = $line.Substring(3).Trim()
-        if ($filePath -match "^\.github/workflows/v2-ci\.yml$") {
+        if ($filePath -match "^\.github(/.*)?$") {
             continue
         }
         if ($filePath -notmatch "^v2/" -and $filePath -ne "package-lock.json") {

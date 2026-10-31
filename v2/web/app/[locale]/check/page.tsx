@@ -56,7 +56,9 @@ import {
 import { cn, defangUrl, defangHandle } from "@/lib/utils";
 import { PipelineGraph } from "@/components/pipeline/PipelineGraph";
 import { Orb3D } from "@/components/ui/Orb3D";
-import { analyzeMessageStream, AnalyzePayload } from "@/lib/api/client";
+import { analyzeMessageStream, simulateOfflineStream, AnalyzePayload } from "@/lib/api/client";
+import { ErrorPanel } from "@/components/ui/ErrorPanel";
+import { useToast } from "@/components/ui/Toast";
 import {
   FinalResultEvent,
   StageResultEvent,
@@ -74,6 +76,7 @@ import {
 export default function SyntrixDashboardPage() {
   const t = useTranslations();
   const locale = useLocale();
+  const { toast } = useToast();
 
   // Investigation state
   const [inputText, setInputText] = useState("");
@@ -215,19 +218,19 @@ export default function SyntrixDashboardPage() {
 
   const processImageFile = (file: File) => {
     if (!file.type.startsWith("image/")) {
-      setErrorMessage(
-        isHi
-          ? "कृपया केवल छवि (PNG, JPG, WebP) फ़ाइल अपलोड करें।"
-          : "Please upload an image file (PNG, JPG, WebP)."
-      );
+      const msg = isHi
+        ? "कृपया केवल छवि (PNG, JPG, WebP) फ़ाइल अपलोड करें।"
+        : "Please upload an image file (PNG, JPG, WebP).";
+      setErrorMessage(msg);
+      toast.error(isHi ? "अमान्य फ़ाइल" : "Invalid File", msg);
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
-      setErrorMessage(
-        isHi
-          ? "छवि फ़ाइल 10MB से कम होनी चाहिए।"
-          : "Image size must be under 10MB."
-      );
+      const msg = isHi
+        ? "छवि फ़ाइल 10MB से कम होनी चाहिए।"
+        : "Image size must be under 10MB.";
+      setErrorMessage(msg);
+      toast.error(isHi ? "फ़ाइल बहुत बड़ी है" : "File Too Large", msg);
       return;
     }
 
@@ -240,6 +243,10 @@ export default function SyntrixDashboardPage() {
       setAttachedImageSize(kb > 1024 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`);
       setUploadModalOpen(false);
       setErrorMessage(null);
+      toast.success(
+        isHi ? "स्क्रीनशॉट संलग्न किया गया" : "Screenshot attached",
+        file.name || "screenshot.png"
+      );
     };
     reader.readAsDataURL(file);
   };
@@ -287,12 +294,17 @@ export default function SyntrixDashboardPage() {
     navigator.clipboard.writeText(finalResult.share_text);
     setCopiedShare(true);
     setTimeout(() => setCopiedShare(false), 2500);
+    toast.success(
+      isHi ? "चेतावनी कॉपी हो गई!" : "WhatsApp Warning Copied",
+      isHi ? "व्हाट्सएप अलर्ट टेक्स्ट क्लिपबोर्ड पर कॉपी किया गया।" : "WhatsApp alert text copied to clipboard."
+    );
   };
 
   const handleCopyEntity = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopiedEntity(text);
     setTimeout(() => setCopiedEntity(null), 2000);
+    toast.info(isHi ? "क्लिपबोर्ड पर कॉपी किया गया" : "Copied to clipboard", text);
   };
 
   const handleToggleTTS = () => {
@@ -369,11 +381,66 @@ export default function SyntrixDashboardPage() {
         setIsAnalyzing(false);
         const updated = saveInvestigationToHistory(currentId, message, res);
         setHistory(updated);
+        toast.success(
+          isHi ? "विश्लेषण पूर्ण" : "Analysis Complete",
+          isHi ? `केस ${currentId}: 5 एजेंट्स ने निष्कर्ष निकाला।` : `Case ${currentId}: 5 agents reached consensus.`
+        );
       },
       onError: (err: Error) => {
         setIsAnalyzing(false);
         setActiveStage(null);
-        setErrorMessage(err.message || "Server connection failed.");
+        const msg = err.message || "Server connection failed.";
+        setErrorMessage(msg);
+        toast.error(isHi ? "विश्लेषण त्रुटि" : "Analysis Pipeline Error", msg);
+      },
+      onComplete: () => {
+        setIsAnalyzing(false);
+        setActiveStage(null);
+      },
+    });
+  };
+
+  const handleRunOfflineSimulation = async () => {
+    setErrorMessage(null);
+    setIsAnalyzing(true);
+    setFinalResult(null);
+    setStageOutputs({});
+    setCompletedStages([]);
+    setActiveStage("extractor");
+    const currentId = `SS-00${Math.floor(Math.random() * 900 + 100)}`;
+    setCaseId(currentId);
+
+    const message = inputText.trim() || (isHi ? "[संलग्न स्क्रीनशॉट का फॉरेंसिक OCR विश्लेषण]" : "[Attached Screenshot Forensic OCR Analysis]");
+    const payload: AnalyzePayload = {
+      text: message,
+      image_base64: attachedImage || undefined,
+      language: locale,
+    };
+
+    await simulateOfflineStream(payload, {
+      onStageStart: (ev: StageStartEvent) => {
+        setActiveStage(ev.stage);
+      },
+      onStageResult: (ev: StageResultEvent) => {
+        setCompletedStages((prev) => Array.from(new Set([...prev, ev.stage])));
+        setStageOutputs((prev) => ({ ...prev, [ev.stage]: ev }));
+      },
+      onFinal: (res: FinalResultEvent) => {
+        setFinalResult(res);
+        setActiveStage(null);
+        setIsAnalyzing(false);
+        const updated = saveInvestigationToHistory(currentId, message, res);
+        setHistory(updated);
+        toast.info(
+          isHi ? "ऑफ़लाइन सिमुलेशन पूर्ण" : "Offline Simulation Complete",
+          isHi ? "स्थानीय एयर-गैप्ड विश्लेषण पूरा हुआ।" : "Deterministic local inspection completed."
+        );
+      },
+      onError: (err: Error) => {
+        setIsAnalyzing(false);
+        setActiveStage(null);
+        setErrorMessage(err.message);
+        toast.error(isHi ? "सिमुलेशन त्रुटि" : "Simulation Error", err.message);
       },
       onComplete: () => {
         setIsAnalyzing(false);
@@ -761,6 +828,23 @@ export default function SyntrixDashboardPage() {
         </div>
 
         {/* ---------------------------------------------------------------------
+         * FORENSIC ERROR PANEL (DISMISSABLE, ACTIONABLE RECOVERY)
+         * --------------------------------------------------------------------- */}
+        {errorMessage && (
+          <div className="w-full max-w-3xl mx-auto relative z-10 mb-2">
+            <ErrorPanel
+              error={errorMessage}
+              caseId={caseId}
+              isHi={isHi}
+              onRetry={() => triggerAnalysis()}
+              onUseOfflineSimulation={handleRunOfflineSimulation}
+              onClear={handleNewCheck}
+              onDismiss={() => setErrorMessage(null)}
+            />
+          </div>
+        )}
+
+        {/* ---------------------------------------------------------------------
          * FLOATING INPUT COMPOSER DOCK (EXACT SYNTHRIX MATCH)
          * --------------------------------------------------------------------- */}
         <div className="w-full max-w-3xl mx-auto relative z-10">
@@ -1146,11 +1230,31 @@ export default function SyntrixDashboardPage() {
 
                     <button
                       type="button"
-                      onClick={() => downloadTextReport(finalResult, { caseId, timestamp: new Date().toISOString(), userMessage: inputText })}
+                      onClick={() => {
+                        downloadTextReport(finalResult, { caseId, timestamp: new Date().toISOString(), userMessage: inputText });
+                        toast.success(
+                          isHi ? "फॉरेंसिक रिपोर्ट सुरक्षित" : "Forensic Dossier Exported",
+                          isHi ? "केस रिपोर्ट .txt के रूप में डाउनलोड की गई।" : "Dossier saved to your downloads."
+                        );
+                      }}
                       className="p-2 rounded-xl border border-white/[0.1] bg-white/[0.05] hover:bg-white/[0.08] text-slate-300 hover:text-white transition-colors"
                       title={dict.reportTxt}
                     >
                       <Download className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        downloadJsonReport(finalResult, { caseId, timestamp: new Date().toISOString(), userMessage: inputText });
+                        toast.info(
+                          isHi ? "फॉरेंसिक सबूत सुरक्षित" : "Forensic JSON Exported",
+                          isHi ? "कच्चा डेटा .json के रूप में डाउनलोड किया गया।" : "Raw telemetry evidence saved as JSON."
+                        );
+                      }}
+                      className="p-2 rounded-xl border border-white/[0.1] bg-white/[0.05] hover:bg-white/[0.08] text-slate-300 hover:text-cyan-400 transition-colors"
+                      title={dict.reportJson}
+                    >
+                      <FileSpreadsheet className="w-4 h-4" />
                     </button>
                   </div>
                 </div>

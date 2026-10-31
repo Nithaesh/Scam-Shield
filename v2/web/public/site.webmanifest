@@ -1,0 +1,21 @@
+{
+  "name": "Scam Shield — AI Cyber Fraud Sentinel",
+  "short_name": "ScamShield",
+  "description": "Autonomous multi-agent citizen cyber fraud verification layer for SMS, WhatsApp, and UPI scams.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#060913",
+  "theme_color": "#38BDF8",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

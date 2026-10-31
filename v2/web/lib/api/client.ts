@@ -131,7 +131,7 @@ export async function analyzeMessageStream(
   }
 }
 
-async function simulateOfflineStream(
+export async function simulateOfflineStream(
   payload: AnalyzePayload,
   handlers: StreamEventHandler
 ): Promise<void> {

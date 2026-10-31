@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, Mukta, JetBrains_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
+import { ToastProvider } from "@/components/ui/Toast";
 import { locales } from "../../i18n";
 import "../globals.css";
 
@@ -55,8 +56,15 @@ export const metadata: Metadata = {
     description: "Multi-agent consensus AI checking suspicious messages with zero data storage.",
   },
   icons: {
-    icon: "/icons/shield.svg",
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
   },
+  manifest: "/site.webmanifest",
 };
 
 export function generateStaticParams() {
@@ -94,7 +102,9 @@ export default async function LocaleLayout({
           Skip to main content
         </a>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <div className="relative min-h-screen flex flex-col">{children}</div>
+          <ToastProvider>
+            <div className="relative min-h-screen flex flex-col">{children}</div>
+          </ToastProvider>
         </NextIntlClientProvider>
       </body>
     </html>

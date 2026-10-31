@@ -1,0 +1,135 @@
+{
+  "brand": {
+    "name": "Scam Shield",
+    "watermark": "SCAM SHIELD",
+    "tagline": "Citizen Fraud Protection"
+  },
+  "nav": {
+    "check": "Check a message",
+    "howItWorks": "How it works",
+    "scamsWeCatch": "Scams we catch",
+    "community": "Community",
+    "about": "About",
+    "honestNumbers": "Honest numbers"
+  },
+  "hero": {
+    "h1Line1": "Got a message that feels off?",
+    "h1Line2": "Check it before you click.",
+    "subtitle": "Paste it or drop in a screenshot. Five AI agents check the words, the links and the sender, then tell you what to do next, in English or Hindi.",
+    "inputPlaceholder": "Paste the SMS, WhatsApp message or UPI request here",
+    "attachScreenshot": "Attach screenshot",
+    "tryExample": "Try an example",
+    "checkButton": "Check this message",
+    "checkedButton": "Checked",
+    "checkingButton": "Checking evidence...",
+    "privacyNotice": "Not stored. Links are never opened.",
+    "helplineChip": "Lost money? Call 1930",
+    "proofCaught": "100% of test-set scams caught",
+    "proofCases": "55 test messages",
+    "proofBrands": "70+ brands tracked"
+  },
+  "evidenceStrip": {
+    "agents": "5 agents",
+    "agentsCaption": "Autonomous specialists examining every case in parallel.",
+    "recall": "100% scam recall",
+    "recallCaption": "On our 55-message test set. Zero scam bypasses.",
+    "brands": "70+ brands tracked",
+    "brandsCaption": "Indian banks, government portals, and courier lookalikes.",
+    "zeroStored": "0 messages stored",
+    "zeroStoredCaption": "Zero text retention. Cryptographic hashing only.",
+    "howMeasured": "How we measured"
+  },
+  "howItWorks": {
+    "heading": "Five agents, one verdict",
+    "subtitle": "Each agent does one job. The Judge weighs their evidence and tells you which side it trusted."
+  },
+  "consolePreview": {
+    "heading": "Inside the investigation console",
+    "caption": "The same screen you will use. Messages in the thread, evidence on the right."
+  },
+  "features": {
+    "heading": "Built for real Indian conditions",
+    "subtitle": "Tested against multilingual evasion tactics, WhatsApp forward chains, and rural 4G connections.",
+    "cardATitle": "Reads screenshots and Hindi",
+    "cardADesc": "Understands Devanagari Hindi, Roman Hinglish, and phone screenshots directly.",
+    "cardBTitle": "Checks links without opening them",
+    "cardBDesc": "Inspects DNS registration records, WHOIS age, and lookalike patterns safely in an isolated sandbox.",
+    "cardCTitle": "Shows when the evidence disagrees",
+    "cardCDesc": "When polished, polite wording masks a fake phishing link, our Judge calls out the tension explicitly.",
+    "cardDTitle": "Private by default",
+    "cardDDesc": "Your personal messages and images never hit disk storage. Only anonymized hashes protect the community."
+  },
+  "scams": {
+    "heading": "Scams we catch",
+    "subtitle": "Patterns from real Indian fraud, with the tell-tale signs."
+  },
+  "honestNumbers": {
+    "heading": "Honest numbers",
+    "explanation": "Security tools often hide their mistakes. We publish ours openly. Measured on our 55-message test set (30 scams, 15 genuine, 10 edge cases) evaluated in October 2026.",
+    "whatWeGotWrong": "What we got wrong",
+    "recallHeading": "Scam detection rate by category"
+  },
+  "privacy": {
+    "heading": "Zero-knowledge by design",
+    "messageNotStored": "The message is not stored.",
+    "messageNotStoredSub": "Your text is analyzed in memory and immediately discarded. No databases retain your words.",
+    "linksNotOpened": "Links are never opened.",
+    "linksNotOpenedSub": "We inspect DNS and domain registry metadata without ever requesting or downloading link targets.",
+    "hashesOnly": "Community reports keep only a hash.",
+    "hashesOnlySub": "Reported numbers and links are irreversibly salted and hashed before joining peer defense.",
+    "disclosureTitle": "What the community database keeps"
+  },
+  "faq": {
+    "heading": "Frequently asked questions"
+  },
+  "cta": {
+    "heading": "Not sure? Check it now.",
+    "button": "Check this message"
+  },
+  "footer": {
+    "product": "Product",
+    "help": "Help",
+    "project": "Project",
+    "legal": "Legal",
+    "hackathonNote": "Built for Hacktober Hack Day Prayagraj 2026.",
+    "disclaimer": "AI can make mistakes. This is guidance, not legal or police advice."
+  },
+  "verdict": {
+    "safe": "Looks safe",
+    "suspicious": "Be careful",
+    "scam": "This is a scam",
+    "safeSub": "Matches regular non-fraud patterns. Always guard your OTP.",
+    "suspiciousSub": "Exercise extreme caution. Verify independently through official channels.",
+    "scamSub": "Do NOT tap any link, pay money, or reply to this message.",
+    "conflictQuote": "The wording looked official, but the technical evidence says otherwise. We trusted the evidence.",
+    "mistakeWarning": "AI can make mistakes. If you are unsure, do not click, and call your bank using the number on your card."
+  },
+  "advice": {
+    "doNot": "Do not",
+    "doNext": "Do next",
+    "listen": "Listen",
+    "listening": "Speaking...",
+    "stopListening": "Stop",
+    "copyFamily": "Copy warning for family",
+    "copied": "Copied to clipboard",
+    "downloadReport": "Download report",
+    "reportScam": "Report this scam",
+    "call1930": "Call 1930",
+    "cybercrimeWeb": "cybercrime.gov.in"
+  },
+  "console": {
+    "title": "Investigation Console",
+    "newCheck": "New check",
+    "case": "Case",
+    "thread": "Investigation Thread",
+    "composerPlaceholder": "Paste message or enter UPI/URL... (Cmd+Enter to check)",
+    "send": "Check",
+    "evidenceDonut": "Evidence sources",
+    "entitiesList": "Extracted entities",
+    "copyDefanged": "Copy safe URL",
+    "communityMatches": "Community matches",
+    "timing": "Execution timing",
+    "emptyGuide": "Paste any suspicious SMS, WhatsApp forward, or UPI request to begin 5-agent investigation.",
+    "coldStart": "Waking up the server. This can take up to 30 seconds the first time."
+  }
+}

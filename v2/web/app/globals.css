@@ -1,0 +1,81 @@
+@import "../styles/tokens.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    border-color: var(--hairline);
+  }
+
+  html {
+    color-scheme: dark light;
+  }
+
+  body {
+    background-color: var(--page);
+    color: var(--text);
+    font-family: var(--font-sans-modern), var(--font-body), system-ui, sans-serif;
+    font-size: 0.9375rem; /* 15px modern UI standard */
+    line-height: 1.5;
+    letter-spacing: -0.011em;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Devanagari specific typographic leading */
+  :lang(hi), [lang="hi"] {
+    font-family: var(--font-body), system-ui, sans-serif;
+    line-height: 1.6;
+  }
+
+  :lang(hi) h1, [lang="hi"] h1 {
+    line-height: 1.25;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-sans-modern), var(--font-body), system-ui, sans-serif;
+    letter-spacing: -0.025em;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Enforce line length limit only for dedicated reading prose */
+  .prose-readable {
+    max-width: 68ch;
+  }
+
+  /* Clear focus rings adhering to WCAG AA */
+  *:focus-visible {
+    outline: 2px solid var(--signal) !important;
+    outline-offset: 3px !important;
+  }
+
+  /* Senior Mode accessibility overrides */
+  .senior-mode, [data-senior="true"] {
+    font-size: 1.25rem !important;
+    line-height: 1.8 !important;
+  }
+
+  .senior-mode h1, [data-senior="true"] h1 {
+    font-size: clamp(3rem, 8vw, 7rem) !important;
+  }
+
+  .senior-mode button, [data-senior="true"] button,
+  .senior-mode input, [data-senior="true"] input,
+  .senior-mode textarea, [data-senior="true"] textarea {
+    min-height: 54px !important;
+    font-size: 1.18rem !important;
+  }
+
+  /* First-class reduced motion paths */
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

@@ -1,0 +1,202 @@
+[
+  {
+    "id": "V2_HING_001",
+    "category": "bank_kyc",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "Dear customer aapka SBI account aaj raat 12 baje block ho jayega. KYC update karne ke liye turant click karein: http://sbi-kyc-update.xyz/login",
+    "expected_verdict": "scam",
+    "expected_scam_type": "bank_kyc",
+    "notes": "Classic Hinglish bank account block threat with lookalike link."
+  },
+  {
+    "id": "V2_HING_002",
+    "category": "electricity_bill",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "Priye upbhokta aapka bijli connection aaj raat 9:30 baje cut kar diya jayega kyonki pichle mahine ka bill jama nahi hai. Contact bijli officer: 9000000001",
+    "expected_verdict": "scam",
+    "expected_scam_type": "electricity_bill",
+    "notes": "Hinglish power disconnection scam with personal contact."
+  },
+  {
+    "id": "V2_HING_003",
+    "category": "digital_arrest",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "CBI & Mumbai Police Notice: Aapke naam se narcotics parcel mila hai. Aap Digital Arrest mein hain. Turant Skype call join karein warna arrest warrant issue hoga.",
+    "expected_verdict": "scam",
+    "expected_scam_type": "digital_arrest",
+    "notes": "Coercive digital arrest intimidation in Hinglish."
+  },
+  {
+    "id": "V2_HING_004",
+    "category": "upi_collect_refund",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "Badhai ho! PhonePe se aapko Rs 2,499 ka cashback mila hai. Paise bank a/c mein lene ke liye is link par apna UPI PIN dalein: http://phonepe-cashback.fake/pay",
+    "expected_verdict": "scam",
+    "expected_scam_type": "upi_collect_refund",
+    "notes": "UPI PIN required to receive money trap."
+  },
+  {
+    "id": "V2_HING_005",
+    "category": "job_offer",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "Part-time work from home! Daily YouTube video like karein aur Rs 3,500 kamayein. No investment required. Telegram join karein: @fake_job_hr",
+    "expected_verdict": "scam",
+    "expected_scam_type": "job_offer",
+    "notes": "YouTube video like prepaid task scam."
+  },
+  {
+    "id": "V2_HING_006",
+    "category": "lottery_prize",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "KBC Maha Lucky Draw! Aapka number jeeta hai Rs 25,00,000 cash prize. Apni lottery claim karne ke liye processing fee Rs 5,000 pay karein: kbc.prize@fakeybl",
+    "expected_verdict": "scam",
+    "expected_scam_type": "lottery_prize",
+    "notes": "KBC lottery advance fee fraud."
+  },
+  {
+    "id": "V2_HING_007",
+    "category": "courier_customs",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "India Post Alert: Aapka international parcel address galat hone ki wajah se ruka hua hai. Rs 48 redelivery fee pay karein: http://indiapost-parcel.fake/redelivery",
+    "expected_verdict": "scam",
+    "expected_scam_type": "courier_customs",
+    "notes": "Impersonating postal authority with small fee trap."
+  },
+  {
+    "id": "V2_HING_008",
+    "category": "loan_app",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "Urgent Loan Alert: Bina kisi document ke 5 minute mein Rs 50,000 payein. Low interest no CIBIL check. Download karein: http://quick-easyloan.fake/app.apk",
+    "expected_verdict": "scam",
+    "expected_scam_type": "loan_app",
+    "notes": "Predatory loan app APK distribution."
+  },
+  {
+    "id": "V2_HING_009",
+    "category": "govt_scheme_apk",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "PM Kisan Yojana ke antargat sabhi kisan bhaiyon ko Rs 6,000 bonus diya ja raha hai. List mein apna naam check karne ke liye official app install karein: http://pmkisan-yojana.fake/pmkisan.apk",
+    "expected_verdict": "scam",
+    "expected_scam_type": "govt_scheme_apk",
+    "notes": "Government scheme malware APK lure."
+  },
+  {
+    "id": "V2_HING_010",
+    "category": "bank_kyc",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "HDFC Bank Alert: Aapka NetBanking access expire ho chuka hai. 24 ghante ke andar PAN card link karein warna card block hoga: http://hdfc-pan-update.fake/login",
+    "expected_verdict": "scam",
+    "expected_scam_type": "bank_kyc",
+    "notes": "NetBanking expiry phishing."
+  },
+  {
+    "id": "V2_HING_011",
+    "category": "electricity_bill",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "Important Notice: Priya grahak aapka bijli connection aaj sham 8 baje cut hoga. Turant bill clear karein ya contact karein head engineer: 9000000002",
+    "expected_verdict": "scam",
+    "expected_scam_type": "electricity_bill",
+    "notes": "Power disconnection urgency notice."
+  },
+  {
+    "id": "V2_HING_012",
+    "category": "upi_collect_refund",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "Amazon Pay Refund: Aapka order cancel refund Rs 1,850 approve ho gaya hai. Accept karne ke liye UPI PIN enter karein: upi://pay?pa=refund.support@fakeybl",
+    "expected_verdict": "scam",
+    "expected_scam_type": "upi_collect_refund",
+    "notes": "Reverse UPI collect trap for order refund."
+  },
+  {
+    "id": "V2_HING_013",
+    "category": "digital_arrest",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "Delhi Police Crime Branch: Aapke Aadhaar card se 25 bank accounts khole gaye hain money laundering ke liye. Immediate statement ke liye connect karein WhatsApp video: 9000000003",
+    "expected_verdict": "scam",
+    "expected_scam_type": "digital_arrest",
+    "notes": "Police money laundering extortion intimidation."
+  },
+  {
+    "id": "V2_HING_014",
+    "category": "job_offer",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "Google Maps Review Job: Har review par Rs 150 kamayein. Daily 20 reviews = Rs 3,000 payout. HR se sampark karein: http://t.me/fake_review_hr",
+    "expected_verdict": "scam",
+    "expected_scam_type": "job_offer",
+    "notes": "Maps review prepaid rating task scam."
+  },
+  {
+    "id": "V2_HING_015",
+    "category": "lottery_prize",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "Tata Motors Lucky Draw: Aapne jeeti hai nayi Tata Harrier car ya cash Rs 15 Lakh. Claim karne ke liye GST tax Rs 8,500 jama karein.",
+    "expected_verdict": "scam",
+    "expected_scam_type": "lottery_prize",
+    "notes": "Vehicle prize tax fee scam."
+  },
+  {
+    "id": "V2_HING_016",
+    "category": "courier_customs",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "DHL Express: Aapka consignment Customs clearance par atka hua hai. Import duty penalty Rs 350 online pay karein: http://dhl-express-customs.fake/clearance",
+    "expected_verdict": "scam",
+    "expected_scam_type": "courier_customs",
+    "notes": "Customs clearance fee phishing."
+  },
+  {
+    "id": "V2_HING_017",
+    "category": "loan_app",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "Khushkhabri! Pre-approved personal loan Rs 2,00,000 approved at 1% interest. Install karein FastPaisa app: http://fastpaisa-loan.fake/app.apk",
+    "expected_verdict": "scam",
+    "expected_scam_type": "loan_app",
+    "notes": "Instant personal loan APK malware."
+  },
+  {
+    "id": "V2_HING_018",
+    "category": "govt_scheme_apk",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "PM Free Laptop Yojana 2026: Sabhi 10th aur 12th pass students ko free laptop diya ja raha hai. Form bharne ke liye app download karein: http://pm-laptop-scheme.fake/apply.apk",
+    "expected_verdict": "scam",
+    "expected_scam_type": "govt_scheme_apk",
+    "notes": "Free laptop student scheme fake APK."
+  },
+  {
+    "id": "V2_HING_019",
+    "category": "bank_kyc",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "PNB Bank Notice: Priya grahak aapka account temporarily disable kar diya gaya hai. Re-activate karne ke liye details verify karein: http://pnb-online-verify.fake/kyc",
+    "expected_verdict": "scam",
+    "expected_scam_type": "bank_kyc",
+    "notes": "Bank account disabled re-activation phishing."
+  },
+  {
+    "id": "V2_HING_020",
+    "category": "electricity_bill",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "Electricity Sub-Station Notice: Priya consumer aapka bijli meter software update na hone se connection cut kiya ja raha hai. Helpdesk se baat karein: 9000000004",
+    "expected_verdict": "scam",
+    "expected_scam_type": "electricity_bill",
+    "notes": "Meter software update power cut scam."
+  }
+]

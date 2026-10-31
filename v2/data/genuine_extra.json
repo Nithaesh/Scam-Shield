@@ -1,0 +1,202 @@
+[
+  {
+    "id": "V2_GEN_001",
+    "category": "bank_debit_alert",
+    "language": "en",
+    "input_type": "text",
+    "text": "INR 1,250.00 debited from A/c XX4521 on 31-Oct-26 to UPI/Sample Stores. Ref 612345678901. If this was not you, contact your bank through its official app.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none",
+    "notes": "Standard official debit notification with masked account and no links."
+  },
+  {
+    "id": "V2_GEN_002",
+    "category": "bank_credit_alert",
+    "language": "en",
+    "input_type": "text",
+    "text": "Your A/c XX7890 has been credited with INR 45,000.00 on 31-Oct-26 by Salary Transfer from Employer Ltd. Available balance: INR 52,410.00.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none",
+    "notes": "Standard salary credit alert."
+  },
+  {
+    "id": "V2_GEN_003",
+    "category": "bank_otp",
+    "language": "en",
+    "input_type": "text",
+    "text": "459012 is your secret OTP for transaction of INR 750.00 at Grocery Supermarket. Valid for 10 mins. NEVER share this OTP with anyone, including bank staff.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none",
+    "notes": "Legitimate transactional OTP with explicit warning."
+  },
+  {
+    "id": "V2_GEN_004",
+    "category": "bank_otp",
+    "language": "hi",
+    "input_type": "text",
+    "text": "782341 आपके एसबीआई नेटबैंकिंग लॉगिन के लिए ओटीपी है। यह 5 मिनट के लिए वैध है। बैंक अधिकारी सहित किसी के भी साथ अपना ओटीपी साझा न करें।",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none",
+    "notes": "Legitimate Hindi bank login OTP with warning."
+  },
+  {
+    "id": "V2_GEN_005",
+    "category": "ecommerce_delivery",
+    "language": "en",
+    "input_type": "text",
+    "text": "Your package with Order #402-9876543-12345 is out for delivery today by Amazon delivery associate Ramesh. Track delivery in your official Amazon app.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none",
+    "notes": "Standard e-commerce delivery update directing to official app."
+  },
+  {
+    "id": "V2_GEN_006",
+    "category": "food_delivery",
+    "language": "en",
+    "input_type": "text",
+    "text": "Zomato: Your order from Biryani House is picked up and arriving in 20 minutes. Share delivery OTP 34 only with delivery partner upon arrival.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none",
+    "notes": "Routine food delivery update."
+  },
+  {
+    "id": "V2_GEN_007",
+    "category": "irctc_booking",
+    "language": "en",
+    "input_type": "text",
+    "text": "IRCTC PNR 2415678901: Train 12423 RAJDHANI EXP from NDLS to CNB on 05-Nov. Confirmed: B3-45 (LB). Chart not prepared. Check status on irctc.co.in.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none",
+    "notes": "Official Indian Railways PNR booking confirmation."
+  },
+  {
+    "id": "V2_GEN_008",
+    "category": "utility_bill_paid",
+    "language": "en",
+    "input_type": "text",
+    "text": "Payment received: Thank you for paying your BESCOM electricity bill of Rs 1,450.00 for Consumer No 5421098. Receipt No: RCP8976523. No action required.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none",
+    "notes": "Official utility payment acknowledgement."
+  },
+  {
+    "id": "V2_GEN_009",
+    "category": "telecom_recharge",
+    "language": "en",
+    "input_type": "text",
+    "text": "Recharge successful! Rs 299 Unlimited pack activated on your Jio number 9876543210. 1.5GB/day + Unlimited calls for 28 days. Balance checked in MyJio app.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none",
+    "notes": "Telecom recharge confirmation with no suspicious links."
+  },
+  {
+    "id": "V2_GEN_010",
+    "category": "gov_in_notice",
+    "language": "en",
+    "input_type": "text",
+    "text": "Income Tax Department: Your e-filing ITR-V for AY 2026-27 has been processed successfully. Refund of INR 2,450 credited to pre-validated bank account. Visit incometax.gov.in.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none",
+    "notes": "Legitimate government tax refund notification pointing to official .gov.in."
+  },
+  {
+    "id": "V2_GEN_011",
+    "category": "bank_debit_alert",
+    "language": "en",
+    "input_type": "text",
+    "text": "HDFC Bank Alert: Rs 350.00 spent on your Debit Card ending 8912 at Metro Station on 31-Oct-26. Not you? Lock card instantly in HDFC MobileBanking app.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none",
+    "notes": "Routine card debit security alert."
+  },
+  {
+    "id": "V2_GEN_012",
+    "category": "appointment_reminder",
+    "language": "en",
+    "input_type": "text",
+    "text": "Apollo Hospitals: Reminder for your consultation with Dr. Sharma tomorrow at 10:30 AM. Clinic Room 204. Please arrive 15 minutes before scheduled time.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none",
+    "notes": "Routine hospital appointment reminder."
+  },
+  {
+    "id": "V2_GEN_013",
+    "category": "utility_bill_paid",
+    "language": "hi",
+    "input_type": "text",
+    "text": "विद्युत वितरण निगम: आपके उपभोक्ता खाता संख्या 982134 का बिजली बिल ₹1,820 सफलतापूर्वक प्राप्त हुआ। रसीद संख्या: 451298। धन्यवाद।",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none",
+    "notes": "Hindi electricity bill payment acknowledgement."
+  },
+  {
+    "id": "V2_GEN_014",
+    "category": "service_otp",
+    "language": "en",
+    "input_type": "text",
+    "text": "Your Uber verification code is 6124. Do not share this code with anyone, including your driver.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none",
+    "notes": "Standard ride-hailing OTP."
+  },
+  {
+    "id": "V2_GEN_015",
+    "category": "gov_in_notice",
+    "language": "en",
+    "input_type": "text",
+    "text": "UIDAI: Aadhaar authentication was successful for biometric verification at CSC Center on 31-Oct-2026 10:15 IST. If not done by you, visit myaadhaar.uidai.gov.in.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none",
+    "notes": "Legitimate UIDAI authentication alert pointing to official uidai.gov.in."
+  },
+  {
+    "id": "V2_GEN_016",
+    "category": "postal_delivery",
+    "language": "en",
+    "input_type": "text",
+    "text": "India Post: Speed Post Article ED897654321IN has been delivered to recipient on 31/10/2026 at Bangalore GPO. Track at indiapost.gov.in.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none",
+    "notes": "Authentic India Post delivery notice with official .gov.in domain."
+  },
+  {
+    "id": "V2_GEN_017",
+    "category": "credit_card_statement",
+    "language": "en",
+    "input_type": "text",
+    "text": "ICICI Bank Credit Card ending 3421: Total Due INR 8,450.00, Min Due INR 500.00 by 15-Nov-26. View statement securely on iMobile Pay app.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none",
+    "notes": "Standard credit card statement notice."
+  },
+  {
+    "id": "V2_GEN_018",
+    "category": "fastag_toll",
+    "language": "en",
+    "input_type": "text",
+    "text": "FASTag Alert: INR 85.00 deducted from FASTag wallet for toll plaza Khed Shivapur on 31-Oct-26 08:30 AM. Tag balance: INR 450.00.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none",
+    "notes": "Official highway FASTag deduction alert."
+  },
+  {
+    "id": "V2_GEN_019",
+    "category": "personal_chat",
+    "language": "hinglish",
+    "input_type": "text",
+    "text": "Bhai kal sham ko cricket match khelne aana hai ground par 5 baje. Sabhi log aa rahe hain bat le aana.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none",
+    "notes": "Benign informal personal chat with zero financial or technical indicators."
+  },
+  {
+    "id": "V2_GEN_020",
+    "category": "bank_credit_alert",
+    "language": "en",
+    "input_type": "text",
+    "text": "Your PPF A/c XX9123 has been credited with interest of INR 7,200.00 for Q2 FY26. Check updated passbook on State Bank of India official portal onlinesbi.sbi.",
+    "expected_verdict": "safe",
+    "expected_scam_type": "none",
+    "notes": "Legitimate interest credit pointing to verified onlinesbi.sbi."
+  }
+]

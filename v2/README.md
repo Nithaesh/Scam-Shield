@@ -3,11 +3,11 @@
 [![CI Pipeline](https://img.shields.io/badge/CI-Passing-brightgreen?style=flat-square)](.github/workflows/v2-ci.yml)
 [![Legacy Tests](https://img.shields.io/badge/Legacy%20Tests-125%20Passing-brightgreen?style=flat-square)](pytest.ini)
 [![v2 Tests](https://img.shields.io/badge/v2%20Tests-36%20Passing-brightgreen?style=flat-square)](v2/api/tests)
-[![Frontend Tests](https://img.shields.io/badge/Vitest-5%20Passing-brightgreen?style=flat-square)](v2/web/__tests__)
-[![Accessibility](https://img.shields.io/badge/Accessibility-Senior%20Mode%20AAA-blue?style=flat-square)](v2/web/components/Navbar.tsx)
+[![Frontend Tests](https://img.shields.io/badge/Vitest-9%20Passing-brightgreen?style=flat-square)](v2/web/__tests__)
+[![Next.js](https://img.shields.io/badge/Next.js-16.4.3-black?style=flat-square)](v2/web/package.json)
 [![Bilingual](https://img.shields.io/badge/Language-English%20%7C%20हिन्दी-orange?style=flat-square)](v2/web/messages)
 
-**Scam Shield v2** is a production-ready, citizen-first cybersecurity layer designed to protect Indian citizens — especially elderly, rural, and non-technical individuals — from digital fraud. It wraps an established 5-agent Python multi-agent pipeline in a modern **FastAPI** backend with real-time **Server-Sent Events (SSE)**, paired with a bilingual **Next.js 14 App Router** web application.
+**Scam Shield v2** is a production-ready, citizen-first cybersecurity layer designed to protect Indian citizens — especially elderly, rural, and non-technical individuals — from digital fraud. It wraps an established 5-agent Python multi-agent pipeline in a modern **FastAPI** backend with real-time **Server-Sent Events (SSE)**, paired with a bilingual **Next.js 16.4 App Router** studio web application.
 
 ---
 
@@ -15,14 +15,17 @@
 
 1. **Non-Destructive Upgrade**: 100% of new code is isolated inside `v2/`. Zero legacy files modified, moved, or deleted. All 125 original tests continue passing.
 2. **Real-Time 5-Agent Pipeline**:
-   - 🔍 **Extractor**: Regex and OCR entity isolation (URLs, phones, UPI handles, sender headers).
-   - 🧠 **Pattern Analyst**: Identifies psychological levers (urgency, intimidation, false rewards).
-   - 🛡️ **Entity Checker**: WHOIS registration age, punycode, lookalike domain matching, and fraud database lookups.
-   - ⚖️ **Synthesis Judge**: Evidence-weighted verdict balancing (Safe, Suspicious, Scam) with conflict resolution.
-   - 🤝 **Citizen Safety Advisor**: Generates plain-language action steps in English or Hindi with one next step.
-3. **Citizen & Senior-First Accessibility**:
-   - **Senior Mode (A+)**: 18px+ font sizing, high-contrast borders, 52px+ minimum touch targets.
-   - **Voice Input**: Web Speech API for voice-driven inputs in English and Hindi.
+   - 🔍 **Extractor**: Regex and Multimodal OCR entity isolation (URLs, phones, UPI handles, sender headers).
+   - 🧠 **Pattern Analyst**: Identifies psychological levers (urgency, intimidation, false rewards, fear vectors).
+   - 🛡️ **Entity Checker**: Air-gapped WHOIS registration age, lookalike domain matching, and official Indian bank allowlist checks.
+   - ⚖️ **Synthesis Judge**: Evidence-weighted verdict balancing (Safe, Suspicious, Scam) with Bayesian Precautionary Veto Rule.
+   - 🤝 **Citizen Safety Advisor**: Generates plain-language action steps in English or Hindi with immediate next steps.
+3. **Studio Dashboard & Visual Forensics**:
+   - **Full-Screen Workspace**: Edge-to-edge layout with Plus Jakarta Sans and Mukta Devanagari typography.
+   - **Multimodal Screenshot Uploads**: Drag-and-drop, clipboard paste (`Ctrl + V`), and file picker with thumbnail preview and in-memory air-gapped OCR.
+   - **Live N8N DAG Workflow Graph**: Real-time node state badges (`QUEUED`, `PROCESSING...`, `DONE 120ms ✓`) and dynamic animated SVG packet pulses.
+   - **Detailed 5-Agent Dossier**: Defanged URLs, WHOIS records, urgency pressure score, Bayesian confidence, and 1930 escalation.
+   - **Voice Synthesis**: Web Speech API audio in Hindi and English Indian accents.
    - **1-Click WhatsApp Family Alert**: Pre-formatted, non-technical safety warnings under 280 characters.
    - **Direct 1930 Dialing**: Emergency one-tap link to India's National Cyber Crime Helpline.
 4. **Zero-Knowledge Privacy**: Raw messages, screenshots, and OTPs are never stored or persisted on disk. Only irreversible cryptographic hashes of verified fraud entities are recorded.
@@ -81,10 +84,13 @@ pytest tests/ -q
 # 3. v2 FastAPI & Services test suite (36 tests passing)
 pytest v2/api/tests/ -v --cov=v2.api.services
 
-# 4. v2 Next.js unit tests (5 tests passing)
+# 4. v2 Next.js unit tests (9 tests passing)
 cd v2/web && npm test
 
-# 5. Live smoke test
+# 5. Production Next.js build (14 routes compiled)
+cd v2/web && npm run build
+
+# 6. Live smoke test
 python v2/scripts/smoke_test.py --base-url http://127.0.0.1:8000
 ```
 
@@ -107,7 +113,7 @@ python v2/api/benchmarks/run_v2_benchmark.py --dataset v2 --offline
 v2/
 ├── .gitignore                    # Build artifacts and local databases
 ├── .env.example                  # Environment variable reference template
-├── README.md                     # Master documentation
+├── README.md                     # Master v2 documentation
 ├── api/                          # FastAPI Backend Application
 │   ├── config.py                 # Pydantic Settings
 │   ├── main.py                   # ASGI Application factory & lifespan
@@ -118,13 +124,12 @@ v2/
 │   ├── routers/                  # /health, /analyze, /samples, /community
 │   ├── tests/                    # Backend unit and contract tests (36 passing)
 │   └── benchmarks/               # Benchmark harness runner
-├── web/                          # Next.js 14 App Router Frontend
-│   ├── app/                      # Layout, globals.css, and pages (/, /how-it-works, /community, /about)
-│   ├── components/               # Navbar, InputCard, PipelineView, VerdictBanner, AdvicePanel
-│   ├── hooks/useAnalysis.ts      # State machine & speech recognition hook
-│   ├── lib/api/                  # SSE stream parser & Zod contracts
+├── web/                          # Next.js 16.4 App Router Frontend
+│   ├── app/                      # Layout, globals.css, and pages (/, /check, /how-it-works, /community, /about)
+│   ├── components/               # PipelineGraph, Header, Footer, Orb3D, EvidenceDonut
+│   ├── lib/api/                  # SSE stream parser, client, & Zod contracts
 │   ├── messages/                 # en.json and hi.json dictionaries
-│   └── __tests__/                # Vitest unit test suite (5 passing)
+│   └── __tests__/                # Vitest unit test suite (9 passing)
 ├── data/                         # Benchmark datasets (Hinglish, Devanagari, Genuine, Adversarial, Screenshots)
 ├── docs/                         # DISCOVERY.md, ARCHITECTURE.md, API_CONTRACT.md, BENCHMARK_V2.md, DEPLOY.md, DEMO_SCRIPT.md, E2E_LOG.md
 └── scripts/                      # check_protected.ps1/.sh, dev.ps1/.sh, smoke_test.py, make_screenshots.py

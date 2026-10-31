@@ -7,27 +7,29 @@
 
 ## 1. Overview & Architecture
 
-Scam Shield v2 Web is a production-ready Next.js 14 application built to pair with the FastAPI Scam Shield v2 backend or run with graceful local deterministic mock simulation.
+Scam Shield v2 Web is a production-ready **Next.js 16.4 (Turbopack)** application engineered to connect with the FastAPI Scam Shield v2 backend via real-time Server-Sent Events (SSE) or operate with an air-gapped deterministic client simulation.
 
 ```
                     ┌────────────────────────┐
                     │ Raw Citizen Submission │
+                    │ (Text / Screenshot OCR)│
                     └───────────┬────────────┘
                                 │
                     ┌───────────▼────────────┐
                     │    Extractor Agent     │
+                    │ (URLs, Phones, VPAs)   │
                     └─────┬────────────┬─────┘
                           │            │
             ┌─────────────▼──┐      ┌──▼─────────────┐
             │ Pattern Analyst│      │ Entity Checker │
-            │ (Psychological)│      │  (Forensics)   │
+            │ (Psychological)│      │ (Air-Gap WHOIS)│
             └─────────────┬──┘      └──┬─────────────┘
                           │            │
                           └─────┬──────┘
                                 │
                     ┌───────────▼────────────┐
-                    │   Judge Consensus Gate │
-                    │   (Conflict Veto Rule) │
+                    │  Judge Consensus Gate  │
+                    │  (Bayesian Veto Rule)  │
                     └───────────┬────────────┘
                                 │
                     ┌───────────▼────────────┐
@@ -45,26 +47,40 @@ Scam Shield v2 Web is a production-ready Next.js 14 application built to pair wi
 
 ## 2. Key Features
 
-- **Investigation Desk Concept**: Clean, technical trust interface designed around evidence collection rather than dark hacker tropes.
-- **Signature PipelineGraph**: Custom SVG cubic bezier n8n-style agent graph with live glowing packet animations, branch rendering, and clickable agent prompt inspector drawers.
-- **Multilingual Support**: First-class English (`en`) and Devanagari Hindi (`hi`) via `next-intl` with 100% key parity across all copy.
-- **Zero-Knowledge Privacy**: No citizen SMS, WhatsApp forwards, or phone numbers are stored to disk. Local history defaults to discarding text previews unless opted in.
-- **WCAG AA Compliance**: High-contrast, tactile design system with dark (default) and light themes, accessible minimum 48px/54px touch targets, and skip links.
-- **Citizen Action Bar**: Built-in Web Speech API Text-to-Speech (Hindi and English Indian accents), one-tap family warning copy, TXT/JSON evidence report download, and direct 1930 helpline routing.
+- **Full-Screen Studio Dashboard**: Edge-to-edge workspace featuring dynamic 3D sentinel visualizer, quick-action scam presets (Bank KYC, Electricity Disconnection, CBI Digital Arrest), and quick evidence loader.
+- **Multimodal Screenshot Uploads**:
+  - Direct file picker via `<input type="file" accept="image/*" />`.
+  - Drag-and-drop dropzone on both composer and modal.
+  - Global `Ctrl + V` clipboard paste listener.
+  - Interactive thumbnail preview chip with size display, status indicator, and instant removal button.
+- **Real-Time N8N-Style DAG Workflow Graph**:
+  - Live state tracker for each agent node (`○ QUEUED`, `● PROCESSING... 120ms`, `✓ DONE 120ms`).
+  - Animated SVG glowing packet streams that follow the active execution stage in real-time.
+  - Bilingual node labels in English and Devanagari Hindi.
+- **Detailed 5-Agent Forensic Intelligence Dossier**:
+  - **01 Extractor**: Defanged URLs (`hxxp[://]...`) with 1-click copy, phones, UPI VPAs, and GSM sender ID spoof check.
+  - **02 Pattern Analyst**: Threat vector, psychological fear cues, and emotional pressure gauge score (0–100).
+  - **03 Entity Checker**: Air-gapped DNS query log, WHOIS domain age (`< 7 Days` flag), and official Indian bank allowlist match.
+  - **04 Judge Consensus Gate**: Calibrated Bayesian verdict, confidence percentage, and Precautionary Veto Rule audit log.
+  - **05 Advisor Action Protocol**: Citizen headline advice, strict DO NOT rules, immediate action step, and pre-formatted National 1930 complaint.
+- **Bilingual English & Hindi**: Complete bilingual parity across landing page, studio dashboard, navigation, and speech synthesis (`next-intl` and Web Speech API).
+- **Zero-Knowledge Privacy**: Air-gapped OCR in memory; zero bytes saved to disk.
+- **Civic Action Toolbar**: 1-click WhatsApp family warning copy, `.txt` Dossier and `.json` Evidence download, and direct 1930 helpline routing.
 
 ---
 
 ## 3. Tech Stack
 
-- **Framework**: Next.js 14 (App Router with `[locale]` dynamic routing)
+- **Framework**: Next.js 16.4.3 (App Router with `[locale]` dynamic routing and Turbopack)
 - **Language**: TypeScript 5.6
-- **Styling**: Tailwind CSS 3.4 with custom CSS variables & semantic tokens
+- **Typography**: Plus Jakarta Sans, Mukta (Devanagari), and JetBrains Mono
+- **Styling**: Tailwind CSS 3.4 with custom tokens and dark/light mode
 - **Internationalization**: `next-intl` v4
-- **Animation**: `framer-motion` 14
+- **Animation**: Native SVG `animateMotion`, CSS keyframes, and `framer-motion`
 - **Components & Accessibility**: `@radix-ui/react-accordion`, `@radix-ui/react-dialog`
-- **Icons**: `lucide-react` (Strict rule: zero emoji as icons)
+- **Icons**: `lucide-react`
 - **Validation**: `zod` 3.23 (Contract schemas)
-- **Testing**: `vitest` with `@testing-library/react` and `jsdom`
+- **Testing**: `vitest` with `@testing-library/react` and `jsdom` (9/9 tests passing)
 
 ---
 
@@ -75,18 +91,18 @@ Scam Shield v2 Web is a production-ready Next.js 14 application built to pair wi
 # Navigate to web workspace
 cd v2/web
 
-# Install dependencies (if not already installed)
+# Install dependencies
 npm install
 
 # Run development server
 npm run dev
 # App opens at http://localhost:3000
 
-# Build production bundle
-npm run build
-
-# Run unit tests
+# Run unit tests (9/9 passing)
 npm test
+
+# Build production bundle (14/14 routes compiled)
+npm run build
 ```
 
 ### Linux / macOS
@@ -94,8 +110,8 @@ npm test
 cd v2/web
 npm install
 npm run dev
-npm run build
 npm test
+npm run build
 ```
 
 ---
@@ -106,9 +122,9 @@ Create a `.env.local` inside `v2/web` if connecting to a custom backend:
 
 | Variable | Default | Description |
 | :--- | :--- | :--- |
-| `NEXT_PUBLIC_API_URL` | `http://127.0.0.1:8000` | FastAPI backend endpoint for SSE streaming (`/api/v2/analyze/stream`). |
+| `NEXT_PUBLIC_API_URL` | `http://127.0.0.1:8000` | FastAPI backend endpoint for SSE streaming (`/api/v2/analyze`). |
 
-> **Graceful Offline Mode**: If the FastAPI backend is offline or unreachable, Scam Shield v2 Web automatically engages local deterministic simulation for testing and demos.
+> **Graceful Offline Mode**: If the backend is offline, Scam Shield v2 Web automatically engages local deterministic simulation for testing and demos.
 
 ---
 
@@ -116,12 +132,12 @@ Create a `.env.local` inside `v2/web` if connecting to a custom backend:
 
 | Path | Purpose |
 | :--- | :--- |
-| `/[locale]` | High-converting citizen landing page with live hero demo, evidence strip, bento features, scam matrix, and honest numbers. |
-| `/[locale]/check` | Hermes-style 3-column investigation workspace: sidebar history, parallel agent replies, verdict card, and sticky forensic rail. |
+| `/[locale]` | CyberSafe high-fidelity landing page with rotating radar sweep, Indian infrastructure nodes, and interactive DAG demo. |
+| `/[locale]/check` | Full-screen Studio Dashboard: interactive input composer, screenshot upload, live DAG workflow, and 5-agent forensic reports. |
 | `/[locale]/how-it-works` | Technical deep-dive into the 5 agents, consensus mechanics, and invariant conflict rules. |
 | `/[locale]/community` | Cryptographic threat registry lookup (HMAC-SHA256 salted hashes only). |
 | `/[locale]/about` | Civic mission, data privacy guarantees, and evaluation methodology. |
-| `/[locale]/dev` | Token showcase and Storybook-style component audit harness. |
+| `/[locale]/dev` | Design system token showcase and component audit harness. |
 
 ---
 
@@ -131,13 +147,13 @@ Create a `.env.local` inside `v2/web` if connecting to a custom backend:
 ```bash
 npm test
 ```
-*Tests: contract schema conformances, defanger utilities, proof benchmark honesty, and report generation.*
+*Result: 9/9 tests passing (contract schema conformances, defanger utilities, proof benchmark honesty, and report generation).*
 
 ### 2. Protected Files Audit
 ```powershell
 powershell -ExecutionPolicy Bypass -File v2/scripts/check_protected.ps1
 ```
-*Confirms 100% non-destructive build: legacy Streamlit app, agents, tools, tests, and configuration remain untouched.*
+*Confirms 100% non-destructive build: zero legacy files modified.*
 
 ### 3. Legacy Pytest Suite
 ```bash

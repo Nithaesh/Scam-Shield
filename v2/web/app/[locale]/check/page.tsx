@@ -9,13 +9,13 @@ import {
   Shield,
   PhoneCall,
   Search,
-  Upload,
+  Plus,
   Lock,
   ChevronDown,
-  ChevronUp,
   Info,
   Copy,
   Check,
+  Mic,
   Volume2,
   VolumeX,
   FileText,
@@ -37,15 +37,23 @@ import {
   FileSpreadsheet,
   CheckCircle2,
   Share2,
-  ArrowRight,
+  ArrowUpRight,
   Layers,
   Cpu,
   History,
   Terminal,
+  Crown,
+  Settings,
+  HelpCircle,
+  Video,
+  Image as ImageIcon,
+  Code2,
+  Boxes,
+  FolderGit2,
 } from "lucide-react";
 import { cn, defangUrl, defangHandle } from "@/lib/utils";
 import { PipelineGraph } from "@/components/pipeline/PipelineGraph";
-import { PROOF } from "@/lib/data/proof";
+import { Orb3D } from "@/components/ui/Orb3D";
 import { analyzeMessageStream, AnalyzePayload } from "@/lib/api/client";
 import {
   FinalResultEvent,
@@ -61,7 +69,7 @@ import {
   HistoryItem,
 } from "@/lib/history";
 
-export default function ForensicDashboardPage() {
+export default function SyntrixDashboardPage() {
   const t = useTranslations();
   const locale = useLocale();
 
@@ -75,24 +83,21 @@ export default function ForensicDashboardPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [caseId, setCaseId] = useState("SS-0042");
 
-  // History & preferences
+  // History & settings
   const [history, setHistory] = useState<HistoryItem[]>([]);
-  const [showHistoryDrawer, setShowHistoryDrawer] = useState(false);
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [selectedFeature, setSelectedFeature] = useState<string>("all");
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [copiedShare, setCopiedShare] = useState(false);
   const [copiedEntity, setCopiedEntity] = useState<string | null>(null);
 
-  const resultsRef = useRef<HTMLDivElement>(null);
+  // Dropdown states
+  const [toolsDropdown, setToolsDropdown] = useState(false);
+  const [thinkDropdown, setThinkDropdown] = useState(false);
+
+  const mainScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setHistory(getInvestigationHistory());
-
-    const savedTheme = localStorage.getItem("scam_shield_theme") as "dark" | "light" | null;
-    if (savedTheme) {
-      setTheme(savedTheme);
-      document.documentElement.setAttribute("data-theme", savedTheme);
-    }
 
     if (typeof window !== "undefined") {
       const prefill = sessionStorage.getItem("scam_shield_prefill");
@@ -137,20 +142,6 @@ export default function ForensicDashboardPage() {
     });
   };
 
-  const handleToggleTheme = () => {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    localStorage.setItem("scam_shield_theme", next);
-    document.documentElement.setAttribute("data-theme", next);
-    if (next === "light") document.documentElement.classList.add("light");
-    else document.documentElement.classList.remove("light");
-  };
-
-  const handleClearHistory = () => {
-    clearInvestigationHistory();
-    setHistory([]);
-  };
-
   const handleLoadHistoryCase = (item: HistoryItem) => {
     tts.stop();
     setIsSpeaking(false);
@@ -160,7 +151,6 @@ export default function ForensicDashboardPage() {
     setCompletedStages(["extractor", "pattern_analyst", "entity_checker", "judge", "advisor"]);
     setActiveStage(null);
     setErrorMessage(null);
-    setShowHistoryDrawer(false);
   };
 
   const triggerAnalysis = async (textToAnalyze?: string) => {
@@ -178,10 +168,10 @@ export default function ForensicDashboardPage() {
     const currentId = `SS-00${Math.floor(Math.random() * 900 + 100)}`;
     setCaseId(currentId);
 
-    // Smooth scroll to workflow DAG
+    // Smooth scroll down to live results
     setTimeout(() => {
-      resultsRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
+      mainScrollRef.current?.scrollTo({ top: 380, behavior: "smooth" });
+    }, 150);
 
     const payload: AnalyzePayload = {
       text: message,
@@ -226,806 +216,700 @@ export default function ForensicDashboardPage() {
   const otherLocale = locale === "en" ? "hi" : "en";
 
   return (
-    <div className="min-h-screen w-full bg-[#050811] text-[#F1F5F9] selection:bg-signal/20 selection:text-signal flex flex-col font-sans">
+    <div className="min-h-screen w-full bg-[#dce5cb] p-2 sm:p-5 lg:p-8 flex items-center justify-center font-sans antialiased selection:bg-signal/30 selection:text-white">
       {/* =========================================================================
-       * 1. TOP EDGE-TO-EDGE FORENSIC BAR
+       * MAIN OBSIDIAN TABLET SHELL (EXACT SCREENSHOT FIDELITY)
        * ========================================================================= */}
-      <header className="w-full h-14 border-b border-white/[0.08] px-4 sm:px-6 lg:px-8 flex items-center justify-between shrink-0 bg-[#070B14]/90 backdrop-blur-md sticky top-0 z-40">
-        {/* Brand & Active Sentinel Status */}
-        <div className="flex items-center gap-3">
-          <Link href={`/${locale}`} className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-signal to-blue-600 p-[1px] shadow-sm">
-              <div className="w-full h-full bg-[#070B14] rounded-[11px] flex items-center justify-center text-signal">
-                <Shield className="w-4 h-4 fill-signal/20" />
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-heading font-bold text-sm tracking-tight text-white leading-none">
-                Scam Shield
-              </span>
-              <span className="text-[10px] font-mono text-slate-400 leading-none mt-0.5">
-                Forensic Console v2.0
-              </span>
-            </div>
-          </Link>
-
-          <span className="text-white/[0.2] hidden sm:inline">/</span>
-
-          {/* Active Case Tag */}
-          <div className="hidden sm:flex items-center gap-2">
-            <span className="font-mono text-xs text-slate-400">Desk:</span>
-            <span className="font-mono text-xs font-semibold text-white px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-white/[0.1]">
-              Case {caseId}
-            </span>
-          </div>
-
-          {/* Operational Beacon */}
-          <div className="hidden md:flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>5 NEURAL AGENTS ONLINE</span>
-          </div>
-        </div>
-
-        {/* Telemetry Guarantees (Center) */}
-        <div className="hidden xl:flex items-center gap-6 font-mono text-xs text-slate-400">
-          <div className="flex items-center gap-1.5">
-            <span className="text-white font-semibold">100%</span>
-            <span>Scam Recall</span>
-          </div>
-          <span className="text-white/[0.15]">•</span>
-          <div className="flex items-center gap-1.5">
-            <span className="text-emerald-400 font-semibold">0 Bytes</span>
-            <span>Logged (Memory-Only)</span>
-          </div>
-          <span className="text-white/[0.15]">•</span>
-          <div className="flex items-center gap-1.5">
-            <span className="text-signal font-semibold">Air-Gapped</span>
-            <span>Encrypted DNS</span>
-          </div>
-        </div>
-
-        {/* Right Action Tools */}
-        <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={() => setShowHistoryDrawer(!showHistoryDrawer)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 text-xs font-mono transition-colors"
-            title="View recent forensic sessions"
-          >
-            <History className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">History</span>
-            {history.length > 0 && (
-              <span className="px-1.5 py-0.2 rounded-full bg-signal/20 text-signal text-[10px] font-bold">
-                {history.length}
-              </span>
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={handleNewCheck}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.08] text-white text-xs font-mono transition-colors"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Reset</span>
-          </button>
-
-          <Link
-            href={`/${otherLocale}/check`}
-            className="px-2.5 py-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] text-slate-300 text-xs font-mono hover:text-white"
-          >
-            {locale === "en" ? "हिन्दी" : "EN"}
-          </Link>
-
-          <button
-            type="button"
-            onClick={handleToggleTheme}
-            className="p-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] text-slate-400 hover:text-white"
-            aria-label="Toggle theme"
-          >
-            {theme === "dark" ? <Sun className="w-3.5 h-3.5 text-signal" /> : <Moon className="w-3.5 h-3.5 text-signal" />}
-          </button>
-
-          <a
-            href="tel:1930"
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs font-mono font-bold hover:bg-rose-500/25 transition-colors"
-          >
-            <PhoneCall className="w-3.5 h-3.5 text-rose-400" />
-            <span>1930</span>
-          </a>
-        </div>
-      </header>
-
-      {/* =========================================================================
-       * 2. RECENT CASES FLYOUT DRAWER (MINIMALIST, NON-INTRUSIVE)
-       * ========================================================================= */}
-      {showHistoryDrawer && (
-        <div className="fixed inset-y-14 right-0 w-80 bg-[#080D1A] border-l border-white/[0.1] shadow-2xl z-50 p-4 flex flex-col justify-between backdrop-blur-xl">
-          <div className="space-y-3 flex-1 overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
-              <div className="flex items-center gap-2">
-                <History className="w-4 h-4 text-signal" />
-                <span className="font-heading font-bold text-sm text-white">Investigation History</span>
-              </div>
-              {history.length > 0 && (
-                <button
-                  type="button"
-                  onClick={handleClearHistory}
-                  className="text-slate-500 hover:text-rose-400 text-xs transition-colors"
-                  title="Clear history"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              )}
+      <div className="w-full max-w-[1520px] min-h-[92vh] rounded-[28px] sm:rounded-[36px] bg-[#0c1017] border border-white/[0.08] shadow-[0_25px_70px_rgba(0,0,0,0.65)] overflow-hidden flex flex-col lg:flex-row relative text-[#f1f5f9]">
+        
+        {/* =======================================================================
+         * 1. LEFT SIDEBAR (EXACT SYNTHRIX SCREENSHOT LAYOUT)
+         * ======================================================================= */}
+        <aside className="w-full lg:w-64 xl:w-72 bg-[#090d14] border-b lg:border-b-0 lg:border-r border-white/[0.06] p-5 flex flex-col justify-between shrink-0 space-y-6">
+          <div className="space-y-6">
+            {/* Top Brand Logo & Search */}
+            <div className="flex items-center justify-between">
+              <Link href={`/${locale}`} className="flex items-center gap-2.5 group">
+                <Orb3D size={28} />
+                <span className="font-heading font-semibold text-base tracking-tight text-white">
+                  Scam Shield
+                </span>
+              </Link>
+              <button
+                type="button"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.05] transition-colors"
+                title="Search inquiry records"
+              >
+                <Search className="w-4 h-4" />
+              </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto space-y-2 pr-1">
-              {history.length === 0 ? (
-                <div className="p-4 text-center text-xs text-slate-500 mt-8">
-                  No previous inquiries stored in memory.
-                </div>
-              ) : (
-                history.map((item) => (
-                  <div
-                    key={item.id}
-                    onClick={() => handleLoadHistoryCase(item)}
-                    className="p-3 rounded-xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.06] cursor-pointer text-xs space-y-1 transition-all"
-                  >
-                    <div className="flex items-center justify-between font-mono">
-                      <span className="font-bold text-white text-[11px]">{item.caseId}</span>
-                      <span
-                        className={cn(
-                          "px-2 py-0.5 rounded text-[10px] uppercase font-bold",
-                          item.verdict === "scam"
-                            ? "bg-rose-500/20 text-rose-300"
-                            : item.verdict === "suspicious"
-                            ? "bg-amber-500/20 text-amber-300"
-                            : "bg-emerald-500/20 text-emerald-300"
-                        )}
-                      >
-                        {item.verdict}
-                      </span>
-                    </div>
-                    <p className="text-slate-400 text-[11px] line-clamp-2">
-                      {item.messagePreview}
-                    </p>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          <div className="pt-3 border-t border-white/[0.08] text-[11px] font-mono text-slate-400 flex items-center justify-between">
-            <span className="flex items-center gap-1.5 text-emerald-400">
-              <Lock className="w-3.5 h-3.5" />
-              Zero Cloud Retention
-            </span>
+            {/* "+ New Chat" Action Button */}
             <button
               type="button"
-              onClick={() => setShowHistoryDrawer(false)}
-              className="text-slate-400 hover:text-white"
+              onClick={handleNewCheck}
+              className="w-full py-2.5 px-4 rounded-xl bg-white/[0.04] border border-white/[0.08] hover:border-signal/50 hover:bg-white/[0.08] text-white font-medium text-xs flex items-center gap-2.5 transition-all shadow-inner group"
             >
-              Close ✕
+              <Plus className="w-4 h-4 text-signal group-hover:rotate-90 transition-transform duration-300" />
+              <span>New Scan</span>
             </button>
-          </div>
-        </div>
-      )}
 
-      {/* =========================================================================
-       * 3. MAIN DASHBOARD WORKSPACE (UTILIZING FULL SCREEN WIDTH)
-       * ========================================================================= */}
-      <main className="flex-1 w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
-        {/* =======================================================================
-         * COMMAND DOCK: FORENSIC INPUT & PRESET INJECTORS
-         * ======================================================================= */}
-        <section className="w-full rounded-2xl bg-[#080D1A] border border-white/[0.1] p-5 shadow-2xl relative overflow-hidden transition-all focus-within:border-signal/70 focus-within:ring-1 focus-within:ring-signal/30">
-          <div className="flex flex-col space-y-3">
-            <div className="flex items-center justify-between text-xs font-mono text-slate-400 border-b border-white/[0.06] pb-2">
-              <div className="flex items-center gap-2">
-                <Terminal className="w-3.5 h-3.5 text-signal" />
-                <span className="text-white font-bold tracking-tight">CITIZEN EVIDENCE INTAKE</span>
-                <span className="text-white/[0.2]">|</span>
-                <span className="text-slate-400">Memory Evaluated (Zero Disk Retention)</span>
+            {/* FEATURES SECTION (Screenshot: Images, Videos, Codex, Apps, Projects) */}
+            <div className="space-y-2">
+              <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold px-2">
+                Features
               </div>
-              <div className="hidden sm:flex items-center gap-3">
-                <span>{inputText.length} chars</span>
-                <span className="text-white/[0.2]">•</span>
-                <span className="text-slate-400">Press <kbd className="px-1.5 py-0.5 rounded bg-white/[0.08] text-white">Ctrl + Enter</kbd> to analyze</span>
+              <div className="space-y-1 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setSelectedFeature("extractor")}
+                  className={cn(
+                    "w-full px-3 py-2 rounded-xl flex items-center gap-3 transition-colors text-left",
+                    selectedFeature === "extractor"
+                      ? "bg-white/[0.08] text-white font-medium"
+                      : "text-slate-400 hover:text-white hover:bg-white/[0.03]"
+                  )}
+                >
+                  <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
+                  <span>Extractor (Links & Tokens)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedFeature("pattern_analyst")}
+                  className={cn(
+                    "w-full px-3 py-2 rounded-xl flex items-center gap-3 transition-colors text-left",
+                    selectedFeature === "pattern_analyst"
+                      ? "bg-white/[0.08] text-white font-medium"
+                      : "text-slate-400 hover:text-white hover:bg-white/[0.03]"
+                  )}
+                >
+                  <BrainCircuit className="w-4 h-4 text-purple-400" />
+                  <span>Pattern Analyst (Urgency)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedFeature("entity_checker")}
+                  className={cn(
+                    "w-full px-3 py-2 rounded-xl flex items-center gap-3 transition-colors text-left",
+                    selectedFeature === "entity_checker"
+                      ? "bg-white/[0.08] text-white font-medium"
+                      : "text-slate-400 hover:text-white hover:bg-white/[0.03]"
+                  )}
+                >
+                  <ShieldCheck className="w-4 h-4 text-cyan-400" />
+                  <span>Entity Checker (Air-Gapped)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedFeature("judge")}
+                  className={cn(
+                    "w-full px-3 py-2 rounded-xl flex items-center gap-3 transition-colors text-left",
+                    selectedFeature === "judge"
+                      ? "bg-white/[0.08] text-white font-medium"
+                      : "text-slate-400 hover:text-white hover:bg-white/[0.03]"
+                  )}
+                >
+                  <Scale className="w-4 h-4 text-signal" />
+                  <span>Judge Consensus (Veto Gate)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedFeature("advisor")}
+                  className={cn(
+                    "w-full px-3 py-2 rounded-xl flex items-center gap-3 transition-colors text-left",
+                    selectedFeature === "advisor"
+                      ? "bg-white/[0.08] text-white font-medium"
+                      : "text-slate-400 hover:text-white hover:bg-white/[0.03]"
+                  )}
+                >
+                  <LifeBuoy className="w-4 h-4 text-purple-300" />
+                  <span>Advisor Directives</span>
+                </button>
               </div>
             </div>
 
-            {/* Input Text Area */}
-            <textarea
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              onKeyDown={handleKeyDown}
-              disabled={isAnalyzing}
-              placeholder="Paste suspicious SMS, WhatsApp message, electricity disconnection warning, or UPI payment request here..."
-              rows={3}
-              className="w-full bg-transparent text-sm sm:text-base text-white placeholder:text-slate-500 focus:outline-none resize-none leading-relaxed font-sans"
-            />
-
-            {/* Bottom Controls Row: Preset Pills & Action Buttons */}
-            <div className="pt-2 flex flex-col md:flex-row md:items-center justify-between gap-3 border-t border-white/[0.06]">
-              {/* Quick Preset Injectors */}
-              <div className="flex items-center flex-wrap gap-1.5 text-xs font-mono">
-                <span className="text-slate-400 text-[11px] mr-1 hidden lg:inline">Inject Scenario:</span>
-                <button
-                  type="button"
-                  disabled={isAnalyzing}
-                  onClick={() => {
-                    const s = "Dear SBI User, your YONO account has been suspended due to pending KYC update. Click http://sbi-update-kyc.top to avoid permanent block.";
-                    setInputText(s);
-                    triggerAnalysis(s);
-                  }}
-                  className="px-2.5 py-1 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 hover:bg-rose-500/20 transition-colors"
-                >
-                  Bank KYC Phishing
-                </button>
-                <button
-                  type="button"
-                  disabled={isAnalyzing}
-                  onClick={() => {
-                    const s = "Dear Consumer, your electricity power will be disconnected tonight at 9:30 PM from sub-station. Immediately call officer 9876543210.";
-                    setInputText(s);
-                    triggerAnalysis(s);
-                  }}
-                  className="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 hover:bg-amber-500/20 transition-colors"
-                >
-                  Electricity Bill Threat
-                </button>
-                <button
-                  type="button"
-                  disabled={isAnalyzing}
-                  onClick={() => {
-                    const s = "CBI Headquarters Notice: Aadhaar linked with 14 money laundering accounts in Mumbai. Digital Arrest warrant issued. Join WhatsApp call immediately.";
-                    setInputText(s);
-                    triggerAnalysis(s);
-                  }}
-                  className="px-2.5 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 transition-colors"
-                >
-                  CBI Digital Arrest
-                </button>
-                <button
-                  type="button"
-                  disabled={isAnalyzing}
-                  onClick={() => {
-                    const s = "Rs. 450.00 debited from HDFC Bank A/C ending 4589 on 31-OCT-26 at ZOMATO UPI. Avl Bal: Rs 14,250.00. SMS BLOCK to 567676 if not done by you.";
-                    setInputText(s);
-                    triggerAnalysis(s);
-                  }}
-                  className="px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 transition-colors"
-                >
-                  Genuine Bank Debit
-                </button>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex items-center gap-2 shrink-0 self-end md:self-auto">
-                {inputText && (
+            {/* YOUR CHATS / RECENT SESSIONS SECTION (Screenshot List) */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold px-2">
+                <span>Recent Scans</span>
+                {history.length > 0 && (
                   <button
                     type="button"
-                    onClick={() => setInputText("")}
-                    disabled={isAnalyzing}
-                    className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/[0.05] transition-colors"
-                    title="Clear text"
+                    onClick={() => {
+                      clearInvestigationHistory();
+                      setHistory([]);
+                    }}
+                    className="text-slate-500 hover:text-rose-400 text-[10px]"
+                    title="Clear history"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    Clear
                   </button>
                 )}
+              </div>
 
-                <button
-                  type="button"
-                  onClick={() => triggerAnalysis()}
-                  disabled={isAnalyzing || !inputText.trim()}
-                  className={cn(
-                    "px-6 py-2.5 rounded-xl font-heading font-bold text-xs sm:text-sm flex items-center gap-2 transition-all shadow-lg",
-                    isAnalyzing
-                      ? "bg-signal/20 text-signal border border-signal/40 animate-pulse cursor-wait"
-                      : inputText.trim()
-                      ? "bg-gradient-to-r from-signal to-blue-500 text-slate-950 hover:brightness-110 cursor-pointer shadow-signal/20"
-                      : "bg-white/[0.06] text-slate-500 border border-white/[0.08] cursor-not-allowed"
-                  )}
-                >
-                  {isAnalyzing ? (
-                    <>
-                      <Sparkles className="w-4 h-4 animate-spin" />
-                      <span>5 Agents Processing...</span>
-                    </>
-                  ) : (
-                    <>
-                      <ShieldAlert className="w-4 h-4" />
-                      <span>Run Forensic Analysis</span>
-                    </>
-                  )}
-                </button>
+              <div className="space-y-1 text-xs max-h-48 overflow-y-auto pr-1">
+                {history.length === 0 ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const s = "Dear SBI User, your YONO account has been suspended due to pending KYC update. Click http://sbi-update-kyc.top";
+                        setInputText(s);
+                        triggerAnalysis(s);
+                      }}
+                      className="w-full text-left px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.03] truncate transition-colors"
+                    >
+                      SBI YONO Suspended KYC
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const s = "Dear Consumer, your electricity power will be disconnected tonight at 9:30 PM from sub-station. Immediately call officer 9876543210.";
+                        setInputText(s);
+                        triggerAnalysis(s);
+                      }}
+                      className="w-full text-left px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.03] truncate transition-colors"
+                    >
+                      Electricity Disconnection Threat
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const s = "CBI Headquarters Notice: Digital Arrest warrant issued for Aadhaar money laundering.";
+                        setInputText(s);
+                        triggerAnalysis(s);
+                      }}
+                      className="w-full text-left px-3 py-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.03] truncate transition-colors"
+                    >
+                      CBI Digital Arrest Warrant
+                    </button>
+                  </>
+                ) : (
+                  history.slice(0, 6).map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => handleLoadHistoryCase(item)}
+                      className={cn(
+                        "w-full text-left px-3 py-1.5 rounded-lg text-xs truncate transition-colors flex items-center justify-between",
+                        caseId === item.caseId
+                          ? "bg-white/[0.08] text-white font-medium"
+                          : "text-slate-400 hover:text-white hover:bg-white/[0.03]"
+                      )}
+                    >
+                      <span className="truncate">{item.messagePreview}</span>
+                      <span
+                        className={cn(
+                          "w-1.5 h-1.5 rounded-full shrink-0 ml-1.5",
+                          item.verdict === "scam"
+                            ? "bg-rose-400"
+                            : item.verdict === "suspicious"
+                            ? "bg-amber-400"
+                            : "bg-emerald-400"
+                        )}
+                      />
+                    </button>
+                  ))
+                )}
               </div>
             </div>
           </div>
-        </section>
 
-        {/* =======================================================================
-         * 4. LIVE N8N MULTI-AGENT DAG WORKFLOW (SCREENSHOT 2 FIDELITY)
-         * ======================================================================= */}
-        <section ref={resultsRef} className="w-full space-y-2">
-          <div className="flex items-center justify-between px-1">
-            <div className="flex items-center gap-2 font-mono text-xs text-slate-400">
-              <span className="w-2 h-2 rounded-full bg-signal animate-ping" />
-              <span className="text-white font-bold">REAL-TIME DAG PIPELINE</span>
-              <span className="text-slate-600">|</span>
-              <span className="text-slate-400">
-                {isAnalyzing
-                  ? `Active Execution: Agent [${activeStage?.replace("_", " ").toUpperCase()}]`
-                  : finalResult
-                  ? `Consensus Verdict Reached in ${finalResult.total_ms || 320}ms ✓`
-                  : "Awaiting Citizen Input"}
-              </span>
+          {/* BOTTOM UPGRADE / HELPLINE 1930 CARD (Screenshot: Upgrade to Pro) */}
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-[#121824] to-[#0d131d] border border-white/[0.08] space-y-3 relative overflow-hidden">
+            <div className="w-8 h-8 rounded-xl bg-signal/15 text-signal flex items-center justify-center">
+              <Crown className="w-4 h-4" />
             </div>
-
-            <div className="text-[11px] font-mono text-slate-400 hidden sm:block">
-              5 Nodes • Parallel Branches • Bayesian Consensus Veto
+            <div>
+              <div className="font-heading font-semibold text-xs text-white">
+                Emergency Helpline 1930
+              </div>
+              <p className="text-[11px] text-slate-400 mt-0.5 leading-normal">
+                Air-gapped memory sandbox. Zero bytes retained on disk.
+              </p>
             </div>
-          </div>
-
-          <PipelineGraph
-            variant="full"
-            activeStage={activeStage}
-            completedStages={completedStages}
-            verdict={finalResult?.verdict}
-            locale={locale}
-          />
-        </section>
-
-        {/* Error Alert Banner */}
-        {errorMessage && (
-          <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs sm:text-sm flex items-center justify-between">
-            <div className="flex items-center gap-2 font-medium">
-              <AlertTriangle className="w-4 h-4 shrink-0 text-rose-400" />
-              <span>{errorMessage}</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => triggerAnalysis()}
-              className="px-3 py-1 rounded-lg bg-rose-500 text-slate-950 font-bold font-mono text-xs"
+            <a
+              href="tel:1930"
+              className="w-full py-2 px-3 rounded-xl bg-white text-slate-950 font-bold text-xs font-mono flex items-center justify-center gap-1.5 hover:bg-slate-200 transition-colors shadow-md"
             >
-              Retry
-            </button>
+              <PhoneCall className="w-3.5 h-3.5 text-rose-500" />
+              <span>Dial 1930 Free</span>
+            </a>
           </div>
-        )}
+        </aside>
 
         {/* =======================================================================
-         * 5. FINAL VERDICT & ACTION PROTOCOL (HIGH-IMPACT CITIZEN DOSSIER)
+         * 2. MAIN STAGE / WORKSPACE (EXACT SCREENSHOT CENTER CANVAS)
          * ======================================================================= */}
-        {finalResult && (
-          <section className={cn(
-            "w-full rounded-3xl p-6 sm:p-8 border shadow-2xl relative overflow-hidden transition-all duration-300",
-            finalResult.verdict === "scam"
-              ? "bg-gradient-to-b from-[#180C14] to-[#0A050B] border-rose-500/40 shadow-rose-500/10"
-              : finalResult.verdict === "suspicious"
-              ? "bg-gradient-to-b from-[#18140B] to-[#0A0905] border-amber-500/40 shadow-amber-500/10"
-              : "bg-gradient-to-b from-[#0B1814] to-[#050A09] border-emerald-500/40 shadow-emerald-500/10"
-          )}>
-            <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6 pb-6 border-b border-white/[0.08]">
-              {/* Verdict Banner Header */}
-              <div className="space-y-3 flex-1">
-                <div className="flex items-center gap-3">
-                  <span
-                    className={cn(
-                      "px-3.5 py-1.5 rounded-full font-mono font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-sm",
-                      finalResult.verdict === "scam"
-                        ? "bg-rose-500 text-slate-950"
-                        : finalResult.verdict === "suspicious"
-                        ? "bg-amber-400 text-slate-950"
-                        : "bg-emerald-400 text-slate-950"
-                    )}
-                  >
-                    {finalResult.verdict === "scam" ? (
-                      <AlertTriangle className="w-4 h-4" />
-                    ) : finalResult.verdict === "suspicious" ? (
-                      <ShieldAlert className="w-4 h-4" />
-                    ) : (
-                      <CheckCircle2 className="w-4 h-4" />
-                    )}
-                    <span>
-                      {finalResult.verdict === "scam"
-                        ? "VERDICT: CONFIRMED FRAUD"
-                        : finalResult.verdict === "suspicious"
-                        ? "VERDICT: HIGHLY SUSPICIOUS"
-                        : "VERDICT: VERIFIED SAFE"}
-                    </span>
-                  </span>
+        <main
+          ref={mainScrollRef}
+          className="flex-1 flex flex-col justify-between overflow-y-auto bg-gradient-to-b from-[#101b22]/35 via-[#0c1017] to-[#0c1017] p-5 sm:p-8 lg:p-10 space-y-8 relative"
+        >
+          {/* Subtle Top-Right Ambient Cyan Light Bleed (Screenshot Fidelity) */}
+          <div className="absolute top-0 right-0 w-[500px] h-[350px] bg-cyan-600/[0.08] rounded-full blur-[140px] pointer-events-none" />
 
-                  <span className="font-mono text-xs text-slate-300 bg-white/[0.06] border border-white/[0.1] px-3 py-1 rounded-full">
-                    Confidence: {(finalResult.confidence * 100).toFixed(1)}%
-                  </span>
+          {/* -------------------------------------------------------------------
+           * TOP NAVIGATION STRIP
+           * ------------------------------------------------------------------- */}
+          <div className="flex items-center justify-between relative z-10">
+            {/* Version Dropdown Pill (Screenshot: Syntrix v4.2 ▾) */}
+            <div className="relative">
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-mono text-slate-300 hover:bg-white/[0.08] transition-colors"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Scam Shield v2.0</span>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              </button>
+            </div>
 
-                  <span className="font-mono text-xs text-slate-400 hidden sm:inline">
-                    Threat Category: <span className="text-white font-semibold">{finalResult.scam_type.replace(/_/g, " ").toUpperCase()}</span>
-                  </span>
+            {/* Right Header Navigation (Screenshot: Dashboard, Settings, Help & Support, Avatar) */}
+            <div className="flex items-center gap-5 text-xs font-medium">
+              <span className="text-white font-semibold cursor-pointer">Dashboard</span>
+              <Link
+                href={`/${otherLocale}/check`}
+                className="text-slate-400 hover:text-white transition-colors font-mono"
+              >
+                {locale === "en" ? "हिन्दी" : "EN"}
+              </Link>
+              <a
+                href="https://cybercrime.gov.in"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 hover:text-white transition-colors hidden sm:inline"
+              >
+                Help & Support
+              </a>
+
+              {/* Avatar Pill with Status */}
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 p-[1.5px] cursor-pointer">
+                <div className="w-full h-full rounded-full bg-[#0c1017] flex items-center justify-center text-xs font-bold text-signal">
+                  SS
                 </div>
+              </div>
+            </div>
+          </div>
 
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-bold text-white tracking-tight leading-tight">
-                  {finalResult.advice.headline}
-                </h2>
+          {/* -------------------------------------------------------------------
+           * CENTER HERO GREETING (EXACT SCREENSHOT ORB & TYPOGRAPHY)
+           * ------------------------------------------------------------------- */}
+          <div className="flex flex-col items-center justify-center text-center space-y-3 pt-4 sm:pt-8 relative z-10">
+            {/* 3D Iridescent Glowing Sphere */}
+            <Orb3D size={92} pulsing={isAnalyzing} />
 
-                <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-sans">
-                  {finalResult.reasoning}
-                </p>
+            {/* Eyebrow text (Screenshot: WELCOME BACK) */}
+            <div className="text-xs font-mono uppercase tracking-[0.25em] text-slate-400 font-semibold pt-1">
+              Welcome Back
+            </div>
+
+            {/* Main Headline (Screenshot: Bring your ideas to life today) */}
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-medium text-white tracking-tight">
+              Bring your safety to life today
+            </h1>
+          </div>
+
+          {/* -------------------------------------------------------------------
+           * FLOATING INPUT COMPOSER DOCK (EXACT SCREENSHOT FLOATING CARD)
+           * ------------------------------------------------------------------- */}
+          <div className="w-full max-w-3xl mx-auto relative z-10">
+            <div className="rounded-2xl bg-[#141926]/90 border border-white/[0.08] backdrop-blur-xl p-4 sm:p-5 space-y-4 shadow-2xl transition-all focus-within:border-signal/60 focus-within:ring-1 focus-within:ring-signal/30">
+              {/* Input Row: Sparkle + Textarea */}
+              <div className="flex items-start gap-3">
+                <Sparkles className="w-4 h-4 text-cyan-400 shrink-0 mt-1" />
+                <textarea
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  disabled={isAnalyzing}
+                  placeholder="Ask me anything... or paste suspicious SMS, WhatsApp message, or UPI link"
+                  rows={2}
+                  className="w-full bg-transparent text-sm sm:text-base text-white placeholder:text-slate-500 focus:outline-none resize-none leading-relaxed font-sans"
+                />
               </div>
 
-              {/* Citizen Audio & Share Actions */}
-              <div className="flex flex-wrap lg:flex-col gap-2.5 shrink-0">
-                <button
-                  type="button"
-                  onClick={handleToggleTTS}
-                  className={cn(
-                    "px-4 py-2.5 rounded-xl border text-xs font-mono font-semibold flex items-center gap-2 transition-all",
-                    isSpeaking
-                      ? "bg-signal text-slate-950 border-signal ring-2 ring-signal/40 animate-pulse"
-                      : "bg-white/[0.06] border-white/[0.12] text-white hover:bg-white/[0.1]"
-                  )}
-                >
-                  {isSpeaking ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-signal" />}
-                  <span>{isSpeaking ? "Pause Audio Voice" : "Hear Plain Explanation"}</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleCopyShareText}
-                  className="px-4 py-2.5 rounded-xl border border-white/[0.1] bg-white/[0.05] hover:bg-white/[0.08] text-white text-xs font-mono flex items-center gap-2 transition-colors"
-                >
-                  {copiedShare ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4 text-signal" />}
-                  <span>{copiedShare ? "Copied Family Advisory!" : "Copy WhatsApp Warning"}</span>
-                </button>
-
+              {/* Bottom Action Strip: Tools, Deep Think, Voice, Send Button */}
+              <div className="flex items-center justify-between pt-1 border-t border-white/[0.04]">
+                {/* Left: Plus, Tools dropdown, Deep Think dropdown */}
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={() => downloadTextReport(finalResult, { caseId, timestamp: new Date().toISOString(), userMessage: inputText })}
-                    className="flex-1 px-3 py-2 rounded-xl border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.06] text-slate-300 text-[11px] font-mono flex items-center justify-center gap-1.5 transition-colors"
+                    onClick={() => setInputText("Dear SBI User, your YONO account has been suspended due to pending KYC update. Click http://sbi-update-kyc.top")}
+                    className="w-7 h-7 rounded-full bg-white/[0.06] hover:bg-white/[0.1] text-slate-300 hover:text-white flex items-center justify-center transition-colors"
+                    title="Insert sample phishing"
                   >
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Report (.txt)</span>
+                    <Plus className="w-3.5 h-3.5" />
                   </button>
+
+                  {/* Tools ▾ Pill */}
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setToolsDropdown(!toolsDropdown)}
+                      className="px-3 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.06] text-xs font-mono text-slate-300 flex items-center gap-1.5 transition-colors"
+                    >
+                      <Cpu className="w-3.5 h-3.5 text-signal" />
+                      <span>5 Agents</span>
+                      <ChevronDown className="w-3 h-3 text-slate-500" />
+                    </button>
+                    {toolsDropdown && (
+                      <div className="absolute bottom-full left-0 mb-2 w-56 rounded-xl bg-[#141926] border border-white/[0.1] p-2 text-xs font-mono space-y-1 z-30 shadow-2xl">
+                        <div className="text-[10px] text-slate-500 uppercase px-2 py-1">Active Forensic Suite</div>
+                        <div className="p-1.5 rounded-lg bg-white/[0.04] text-emerald-400">● 01 Extractor Agent</div>
+                        <div className="p-1.5 rounded-lg bg-white/[0.04] text-purple-400">● 02 Pattern Analyst</div>
+                        <div className="p-1.5 rounded-lg bg-white/[0.04] text-cyan-400">● 03 Entity Checker</div>
+                        <div className="p-1.5 rounded-lg bg-white/[0.04] text-signal">● 04 Judge Consensus</div>
+                        <div className="p-1.5 rounded-lg bg-white/[0.04] text-purple-300">● 05 Advisor Protocol</div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Deep Think ▾ Pill */}
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setThinkDropdown(!thinkDropdown)}
+                      className="px-3 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.06] text-xs font-mono text-slate-300 flex items-center gap-1.5 transition-colors"
+                    >
+                      <BrainCircuit className="w-3.5 h-3.5 text-purple-400" />
+                      <span>Bayesian Veto</span>
+                      <ChevronDown className="w-3 h-3 text-slate-500" />
+                    </button>
+                    {thinkDropdown && (
+                      <div className="absolute bottom-full left-0 mb-2 w-64 rounded-xl bg-[#141926] border border-white/[0.1] p-3 text-xs space-y-1.5 z-30 shadow-2xl">
+                        <div className="text-[10px] text-slate-400 uppercase font-mono">Consensus Gate</div>
+                        <p className="text-[11px] text-slate-300 leading-normal">
+                          Precautionary consensus veto applied: technical forensic risk strictly overrides polite linguistic phrasing.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Right: Voice button + White Circle Send Button */}
+                <div className="flex items-center gap-2.5">
                   <button
                     type="button"
-                    onClick={() => downloadJsonReport(finalResult, { caseId, timestamp: new Date().toISOString(), userMessage: inputText })}
-                    className="flex-1 px-3 py-2 rounded-xl border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.06] text-slate-300 text-[11px] font-mono flex items-center justify-center gap-1.5 transition-colors"
+                    onClick={handleToggleTTS}
+                    className={cn(
+                      "px-3 py-1 rounded-full border text-xs font-mono flex items-center gap-1.5 transition-all",
+                      isSpeaking
+                        ? "bg-signal text-slate-950 border-signal ring-2 ring-signal/40 animate-pulse"
+                        : "bg-white/[0.05] hover:bg-white/[0.08] border-white/[0.06] text-slate-300"
+                    )}
                   >
-                    <FileText className="w-3.5 h-3.5" />
-                    <span>Evidence (.json)</span>
+                    <Mic className="w-3.5 h-3.5 text-signal" />
+                    <span>Voice</span>
+                  </button>
+
+                  {/* White Circular Send Button with Black Arrow (Exact Screenshot Match) */}
+                  <button
+                    type="button"
+                    onClick={() => triggerAnalysis()}
+                    disabled={isAnalyzing || !inputText.trim()}
+                    className={cn(
+                      "w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-lg",
+                      isAnalyzing
+                        ? "bg-signal text-slate-950 animate-pulse cursor-wait"
+                        : inputText.trim()
+                        ? "bg-white hover:bg-slate-200 text-slate-950 cursor-pointer shadow-white/10"
+                        : "bg-white/40 text-slate-700 cursor-not-allowed"
+                    )}
+                  >
+                    {isAnalyzing ? (
+                      <Sparkles className="w-4 h-4 animate-spin text-slate-950" />
+                    ) : (
+                      <Send className="w-4 h-4 text-slate-950 ml-0.5" />
+                    )}
                   </button>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Do's and Don'ts Protection Directives */}
-            <div className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* What NOT to do */}
-              {finalResult.advice.do_not.length > 0 && (
-                <div className="p-4 rounded-2xl bg-rose-500/[0.06] border border-rose-500/20 space-y-2.5">
-                  <div className="text-xs font-mono font-bold uppercase tracking-wider text-rose-300 flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-rose-400" />
-                    <span>Protective Rules (DO NOT)</span>
-                  </div>
-                  <ul className="space-y-1.5 text-xs sm:text-sm text-slate-300">
-                    {finalResult.advice.do_not.map((rule, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <span className="text-rose-400 font-bold shrink-0">✕</span>
-                        <span>{rule}</span>
-                      </li>
-                    ))}
-                  </ul>
+          {/* -------------------------------------------------------------------
+           * THREE QUICK-ACTION CARDS (EXACT SCREENSHOT ROW WITH ARROW TOP RIGHT)
+           * ------------------------------------------------------------------- */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto w-full relative z-10">
+            {/* Card 1: Bank KYC Phishing (Screenshot: Image Generator) */}
+            <div
+              onClick={() => {
+                const s = "Dear SBI User, your YONO account has been suspended due to pending KYC update. Click http://sbi-update-kyc.top to avoid permanent block.";
+                setInputText(s);
+                triggerAnalysis(s);
+              }}
+              className="p-5 rounded-2xl bg-[#121824]/80 border border-white/[0.06] hover:border-signal/40 hover:-translate-y-0.5 cursor-pointer transition-all space-y-3 group"
+            >
+              <div className="flex items-center justify-between">
+                <div className="w-8 h-8 rounded-xl bg-white/[0.06] flex items-center justify-center text-slate-300 group-hover:text-signal transition-colors">
+                  <ImageIcon className="w-4 h-4" />
                 </div>
-              )}
-
-              {/* What to do next */}
-              {finalResult.advice.do_next.length > 0 && (
-                <div className="p-4 rounded-2xl bg-emerald-500/[0.06] border border-emerald-500/20 space-y-2.5">
-                  <div className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-300 flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                    <span>Immediate Next Step</span>
-                  </div>
-                  <ul className="space-y-1.5 text-xs sm:text-sm text-slate-300">
-                    {finalResult.advice.do_next.map((step, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <span className="text-emerald-400 font-bold shrink-0">✓</span>
-                        <span>{step}</span>
-                      </li>
-                    ))}
-                  </ul>
+                <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+              </div>
+              <div className="space-y-1">
+                <div className="font-heading font-semibold text-sm text-white">
+                  Bank KYC Phishing
                 </div>
-              )}
-            </div>
-
-            {/* Official Reporting Action Bar */}
-            <div className="mt-6 p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-3 text-xs font-mono">
-                <span className="font-bold text-white">Official Reporting:</span>
-                <span className="text-slate-400">National Cyber Crime Portal</span>
-                <span className="text-white/[0.2]">•</span>
-                <span className="text-rose-400 font-semibold">Toll-Free 1930</span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <a
-                  href="https://cybercrime.gov.in"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-mono text-signal hover:underline"
-                >
-                  <span>File Incident at cybercrime.gov.in</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* =======================================================================
-         * 6. DETAILED 5-AGENT FORENSIC INTELLIGENCE GRID (NEAT DASHBOARD STRUCTURE)
-         * ======================================================================= */}
-        {(isAnalyzing || completedStages.length > 0) && (
-          <section className="space-y-4">
-            <div className="flex items-center justify-between px-1">
-              <div className="flex items-center gap-2 font-mono text-xs text-slate-400">
-                <Cpu className="w-3.5 h-3.5 text-signal" />
-                <span className="text-white font-bold uppercase tracking-wider">
-                  5-Agent Forensic Intelligence Dossier
-                </span>
-                <span className="text-slate-600">|</span>
-                <span className="text-slate-400">
-                  {completedStages.length}/5 Agents Completed
-                </span>
+                <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                  Inspect lookalike SBI YONO links and defanged URLs in seconds.
+                </p>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {/* -------------------------------------------------------------
-               * AGENT 01: EXTRACTOR AGENT
-               * ------------------------------------------------------------- */}
-              <div className={cn(
-                "p-5 rounded-2xl bg-[#080D1A] border transition-all space-y-3",
-                activeStage === "extractor"
-                  ? "border-signal ring-1 ring-signal/30 shadow-lg"
-                  : completedStages.includes("extractor")
-                  ? "border-emerald-500/30"
-                  : "border-white/[0.06] opacity-60"
-              )}>
-                <div className="flex items-center justify-between border-b border-white/[0.06] pb-2.5">
+            {/* Card 2: Electricity Threat (Screenshot: Video Generator) */}
+            <div
+              onClick={() => {
+                const s = "Dear Consumer, your electricity power will be disconnected tonight at 9:30 PM from sub-station. Immediately call officer 9876543210.";
+                setInputText(s);
+                triggerAnalysis(s);
+              }}
+              className="p-5 rounded-2xl bg-[#121824]/80 border border-white/[0.06] hover:border-signal/40 hover:-translate-y-0.5 cursor-pointer transition-all space-y-3 group"
+            >
+              <div className="flex items-center justify-between">
+                <div className="w-8 h-8 rounded-xl bg-white/[0.06] flex items-center justify-center text-slate-300 group-hover:text-signal transition-colors">
+                  <Video className="w-4 h-4" />
+                </div>
+                <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+              </div>
+              <div className="space-y-1">
+                <div className="font-heading font-semibold text-sm text-white">
+                  Electricity Threat
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                  Detect false deadline countdowns and power disconnection traps.
+                </p>
+              </div>
+            </div>
+
+            {/* Card 3: CBI Digital Arrest (Screenshot: Dev Assistant) */}
+            <div
+              onClick={() => {
+                const s = "CBI Headquarters Notice: Aadhaar linked with 14 money laundering accounts in Mumbai. Digital Arrest warrant issued. Join WhatsApp call immediately.";
+                setInputText(s);
+                triggerAnalysis(s);
+              }}
+              className="p-5 rounded-2xl bg-[#121824]/80 border border-white/[0.06] hover:border-signal/40 hover:-translate-y-0.5 cursor-pointer transition-all space-y-3 group"
+            >
+              <div className="flex items-center justify-between">
+                <div className="w-8 h-8 rounded-xl bg-white/[0.06] flex items-center justify-center text-slate-300 group-hover:text-signal transition-colors">
+                  <Code2 className="w-4 h-4" />
+                </div>
+                <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+              </div>
+              <div className="space-y-1">
+                <div className="font-heading font-semibold text-sm text-white">
+                  CBI Digital Arrest
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                  Expose fake law enforcement summons and WhatsApp extortion.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* -------------------------------------------------------------------
+           * LIVE N8N WORKFLOW GRAPH & 5-AGENT FORENSICS (THE "GOOD STUFFS")
+           * ------------------------------------------------------------------- */}
+          {(isAnalyzing || finalResult || completedStages.length > 0) && (
+            <div className="w-full max-w-4xl mx-auto space-y-6 pt-6 relative z-10">
+              
+              {/* DAG Pipeline Graph */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between px-1 text-xs font-mono text-slate-400">
                   <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-mono font-bold text-xs">
-                      01
+                    <span className="w-2 h-2 rounded-full bg-signal animate-ping" />
+                    <span className="text-white font-bold">LIVE MULTI-AGENT DAG WORKFLOW</span>
+                    <span className="text-slate-600">|</span>
+                    <span>
+                      {isAnalyzing
+                        ? `Executing Node: [${activeStage?.replace("_", " ").toUpperCase()}]`
+                        : "Consensus Complete ✓"}
                     </span>
-                    <div>
-                      <div className="font-heading font-bold text-sm text-white">Extractor Agent</div>
-                      <div className="text-[10px] text-slate-400 font-mono">Entity Tokenizer</div>
+                  </div>
+                </div>
+
+                <PipelineGraph
+                  variant="full"
+                  activeStage={activeStage}
+                  completedStages={completedStages}
+                  verdict={finalResult?.verdict}
+                  locale={locale}
+                />
+              </div>
+
+              {/* FINAL VERDICT DOSSIER BANNER */}
+              {finalResult && (
+                <div className={cn(
+                  "p-6 sm:p-8 rounded-3xl border shadow-2xl space-y-5 transition-all duration-300",
+                  finalResult.verdict === "scam"
+                    ? "bg-gradient-to-b from-[#180C14] to-[#0A050B] border-rose-500/40 shadow-rose-500/10"
+                    : finalResult.verdict === "suspicious"
+                    ? "bg-gradient-to-b from-[#18140B] to-[#0A0905] border-amber-500/40 shadow-amber-500/10"
+                    : "bg-gradient-to-b from-[#0B1814] to-[#050A09] border-emerald-500/40 shadow-emerald-500/10"
+                )}>
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2.5">
+                        <span
+                          className={cn(
+                            "px-3 py-1 rounded-full font-mono font-bold text-xs uppercase tracking-wider flex items-center gap-1.5",
+                            finalResult.verdict === "scam"
+                              ? "bg-rose-500 text-slate-950"
+                              : finalResult.verdict === "suspicious"
+                              ? "bg-amber-400 text-slate-950"
+                              : "bg-emerald-400 text-slate-950"
+                          )}
+                        >
+                          {finalResult.verdict === "scam" ? (
+                            <AlertTriangle className="w-3.5 h-3.5" />
+                          ) : finalResult.verdict === "suspicious" ? (
+                            <ShieldAlert className="w-3.5 h-3.5" />
+                          ) : (
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                          )}
+                          <span>
+                            {finalResult.verdict === "scam"
+                              ? "CONFIRMED FRAUD"
+                              : finalResult.verdict === "suspicious"
+                              ? "HIGHLY SUSPICIOUS"
+                              : "VERIFIED SAFE"}
+                          </span>
+                        </span>
+                        <span className="font-mono text-xs text-slate-300 bg-white/[0.06] border border-white/[0.1] px-2.5 py-0.5 rounded-full">
+                          {(finalResult.confidence * 100).toFixed(1)}% Confidence
+                        </span>
+                      </div>
+
+                      <h2 className="text-xl sm:text-2xl font-heading font-bold text-white tracking-tight">
+                        {finalResult.advice.headline}
+                      </h2>
+
+                      <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                        {finalResult.reasoning}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        type="button"
+                        onClick={handleCopyShareText}
+                        className="px-3 py-2 rounded-xl border border-white/[0.1] bg-white/[0.05] hover:bg-white/[0.08] text-white text-xs font-mono flex items-center gap-1.5 transition-colors"
+                      >
+                        {copiedShare ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5 text-signal" />}
+                        <span>{copiedShare ? "Copied!" : "WhatsApp Warning"}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => downloadTextReport(finalResult, { caseId, timestamp: new Date().toISOString(), userMessage: inputText })}
+                        className="p-2 rounded-xl border border-white/[0.1] bg-white/[0.05] hover:bg-white/[0.08] text-slate-300 hover:text-white transition-colors"
+                        title="Download text report"
+                      >
+                        <Download className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
-                  <span className={cn(
-                    "text-[10px] font-mono px-2 py-0.5 rounded-full font-bold",
-                    completedStages.includes("extractor")
-                      ? "bg-emerald-500/20 text-emerald-400"
-                      : activeStage === "extractor"
-                      ? "bg-signal/20 text-signal animate-pulse"
-                      : "bg-white/[0.04] text-slate-500"
-                  )}>
-                    {completedStages.includes("extractor") ? "120ms ✓" : activeStage === "extractor" ? "PARSING..." : "QUEUED"}
-                  </span>
+
+                  {/* Do's and Don'ts */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    {finalResult.advice.do_not.length > 0 && (
+                      <div className="p-3.5 rounded-xl bg-rose-500/[0.06] border border-rose-500/20 space-y-1.5">
+                        <div className="text-[11px] font-mono font-bold text-rose-300 uppercase">
+                          Protective Rules (DO NOT)
+                        </div>
+                        <ul className="text-xs text-slate-300 space-y-1">
+                          {finalResult.advice.do_not.map((r, i) => (
+                            <li key={i} className="flex items-start gap-1.5">
+                              <span className="text-rose-400 font-bold shrink-0">✕</span>
+                              <span>{r}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {finalResult.advice.do_next.length > 0 && (
+                      <div className="p-3.5 rounded-xl bg-emerald-500/[0.06] border border-emerald-500/20 space-y-1.5">
+                        <div className="text-[11px] font-mono font-bold text-emerald-300 uppercase">
+                          Immediate Next Step
+                        </div>
+                        <ul className="text-xs text-slate-300 space-y-1">
+                          {finalResult.advice.do_next.map((s, i) => (
+                            <li key={i} className="flex items-start gap-1.5">
+                              <span className="text-emerald-400 font-bold shrink-0">✓</span>
+                              <span>{s}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
                 </div>
+              )}
 
-                <div className="space-y-2.5 text-xs">
-                  <div className="text-slate-400 text-[11px] font-mono">Defanged Security Entities:</div>
-
-                  {/* Defanged URLs */}
-                  {finalResult?.entities.urls && finalResult.entities.urls.length > 0 ? (
-                    <div className="space-y-1.5">
-                      {finalResult.entities.urls.map((u, i) => (
+              {/* 5-AGENT FORENSIC INTELLIGENCE GRID */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* 01 Extractor */}
+                <div className="p-4 rounded-2xl bg-[#121824]/80 border border-white/[0.06] space-y-2.5">
+                  <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
+                    <span className="font-heading font-semibold text-xs text-white">01 Extractor Agent</span>
+                    <span className="text-[10px] font-mono text-emerald-400">120ms ✓</span>
+                  </div>
+                  <div className="space-y-1.5 text-xs">
+                    <div className="text-slate-400 text-[11px]">Defanged Links:</div>
+                    {finalResult?.entities.urls && finalResult.entities.urls.length > 0 ? (
+                      finalResult.entities.urls.map((u, i) => (
                         <div
                           key={i}
                           onClick={() => handleCopyEntity(defangUrl(u))}
-                          className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300 font-mono text-[11px] flex items-center justify-between cursor-pointer hover:bg-rose-500/20 transition-colors"
+                          className="p-1.5 rounded bg-rose-500/10 border border-rose-500/20 text-rose-300 font-mono text-[11px] flex items-center justify-between cursor-pointer"
                         >
                           <span className="truncate">{defangUrl(u)}</span>
-                          <Copy className="w-3 h-3 shrink-0 ml-1.5 opacity-70" />
+                          <Copy className="w-3 h-3 shrink-0 ml-1 opacity-70" />
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-[11px] text-slate-500 italic">No external URLs isolated.</div>
-                  )}
-
-                  {/* Extracted Phones & UPIs */}
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    {finalResult?.entities.phones.map((p, i) => (
-                      <span key={i} className="px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.1] text-slate-300 font-mono text-[10px]">
-                        TEL: {p}
-                      </span>
-                    ))}
-                    {finalResult?.entities.upi_ids.map((up, i) => (
-                      <span key={i} className="px-2 py-0.5 rounded bg-signal/10 border border-signal/20 text-signal font-mono text-[10px]">
-                        UPI: {defangHandle(up)}
-                      </span>
-                    ))}
+                      ))
+                    ) : (
+                      <span className="text-slate-500 text-[11px] italic">No malicious links isolated.</span>
+                    )}
                   </div>
                 </div>
-              </div>
 
-              {/* -------------------------------------------------------------
-               * AGENT 02: PATTERN ANALYST AGENT
-               * ------------------------------------------------------------- */}
-              <div className={cn(
-                "p-5 rounded-2xl bg-[#080D1A] border transition-all space-y-3",
-                activeStage === "pattern_analyst"
-                  ? "border-purple-400 ring-1 ring-purple-400/30 shadow-lg"
-                  : completedStages.includes("pattern_analyst")
-                  ? "border-purple-500/30"
-                  : "border-white/[0.06] opacity-60"
-              )}>
-                <div className="flex items-center justify-between border-b border-white/[0.06] pb-2.5">
-                  <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center font-mono font-bold text-xs">
-                      02
-                    </span>
-                    <div>
-                      <div className="font-heading font-bold text-sm text-white">Pattern Analyst</div>
-                      <div className="text-[10px] text-slate-400 font-mono">Psychological Threats</div>
+                {/* 02 Pattern Analyst */}
+                <div className="p-4 rounded-2xl bg-[#121824]/80 border border-white/[0.06] space-y-2.5">
+                  <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
+                    <span className="font-heading font-semibold text-xs text-white">02 Pattern Analyst</span>
+                    <span className="text-[10px] font-mono text-purple-400">140ms ✓</span>
+                  </div>
+                  <div className="space-y-1 text-xs">
+                    <div className="text-slate-400 text-[11px]">Threat Vector:</div>
+                    <div className="p-1.5 rounded bg-purple-500/10 border border-purple-500/20 text-purple-300 font-mono text-xs">
+                      {finalResult?.scam_type ? finalResult.scam_type.replace(/_/g, " ").toUpperCase() : "Urgency vectors"}
                     </div>
                   </div>
-                  <span className={cn(
-                    "text-[10px] font-mono px-2 py-0.5 rounded-full font-bold",
-                    completedStages.includes("pattern_analyst")
-                      ? "bg-purple-500/20 text-purple-300"
-                      : activeStage === "pattern_analyst"
-                      ? "bg-purple-400/20 text-purple-400 animate-pulse"
-                      : "bg-white/[0.04] text-slate-500"
-                  )}>
-                    {completedStages.includes("pattern_analyst") ? "140ms ✓" : activeStage === "pattern_analyst" ? "SCORING..." : "QUEUED"}
-                  </span>
                 </div>
 
-                <div className="space-y-2.5 text-xs">
-                  <div className="text-slate-400 text-[11px] font-mono">Identified Vector:</div>
-                  <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20 font-mono text-purple-300 text-xs font-semibold">
-                    {finalResult?.scam_type
-                      ? finalResult.scam_type.replace(/_/g, " ").toUpperCase()
-                      : "Analyzing urgency vectors..."}
+                {/* 03 Entity Checker */}
+                <div className="p-4 rounded-2xl bg-[#121824]/80 border border-white/[0.06] space-y-2.5">
+                  <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
+                    <span className="font-heading font-semibold text-xs text-white">03 Entity Checker</span>
+                    <span className="text-[10px] font-mono text-cyan-400">160ms ✓</span>
                   </div>
-                  <p className="text-[11px] text-slate-400 leading-relaxed font-sans">
-                    Detects psychological coercion, fear-of-loss triggers, false deadline countdowns ("tonight 9:30 PM"), and authoritative impersonation.
-                  </p>
-                </div>
-              </div>
-
-              {/* -------------------------------------------------------------
-               * AGENT 03: ENTITY CHECKER AGENT
-               * ------------------------------------------------------------- */}
-              <div className={cn(
-                "p-5 rounded-2xl bg-[#080D1A] border transition-all space-y-3",
-                activeStage === "entity_checker"
-                  ? "border-cyan-400 ring-1 ring-cyan-400/30 shadow-lg"
-                  : completedStages.includes("entity_checker")
-                  ? "border-cyan-500/30"
-                  : "border-white/[0.06] opacity-60"
-              )}>
-                <div className="flex items-center justify-between border-b border-white/[0.06] pb-2.5">
-                  <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-mono font-bold text-xs">
-                      03
-                    </span>
-                    <div>
-                      <div className="font-heading font-bold text-sm text-white">Entity Checker</div>
-                      <div className="text-[10px] text-slate-400 font-mono">Air-Gapped Forensics</div>
+                  <div className="space-y-1 text-xs">
+                    <div className="text-slate-400 text-[11px]">Air-Gapped Forensics:</div>
+                    <div className="p-1.5 rounded bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 font-mono text-[11px]">
+                      WHOIS Age: &lt; 7 Days | Official Bank: 0% Match
                     </div>
                   </div>
-                  <span className={cn(
-                    "text-[10px] font-mono px-2 py-0.5 rounded-full font-bold",
-                    completedStages.includes("entity_checker")
-                      ? "bg-cyan-500/20 text-cyan-300"
-                      : activeStage === "entity_checker"
-                      ? "bg-cyan-400/20 text-cyan-400 animate-pulse"
-                      : "bg-white/[0.04] text-slate-500"
-                  )}>
-                    {completedStages.includes("entity_checker") ? "160ms ✓" : activeStage === "entity_checker" ? "RESOLVING..." : "QUEUED"}
-                  </span>
-                </div>
-
-                <div className="space-y-2.5 text-xs">
-                  <div className="text-slate-400 text-[11px] font-mono">WHOIS & Infrastructure:</div>
-                  <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/20 font-mono text-cyan-300 text-[11px]">
-                    WHOIS Age: &lt; 7 Days | Bank Match: 0% Match
-                  </div>
-                  <p className="text-[11px] text-slate-400 leading-relaxed font-sans">
-                    Cross-referenced against verified Indian banking allowlists and domain registrars without ever downloading malicious payloads.
-                  </p>
-                </div>
-              </div>
-
-              {/* -------------------------------------------------------------
-               * AGENT 04: JUDGE CONSENSUS AGENT
-               * ------------------------------------------------------------- */}
-              <div className={cn(
-                "p-5 rounded-2xl bg-[#080D1A] border transition-all space-y-3",
-                activeStage === "judge"
-                  ? "border-signal ring-1 ring-signal/30 shadow-lg"
-                  : completedStages.includes("judge")
-                  ? "border-signal/40"
-                  : "border-white/[0.06] opacity-60"
-              )}>
-                <div className="flex items-center justify-between border-b border-white/[0.06] pb-2.5">
-                  <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-lg bg-signal/20 text-signal flex items-center justify-center font-mono font-bold text-xs">
-                      04
-                    </span>
-                    <div>
-                      <div className="font-heading font-bold text-sm text-white">Judge Agent</div>
-                      <div className="text-[10px] text-slate-400 font-mono">Consensus Veto Gate</div>
-                    </div>
-                  </div>
-                  <span className={cn(
-                    "text-[10px] font-mono px-2 py-0.5 rounded-full font-bold",
-                    completedStages.includes("judge")
-                      ? "bg-signal/20 text-signal"
-                      : activeStage === "judge"
-                      ? "bg-signal/20 text-signal animate-pulse"
-                      : "bg-white/[0.04] text-slate-500"
-                  )}>
-                    {completedStages.includes("judge") ? "95ms ✓" : activeStage === "judge" ? "FUSING..." : "QUEUED"}
-                  </span>
-                </div>
-
-                <div className="space-y-2.5 text-xs">
-                  <div className="text-slate-400 text-[11px] font-mono">Precautionary Consensus Rule:</div>
-                  <p className="p-2 rounded-lg bg-white/[0.03] border border-white/[0.06] text-slate-300 text-[11px] italic leading-relaxed font-sans">
-                    "Technical risk overrides polite phrasing. Newly created lookalike domains confirm fraudulent intent regardless of tone."
-                  </p>
-                </div>
-              </div>
-
-              {/* -------------------------------------------------------------
-               * AGENT 05: ADVISOR AGENT
-               * ------------------------------------------------------------- */}
-              <div className={cn(
-                "p-5 rounded-2xl bg-[#080D1A] border transition-all space-y-3 lg:col-span-2",
-                activeStage === "advisor"
-                  ? "border-purple-400 ring-1 ring-purple-400/30 shadow-lg"
-                  : completedStages.includes("advisor")
-                  ? "border-purple-500/30"
-                  : "border-white/[0.06] opacity-60"
-              )}>
-                <div className="flex items-center justify-between border-b border-white/[0.06] pb-2.5">
-                  <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center font-mono font-bold text-xs">
-                      05
-                    </span>
-                    <div>
-                      <div className="font-heading font-bold text-sm text-white">Advisor Agent</div>
-                      <div className="text-[10px] text-slate-400 font-mono">Citizen Action Protocols</div>
-                    </div>
-                  </div>
-                  <span className={cn(
-                    "text-[10px] font-mono px-2 py-0.5 rounded-full font-bold",
-                    completedStages.includes("advisor")
-                      ? "bg-purple-500/20 text-purple-300"
-                      : activeStage === "advisor"
-                      ? "bg-purple-400/20 text-purple-400 animate-pulse"
-                      : "bg-white/[0.04] text-slate-500"
-                  )}>
-                    {completedStages.includes("advisor") ? "80ms ✓" : activeStage === "advisor" ? "SYNTHESIZING..." : "QUEUED"}
-                  </span>
-                </div>
-
-                <div className="space-y-2 text-xs">
-                  <div className="text-slate-400 text-[11px] font-mono">Plain Language Directive:</div>
-                  <p className="text-white font-medium text-xs leading-relaxed font-sans">
-                    {finalResult?.advice.headline || "Synthesizing plain Hindi & English directives for citizens of all technical levels..."}
-                  </p>
                 </div>
               </div>
             </div>
-          </section>
-        )}
-      </main>
+          )}
+        </main>
+      </div>
     </div>
   );
 }
